@@ -1,23 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, CalendarClock, CheckCircle2, CircleDollarSign, Search } from "lucide-react";
 import { BarChartComponent, ChartCard, StatCard } from "@/components/charts";
 import { useZone } from "@/components/zone-filter";
 
 const REPORT_DATE = new Date("2026-06-03T12:00:00");
 
-const documents = [
-  { document: "FAC-16021", customer: "CREMERIA LOS ALTOS", zone: "GDL", seller: "MARIO", balance: 87400, dueDate: "2026-06-09" },
-  { document: "FAC-16034", customer: "CRISTIAN IVAN ESTRADA", zone: "QR", seller: "MARIO", balance: 53200, dueDate: "2026-06-08" },
-  { document: "FAC-15988", customer: "EL SAZON 86", zone: "CS", seller: "DIEGO", balance: 25257, dueDate: "2026-04-29" },
-  { document: "FAC-16002", customer: "TREFOODS", zone: "MEN VLP", seller: "GABRIELA", balance: 12143, dueDate: "2026-05-16" },
-  { document: "FAC-15894", customer: "EVENTUAL", zone: "MAY VLP", seller: "MARIO", balance: 19147, dueDate: "2026-04-04" },
-  { document: "FAC-16055", customer: "COMERCIAL PDC", zone: "GDL", seller: "GAMALIEL", balance: 13650, dueDate: "2026-06-20" },
-  { document: "FAC-16062", customer: "SLOVENSKO", zone: "QR", seller: "ADOLFO", balance: 12240, dueDate: "2026-06-25" },
-  { document: "FAC-15721", customer: "DISTRIBUIDORA BAHIA KINO", zone: "CS", seller: "MARIO", balance: 11250, dueDate: "2026-04-12" },
-  { document: "FAC-15601", customer: "OPERADORA VALIENTE", zone: "CC CASTEL", seller: "MARIO", balance: 55500, dueDate: "2026-02-28" },
-];
+type Document = { document: string; customer: string; zone: string; seller: string; balance: number; dueDate: string };
 
 const dayDiff = (from: Date, to: string) =>
   Math.floor((from.getTime() - new Date(`${to}T12:00:00`).getTime()) / 86400000);
@@ -36,6 +26,14 @@ const money = (value: number) =>
 export default function ReceivablesPage() {
   const { zone } = useZone();
   const [query, setQuery] = useState("");
+  const [documents, setDocuments] = useState<Document[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/cobranza/documentos")
+      .then((res) => res.json())
+      .then((data: { items?: Document[] }) => setDocuments(data.items ?? []))
+      .catch(() => setDocuments([]));
+  }, []);
 
   const filtered = useMemo(() => documents
     .map((item) => {
@@ -51,7 +49,7 @@ export default function ReceivablesPage() {
       };
     })
     .filter((item) => zone === "TODAS" || item.zone === zone)
-    .filter((item) => !query || `${item.customer} ${item.document} ${item.seller}`.toLowerCase().includes(query.toLowerCase())), [zone, query]);
+    .filter((item) => !query || `${item.customer} ${item.document} ${item.seller}`.toLowerCase().includes(query.toLowerCase())), [documents, zone, query]);
 
   const total = filtered.reduce((sum, item) => sum + item.balance, 0);
   const overdue = filtered.filter((item) => item.overdue);
