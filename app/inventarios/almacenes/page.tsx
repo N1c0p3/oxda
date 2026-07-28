@@ -1,21 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChartComponent, PieChartComponent, StatCard, ChartCard } from "@/components/charts";
 import { Warehouse, Package, TrendingDown, AlertTriangle, CheckCircle, Search, MapPin, Box } from "lucide-react";
 
-// Datos reales Mayo 2026 por almacén/bodega del CSV INVENTARIOS-OXDA-MAYO-2026
-const almacenesData = [
-  { almacen: "Abastos Logicos", valor: 743039, cajas: 2692, costoProm: 276, ventasMes: 493, llegadas: 4644, ventasEst: 2000, cobertura: 2.67, status: "Óptimo" },
-  { almacen: "CDMX: Arcosa/Fresco/Frigarsa/Canbelt", valor: 2089695, cajas: 5626, costoProm: 371, ventasMes: 411, llegadas: 3024, ventasEst: 1200, cobertura: 6.21, status: "Óptimo" },
-  { almacen: "Bajo Cero", valor: 1358076, cajas: 4926, costoProm: 276, ventasMes: 0, llegadas: 2622, ventasEst: 1000, cobertura: 7.93, status: "Exceso" },
-  { almacen: "Frjalisco", valor: 1231168, cajas: 4584, costoProm: 269, ventasMes: 3410, llegadas: 1185, ventasEst: 2800, cobertura: 1.06, status: "Crítico" },
-  { almacen: "Alfrimex", valor: 94931, cajas: 356, costoProm: 267, ventasMes: 158, llegadas: 0, ventasEst: 50, cobertura: 6.12, status: "Óptimo" },
-  { almacen: "Vulpes", valor: 307923, cajas: 981, costoProm: 314, ventasMes: 0, llegadas: 0, ventasEst: 0, cobertura: 0, status: "Sin movimiento" },
-];
+type AlmacenMetrica = {
+  almacen: string;
+  valor: number;
+  cajas: number;
+  costoProm: number;
+  ventasMes: number;
+  llegadas: number;
+  ventasEst: number;
+  cobertura: number;
+  status: string;
+};
 
 export default function InventariosAlmacenesPage() {
   const [filtro, setFiltro] = useState("");
+  const [almacenesData, setAlmacenesData] = useState<AlmacenMetrica[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/inventarios/almacenes")
+      .then((res) => res.json())
+      .then((data: { items?: AlmacenMetrica[] }) => setAlmacenesData(data.items ?? []))
+      .catch(() => setAlmacenesData([]));
+  }, []);
 
   const almacenesFiltrados = filtro
     ? almacenesData.filter((a) => a.almacen.toLowerCase().includes(filtro.toLowerCase()))
