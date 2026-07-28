@@ -165,18 +165,17 @@ export default function LogisticaPrediccionPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [r1, r2, r3, r4] = await Promise.all([
-          fetch("/data/logistica.json"),
-          fetch("/data/ventas_mensual.json"),
-          fetch("/data/predicciones.json"),
+        const [r1, r2] = await Promise.all([
+          fetch("/api/v1/predicciones"),
           fetch("/api/v1/comisiones"),
         ]);
-        if (!r1.ok || !r2.ok || !r3.ok) throw new Error("No se pudieron cargar los datos");
-        setLogistics(await r1.json());
-        setSales(await r2.json());
-        setPredictions(await r3.json());
-        if (r4.ok) {
-          const comData = await r4.json();
+        if (!r1.ok) throw new Error("No se pudieron cargar los datos");
+        const predData = await r1.json();
+        setLogistics(predData.logistics ?? null);
+        setSales(predData.sales ?? null);
+        setPredictions(predData.predictions ?? null);
+        if (r2.ok) {
+          const comData = await r2.json();
           setCommissions(comData.items ?? []);
         }
       } catch (err) {
