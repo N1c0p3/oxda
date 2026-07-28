@@ -86,29 +86,34 @@ function toLeadRow(api: ApiLead): LeadRow {
   };
 }
 
-const origenLeads = [
-  { origen: "Referidos", cantidad: 28, porcentaje: 38.9 },
-  { origen: "Web", cantidad: 18, porcentaje: 25.0 },
-  { origen: "Llamadas", cantidad: 15, porcentaje: 20.8 },
-  { origen: "Eventos", cantidad: 8, porcentaje: 11.1 },
-  { origen: "Base", cantidad: 3, porcentaje: 4.2 },
-];
+type OrigenLead = { origen: string; cantidad: number; porcentaje: number };
 
 const actividadesProximas: { id: number; tipo: string; titulo: string; fecha: string; hora: string; vendedor: string; prioridad: string }[] = [];
 
 export default function PipelinePage() {
   const [leadsData, setLeadsData] = useState<LeadRow[]>([]);
+  const [origenLeads, setOrigenLeads] = useState<OrigenLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [etapaSeleccionada, setEtapaSeleccionada] = useState<string | null>(null);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
 
   useEffect(() => {
-    fetch("/api/v1/crm/oportunidades")
-      .then((res) => res.json())
-      .then((data: { items?: ApiLead[] }) => {
-        setLeadsData((data.items ?? []).map(toLeadRow));
+    Promise.all([
+      fetch("/api/v1/crm/oportunidades"),
+      fetch("/api/v1/crm/origen-leads"),
+    ])
+      .then(async ([oportunidadesRes, origenRes]) => {
+        const oportunidadesData = await oportunidadesRes.json();
+        setLeadsData((oportunidadesData.items ?? []).map(toLeadRow));
+        if (origenRes.ok) {
+          const origenData = await origenRes.json();
+          setOrigenLeads(origenData.items ?? []);
+        }
       })
-      .catch(() => setLeadsData([]))
+      .catch(() => {
+        setLeadsData([]);
+        setOrigenLeads([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
