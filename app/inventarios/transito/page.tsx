@@ -1,28 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChartComponent, LineChartComponent, StatCard, ChartCard } from "@/components/charts";
 import { Truck, Package, Clock, MapPin, AlertTriangle, CheckCircle, Calendar, Search } from "lucide-react";
 
-// Datos de inventarios en tránsito derivados de llegadas del CSV
-const transitoData = [
-  { id: "T-001", almacenDestino: "Abastos Logicos", producto: "Papa Recta 3/8", cajas: 2268, valor: 626000, origen: "Proveedor A", eta: "2026-06-03", estado: "En ruta", transportista: "Transportes del Norte" },
-  { id: "T-002", almacenDestino: "CDMX", producto: "Papa Delgada 1/4", cajas: 1512, valor: 418000, origen: "Proveedor A", eta: "2026-06-05", estado: "En ruta", transportista: "Logística CDMX" },
-  { id: "T-003", almacenDestino: "Bajo Cero", producto: "Papa Castel Straight", cajas: 1312, valor: 362000, origen: "Proveedor B", eta: "2026-06-04", estado: "En ruta", transportista: "Frío Express" },
-  { id: "T-004", almacenDestino: "Frjalisco", producto: "Papa Ondulada 1/2", cajas: 593, valor: 164000, origen: "Proveedor C", eta: "2026-06-06", estado: "Pendiente", transportista: "Cargas Jalisco" },
-  { id: "T-005", almacenDestino: "Abastos Logicos", producto: "Papa Recta Cobertura", cajas: 2376, valor: 655000, origen: "Proveedor B", eta: "2026-06-08", estado: "Pendiente", transportista: "Transportes del Norte" },
-  { id: "T-006", almacenDestino: "CDMX", producto: "Papa Gajo Sazonado", cajas: 1512, valor: 418000, origen: "Proveedor A", eta: "2026-06-07", estado: "En ruta", transportista: "Logística CDMX" },
-];
-
-const transitoPorAlmacen = [
-  { almacen: "Abastos Logicos", cajas: 4644, valor: 1281000 },
-  { almacen: "CDMX", cajas: 3024, valor: 836000 },
-  { almacen: "Bajo Cero", cajas: 2622, valor: 724000 },
-  { almacen: "Frjalisco", cajas: 1185, valor: 327000 },
-];
+type Transito = {
+  id: string;
+  almacenDestino: string;
+  producto: string;
+  cajas: number;
+  valor: number;
+  origen: string;
+  eta: string;
+  estado: string;
+  transportista: string;
+};
 
 export default function InventariosTransitoPage() {
   const [filtro, setFiltro] = useState("");
+  const [transitoData, setTransitoData] = useState<Transito[]>([]);
+  const [transitoPorAlmacen, setTransitoPorAlmacen] = useState<{ almacen: string; cajas: number; valor: number }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/inventarios/transito")
+      .then((res) => res.json())
+      .then((data: { items?: Transito[]; porAlmacen?: { almacen: string; cajas: number; valor: number }[] }) => {
+        setTransitoData(data.items ?? []);
+        setTransitoPorAlmacen(data.porAlmacen ?? []);
+      })
+      .catch(() => {
+        setTransitoData([]);
+        setTransitoPorAlmacen([]);
+      });
+  }, []);
 
   const transitoFiltrado = filtro
     ? transitoData.filter((t) => t.almacenDestino.toLowerCase().includes(filtro.toLowerCase()) || t.producto.toLowerCase().includes(filtro.toLowerCase()))
