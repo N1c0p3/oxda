@@ -1,37 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChartComponent, PieChartComponent, StatCard, ChartCard } from "@/components/charts";
 import { MapPin, Target, Package, TrendingUp, Search } from "lucide-react";
 import { useZone } from "@/components/zone-filter";
 
-// Presupuesto por zona/division (Objetivos-Tabla 1.csv)
-const presupuestoZona = [
-  { zona: "GDL", enero: 868336, febrero: 937996, marzo: 1319014, abril: 1239990, mayo: 976665, producto: "Papa Recta 3/8" },
-  { zona: "QR", enero: 640090, febrero: 723170, marzo: 676280, abril: 968530, mayo: 941850, producto: "Papa Delgada 1/4" },
-  { zona: "CS", enero: 1224156, febrero: 1236049, marzo: 885795, abril: 798594, mayo: 727054, producto: "Papa Castel" },
-  { zona: "CC KAIDA1", enero: 624000, febrero: 636000, marzo: 576000, abril: 600000, mayo: 316800, producto: "Papa Gajo" },
-  { zona: "CC KAIDA2", enero: 636000, febrero: 636000, marzo: 636000, abril: 600000, mayo: 592800, producto: "Papa Recta Cob" },
-  { zona: "CC KAIDA3", enero: 636000, febrero: 624000, marzo: 636000, abril: 636000, mayo: 600000, producto: "Papa Ondulada" },
-  { zona: "MEN VLP", enero: 1000000, febrero: 680000, marzo: 592919, abril: 760000, mayo: 902885, producto: "Aves" },
-  { zona: "MAY VLP", enero: 485000, febrero: 583000, marzo: 495170, abril: 550000, mayo: 766144, producto: "Secos" },
-];
-
-// Presupuesto por producto (basado en canales de venta)
-const presupuestoProducto = [
-  { producto: "Papa Recta 3/8", presupuesto: 8500000, real: 7420000, avance: 87 },
-  { producto: "Papa Delgada 1/4", presupuesto: 4200000, real: 3180000, avance: 76 },
-  { producto: "Papa Castel Straight", presupuesto: 3800000, real: 2890000, avance: 76 },
-  { producto: "Papa Gajo Sazonado", presupuesto: 2100000, real: 1620000, avance: 77 },
-  { producto: "Papa Ondulada 1/2", presupuesto: 1800000, real: 1430000, avance: 79 },
-  { producto: "Aves", presupuesto: 3500000, real: 1850000, avance: 53 },
-  { producto: "Secos", presupuesto: 1200000, real: 497000, avance: 41 },
-];
+type PresupuestoZona = { zona: string; producto: string; enero: number; febrero: number; marzo: number; abril: number; mayo: number };
+type PresupuestoProducto = { producto: string; presupuesto: number; real: number; avance: number };
 
 export default function PresupuestoZonaProductoPage() {
   const { zone } = useZone();
   const [vista, setVista] = useState("zona");
   const [filtro, setFiltro] = useState("");
+  const [presupuestoZona, setPresupuestoZona] = useState<PresupuestoZona[]>([]);
+  const [presupuestoProducto, setPresupuestoProducto] = useState<PresupuestoProducto[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/presupuestos")
+      .then((res) => res.json())
+      .then((data: { zonas?: PresupuestoZona[]; productos?: PresupuestoProducto[] }) => {
+        setPresupuestoZona(data.zonas ?? []);
+        setPresupuestoProducto(data.productos ?? []);
+      })
+      .catch(() => {
+        setPresupuestoZona([]);
+        setPresupuestoProducto([]);
+      });
+  }, []);
+
   const zonasZona = zone === "TODAS" ? presupuestoZona : presupuestoZona.filter((item) => item.zona === zone);
   const productKey = (zonasZona[0]?.producto ?? "").toLowerCase().split(" ").slice(0, 2).join(" ");
   const productoZona = zone === "TODAS"
