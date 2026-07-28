@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BarChartComponent,
   PieChartComponent,
@@ -28,53 +28,64 @@ import {
 } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DATOS PIPELINE - Basado en estructura de prospectos/clientes potenciales
+// DATOS PIPELINE - Conectado a Supabase (crm_oportunidades)
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Etapas del pipeline
-const etapasPipeline = [
-  { id: "prospeccion", nombre: "Prospección", color: "#64748b", icon: "🔍", cantidad: 24, valor: 2845000 },
-  { id: "contacto", nombre: "Primer Contacto", color: "#3b82f6", icon: "📞", cantidad: 18, valor: 1956000 },
-  { id: "propuesta", nombre: "Propuesta Enviada", color: "#8b5cf6", icon: "📄", cantidad: 12, valor: 1420000 },
-  { id: "negociacion", nombre: "Negociación", color: "#f59e0b", icon: "🤝", cantidad: 8, valor: 980000 },
-  { id: "cerrado", nombre: "Cerrado Ganado", color: "#22c55e", icon: "✅", cantidad: 6, valor: 621000 },
-  { id: "perdido", nombre: "Cerrado Perdido", color: "#ef4444", icon: "❌", cantidad: 4, valor: 0 },
-];
-
-// Leads/Prospectos
-const leadsData = [
-  { id: 1, empresa: "CREMERIA LOS ALTOS", contacto: "Juan Pérez", telefono: "33-1234-5678", email: "juan@cremeria.com", etapa: "negociacion", valor: 250000, probabilidad: 75, ultimoContacto: "2026-06-03", vendedor: "Mario", origen: "Referido", actividad: "Esperando confirmación de pedido" },
-  { id: 2, empresa: "TREFOODS", contacto: "Ana Torres", telefono: "33-8765-4321", email: "ana@trefoods.com", etapa: "propuesta", valor: 180000, probabilidad: 60, ultimoContacto: "2026-06-02", vendedor: "Gabriela", origen: "Web", actividad: "Enviar cotización actualizada" },
-  { id: 3, empresa: "OPERADORA VALIENTE", contacto: "Luis Gómez", telefono: "33-5555-9999", email: "luis@valiente.com", etapa: "cerrado", valor: 111000, probabilidad: 100, ultimoContacto: "2026-05-28", vendedor: "Mario", origen: "Llamada", actividad: "Entrega programada 15/06" },
-  { id: 4, empresa: "EL SAZON 86", contacto: "Pedro Martínez", telefono: "33-7777-1111", email: "pedro@sazon86.com", etapa: "contacto", valor: 85000, probabilidad: 40, ultimoContacto: "2026-06-01", vendedor: "Diego", origen: "Evento", actividad: "Agendar demostración" },
-  { id: 5, empresa: "COMERCIAL PDC", contacto: "Sofia Ruiz", telefono: "33-2222-8888", email: "sofia@pdc.com", etapa: "prospeccion", valor: 45000, probabilidad: 25, ultimoContacto: "2026-05-30", vendedor: "Gamaliel", origen: "Base", actividad: "Llamada de seguimiento" },
-  { id: 6, empresa: "SLOVENSKO", contacto: "Marco Silva", telefono: "33-9999-3333", email: "marco@slovensko.com", etapa: "propuesta", valor: 40000, probabilidad: 55, ultimoContacto: "2026-06-04", vendedor: "Adolfo", origen: "Referido", actividad: "Negociar condiciones de pago" },
-  { id: 7, empresa: "ALITAS EL LOCO", contacto: "Carmen Vega", telefono: "33-4444-6666", email: "carmen@alitas.com", etapa: "contacto", valor: 28000, probabilidad: 35, ultimoContacto: "2026-05-29", vendedor: "Karim", origen: "Web", actividad: "Enviar muestras" },
-  { id: 8, empresa: "DISTRIBUIDORA BAHIA", contacto: "Roberto Diaz", telefono: "33-6666-2222", email: "roberto@bahia.com", etapa: "perdido", valor: 0, probabilidad: 0, ultimoContacto: "2026-05-15", vendedor: "Mario", origen: "Referido", actividad: "Precio no competitivo" },
-];
-
-// Métricas del pipeline
-const metricasPipeline = {
-  totalLeads: 72,
-  activos: 62,
-  conversionRate: 8.3,
-  promedioCiclo: 18,
-  valorPipeline: 7731000,
-  valorWeighted: 4252050,
-  nuevosEsteMes: 12,
-  actividadesPendientes: 24,
+type ApiLead = {
+  id: number;
+  clienteId: number;
+  cliente?: string;
+  vendedorId?: number;
+  vendedor?: string;
+  nombre: string;
+  etapa: string;
+  probabilidad: number;
+  montoEstimado: number;
+  cierreEstimado?: string;
+  createdAt: string;
 };
 
-// Actividades próximas
-const actividadesProximas = [
-  { id: 1, tipo: "llamada", titulo: "Seguimiento TREFOODS", fecha: "2026-06-06", hora: "10:00", vendedor: "Gabriela", prioridad: "alta" },
-  { id: 2, tipo: "reunion", titulo: "Demo EL SAZON 86", fecha: "2026-06-07", hora: "14:30", vendedor: "Diego", prioridad: "media" },
-  { id: 3, tipo: "email", titulo: "Cotización SLOVENSKO", fecha: "2026-06-06", hora: "09:00", vendedor: "Adolfo", prioridad: "alta" },
-  { id: 4, tipo: "llamada", titulo: "Nuevo lead COMERCIAL PDC", fecha: "2026-06-08", hora: "11:00", vendedor: "Gamaliel", prioridad: "baja" },
-  { id: 5, tipo: "visita", titulo: "Entrega OPERADORA VALIENTE", fecha: "2026-06-15", hora: "08:00", vendedor: "Mario", prioridad: "alta" },
+type LeadRow = {
+  id: number;
+  empresa: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  etapa: string;
+  valor: number;
+  probabilidad: number;
+  ultimoContacto: string;
+  vendedor: string;
+  origen: string;
+  actividad: string;
+};
+
+const ETAPAS_BASE = [
+  { id: "prospeccion", nombre: "Prospección", color: "#64748b", icon: "🔍" },
+  { id: "contacto", nombre: "Primer Contacto", color: "#3b82f6", icon: "📞" },
+  { id: "propuesta", nombre: "Propuesta Enviada", color: "#8b5cf6", icon: "📄" },
+  { id: "negociacion", nombre: "Negociación", color: "#f59e0b", icon: "🤝" },
+  { id: "cerrado", nombre: "Cerrado Ganado", color: "#22c55e", icon: "✅" },
+  { id: "perdido", nombre: "Cerrado Perdido", color: "#ef4444", icon: "❌" },
 ];
 
-// Origen de leads
+function toLeadRow(api: ApiLead): LeadRow {
+  return {
+    id: api.id,
+    empresa: api.cliente ?? `Cliente #${api.clienteId}`,
+    contacto: api.nombre,
+    telefono: "—",
+    email: "—",
+    etapa: api.etapa,
+    valor: api.montoEstimado,
+    probabilidad: api.probabilidad,
+    ultimoContacto: api.cierreEstimado ?? new Date(api.createdAt).toISOString().slice(0, 10),
+    vendedor: api.vendedor ?? `Vendedor #${api.vendedorId ?? 0}`,
+    origen: "Base",
+    actividad: api.etapa === "cerrado" ? "Cerrado" : api.etapa === "perdido" ? "Perdido" : "Seguimiento",
+  };
+}
+
 const origenLeads = [
   { origen: "Referidos", cantidad: 28, porcentaje: 38.9 },
   { origen: "Web", cantidad: 18, porcentaje: 25.0 },
@@ -83,9 +94,57 @@ const origenLeads = [
   { origen: "Base", cantidad: 3, porcentaje: 4.2 },
 ];
 
+const actividadesProximas: { id: number; tipo: string; titulo: string; fecha: string; hora: string; vendedor: string; prioridad: string }[] = [];
+
 export default function PipelinePage() {
+  const [leadsData, setLeadsData] = useState<LeadRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [etapaSeleccionada, setEtapaSeleccionada] = useState<string | null>(null);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
+
+  useEffect(() => {
+    fetch("/api/v1/crm/oportunidades")
+      .then((res) => res.json())
+      .then((data: { items?: ApiLead[] }) => {
+        setLeadsData((data.items ?? []).map(toLeadRow));
+      })
+      .catch(() => setLeadsData([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const etapasPipeline = useMemo(() => {
+    const porEtapa = new Map<string, { cantidad: number; valor: number }>();
+    for (const lead of leadsData) {
+      const actual = porEtapa.get(lead.etapa) ?? { cantidad: 0, valor: 0 };
+      actual.cantidad += 1;
+      actual.valor += lead.valor;
+      porEtapa.set(lead.etapa, actual);
+    }
+    return ETAPAS_BASE.map((etapa) => {
+      const stats = porEtapa.get(etapa.id) ?? { cantidad: 0, valor: 0 };
+      return { ...etapa, cantidad: stats.cantidad, valor: stats.valor };
+    });
+  }, [leadsData]);
+
+  const metricasPipeline = useMemo(() => {
+    const totalLeads = leadsData.length;
+    const activos = leadsData.filter((l) => l.etapa !== "cerrado" && l.etapa !== "perdido").length;
+    const ganados = leadsData.filter((l) => l.etapa === "cerrado").length;
+    const cerrados = ganados + leadsData.filter((l) => l.etapa === "perdido").length;
+    const conversionRate = cerrados > 0 ? (ganados / cerrados) * 100 : 0;
+    const valorPipeline = leadsData.reduce((sum, l) => sum + l.valor, 0);
+    const valorWeighted = leadsData.reduce((sum, l) => sum + l.valor * (l.probabilidad / 100), 0);
+    return {
+      totalLeads,
+      activos,
+      conversionRate: Number(conversionRate.toFixed(1)),
+      promedioCiclo: 18,
+      valorPipeline,
+      valorWeighted: Number(valorWeighted.toFixed(0)),
+      nuevosEsteMes: 0,
+      actividadesPendientes: actividadesProximas.length,
+    };
+  }, [leadsData]);
 
   const leadsFiltrados = etapaSeleccionada
     ? leadsData.filter((l) => l.etapa === etapaSeleccionada)

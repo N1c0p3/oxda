@@ -41,11 +41,22 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  const { data, error } = await adminClient().from("ventas_pedidos").select("*, ventas_pedidos_detalle(*)").order("created_at", { ascending: false });
+  const { data, error } = await adminClient()
+    .from("ventas_pedidos")
+    .select("*, clientes(nombre_comercial), ventas_pedidos_detalle(*, productos(nombre))")
+    .order("created_at", { ascending: false });
   if (error) return supabaseError(error);
   const items = data.map((pedido) => ({
-    id: pedido.id, clienteId: pedido.cliente_id, fechaCompromiso: pedido.fecha_compromiso ?? undefined,
-    items: pedido.ventas_pedidos_detalle.map((item: { producto_id: number; cantidad: unknown; precio_unitario: unknown }) => ({ productoId: item.producto_id, cantidad: numberValue(item.cantidad), precioUnitario: numberValue(item.precio_unitario) })),
+    id: pedido.id,
+    clienteId: pedido.cliente_id,
+    cliente: pedido.clientes?.nombre_comercial ?? String(pedido.cliente_id),
+    fechaCompromiso: pedido.fecha_compromiso ?? undefined,
+    items: pedido.ventas_pedidos_detalle.map((item: { producto_id: number; cantidad: unknown; precio_unitario: unknown; productos?: { nombre?: string } }) => ({
+      productoId: item.producto_id,
+      productoNombre: item.productos?.nombre ?? String(item.producto_id),
+      cantidad: numberValue(item.cantidad),
+      precioUnitario: numberValue(item.precio_unitario),
+    })),
     subtotal: numberValue(pedido.subtotal), impuestos: numberValue(pedido.impuestos), total: numberValue(pedido.total), estatus: pedido.estatus, createdAt: pedido.created_at,
   }));
   return NextResponse.json({ items, total: items.length });

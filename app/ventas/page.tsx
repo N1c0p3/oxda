@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useZone } from "@/components/zone-filter";
 
-type PedidoItem = { productoId: number; cantidad: number; precioUnitario: number };
+type PedidoItem = { productoId: number; productoNombre?: string; cantidad: number; precioUnitario: number };
 type Pedido = {
   id: number;
   clienteId: number;
+  cliente?: string;
   items: PedidoItem[];
   comentarios?: string;
   subtotal: number;
@@ -23,25 +24,45 @@ function fmtDate(iso: string) {
 
 type PendienteItem = { id: string; cliente: string; producto: string; zona: string; cajas: number; unidadesPorCaja: number; avance: number; fechaCompromiso: string; ejecutivo: string; listo: boolean };
 
-const PENDIENTES_DEMO: PendienteItem[] = [
-  { id: "P-001", cliente: "CREMERIA LOS ALTOS",    producto: "Papa Recta 3/8",           zona: "GDL", cajas: 120, unidadesPorCaja: 4,  avance: 25,  fechaCompromiso: "2026-06-25", ejecutivo: "Mario",    listo: false },
-  { id: "P-002", cliente: "CRISTIAN IVAN ESTRADA", producto: "Frozen Straight Cut 3/8",  zona: "QR", cajas:  80, unidadesPorCaja: 4,  avance: 60,  fechaCompromiso: "2026-06-25", ejecutivo: "Mario",    listo: false },
-  { id: "P-003", cliente: "OPERADORA VALIENTE",    producto: "Aviko Crunch Shoestring",  zona: "CS", cajas:  40, unidadesPorCaja: 5,  avance: 100, fechaCompromiso: "2026-06-26", ejecutivo: "Mario",    listo: true  },
-  { id: "P-004", cliente: "JONATAN M. RAMIREZ",    producto: "Papa Castel Straight Cut", zona: "MEN VLP", cajas:  60, unidadesPorCaja: 4, avance: 40, fechaCompromiso: "2026-06-26", ejecutivo: "Gabriela", listo: false },
-  { id: "P-005", cliente: "TREFOODS",              producto: "Papa Delgada 1/4",         zona: "MAY VLP", cajas:  35, unidadesPorCaja: 4, avance: 75, fechaCompromiso: "2026-06-27", ejecutivo: "Gabriela", listo: false },
-  { id: "P-006", cliente: "EL SAZON 86",           producto: "Aves Mixto",               zona: "GDL", cajas:  18, unidadesPorCaja: 10, avance: 100, fechaCompromiso: "2026-06-27", ejecutivo: "Diego",    listo: true  },
-];
+function toPendiente(pedido: Pedido): PendienteItem {
+  return {
+    id: String(pedido.id),
+    cliente: pedido.cliente ?? `Cliente #${pedido.clienteId}`,
+    producto: pedido.items.map((i) => i.productoNombre ?? `Producto #${i.productoId}`).join(", ") || "Sin productos",
+    zona: "—",
+    cajas: 0,
+    unidadesPorCaja: 1,
+    avance: pedido.estatus === "listo" ? 100 : 0,
+    fechaCompromiso: pedido.fechaCompromiso ?? new Date(pedido.createdAt).toISOString().slice(0, 10),
+    ejecutivo: "—",
+    listo: pedido.estatus === "listo",
+  };
+}
 
 export default function VentasPage() {
   const { zone } = useZone();
   const [vistaPedidos, setVistaPedidos] = useState<"nuevo" | "pendientes">("pendientes");
-  const [pendientes, setPendientes] = useState<PendienteItem[]>(PENDIENTES_DEMO);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    fetch("/api/v1/ventas/pedidos")
+      .then((res) => res.json())
+      .then((data: { items?: Pedido[] }) => setPedidos(data.items ?? []))
+      .catch(() => setMsg({ type: "error", text: "No se pudieron cargar los pedidos" }));
+  }, []);
+
+  const pendientes = pedidos.filter((p) => p.estatus === "pendiente" || p.estatus === "capturado").map(toPendiente);
+
   function toggleListo(id: string) {
-    setPendientes(prev => prev.map(p => p.id === id ? { ...p, listo: !p.listo, avance: p.listo ? 0 : 100 } : p));
+    setPedidos((prev) =>
+      prev.map((p) =>
+        String(p.id) === id
+          ? { ...p, estatus: p.estatus === "listo" ? "pendiente" : "listo" }
+          : p
+      )
+    );
   }
 
   const pendientesZona = zone === "TODAS" ? pendientes : pendientes.filter((item) => item.zona === zone);

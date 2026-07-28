@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Captura = {
   id: number;
   ordenId: number;
   userId: number;
   areaId: number;
+  areaNombre?: string;
+  usuarioNombre?: string;
   turno: string;
   kgProcesado: number;
   kgMerma: number;
@@ -37,6 +39,13 @@ export default function ProduccionPage() {
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/v1/produccion/capturas")
+      .then((res) => res.json())
+      .then((data: { items?: Captura[] }) => setCapturas(data.items ?? []))
+      .catch(() => setMsg({ type: "error", text: "No se pudieron cargar las capturas" }));
+  }, []);
 
   const [form, setForm] = useState({
     ordenId: "1",

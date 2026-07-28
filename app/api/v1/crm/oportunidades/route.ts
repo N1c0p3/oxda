@@ -44,12 +44,23 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  const { data, error } = await adminClient().from("crm_oportunidades").select().order("created_at", { ascending: false });
+  const { data, error } = await adminClient()
+    .from("crm_oportunidades")
+    .select("*, clientes(nombre_comercial), usuarios(nombre)")
+    .order("created_at", { ascending: false });
   if (error) return supabaseError(error);
   const items = data.map((item) => ({
-    id: item.id, clienteId: item.cliente_id, vendedorId: item.responsable_id, nombre: item.nombre,
-    etapa: item.etapa, probabilidad: numberValue(item.probabilidad), montoEstimado: numberValue(item.monto_estimado),
-    cierreEstimado: dateValue(item.fecha_cierre_estimada), createdAt: item.created_at,
+    id: item.id,
+    clienteId: item.cliente_id,
+    cliente: item.clientes?.nombre_comercial ?? String(item.cliente_id),
+    vendedorId: item.responsable_id,
+    vendedor: item.usuarios?.nombre ?? String(item.responsable_id),
+    nombre: item.nombre,
+    etapa: item.etapa,
+    probabilidad: numberValue(item.probabilidad),
+    montoEstimado: numberValue(item.monto_estimado),
+    cierreEstimado: dateValue(item.fecha_cierre_estimada),
+    createdAt: item.created_at,
   }));
   return NextResponse.json({ items, total: items.length });
 }

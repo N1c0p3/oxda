@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Envio = {
   id: number;
   pedidoId: number;
   rutaId?: number;
+  rutaNombre?: string;
   operadorId?: number;
+  operadorNombre?: string;
   unidadId?: number;
+  unidadPlaca?: string;
   fechaSalida?: string;
   estatus: string;
   createdAt: string;
@@ -33,6 +36,13 @@ export default function LogisticaPage() {
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/logistica/envios")
+      .then((res) => res.json())
+      .then((data: { items?: Envio[] }) => setEnvios(data.items ?? []))
+      .catch(() => setMsg({ type: "error", text: "No se pudieron cargar los envíos" }));
+  }, []);
 
   const [form, setForm] = useState({
     pedidoId: "1",

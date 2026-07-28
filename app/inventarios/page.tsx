@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Movimiento = {
   id: number;
   fecha: string;
   tipoMovimiento: string;
   productoId: number;
+  productoNombre?: string;
   loteId?: number;
   almacenOrigenId?: number;
+  almacenOrigenNombre?: string;
   almacenDestinoId?: number;
+  almacenDestinoNombre?: string;
   cantidad: number;
   unidad: string;
   motivo?: string;
@@ -44,6 +47,13 @@ export default function InventariosPage() {
   const [movimientos, setMovimientos] = useState<Movimiento[]>([]);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/v1/inventarios/movimientos")
+      .then((res) => res.json())
+      .then((data: { items?: Movimiento[] }) => setMovimientos(data.items ?? []))
+      .catch(() => setMsg({ type: "error", text: "No se pudieron cargar los movimientos" }));
+  }, []);
 
   const [form, setForm] = useState({
     tipoMovimiento: "entrada",
@@ -222,10 +232,10 @@ export default function InventariosPage() {
                           {m.tipoMovimiento}
                         </span>
                       </td>
-                      <td>{m.productoId}</td>
+                      <td>{m.productoNombre ?? m.productoId}</td>
                       <td>{m.loteId ?? "—"}</td>
-                      <td>{m.almacenOrigenId ? ALMACEN_NOMBRE[m.almacenOrigenId] : "—"}</td>
-                      <td>{m.almacenDestinoId ? ALMACEN_NOMBRE[m.almacenDestinoId] : "—"}</td>
+                      <td>{m.almacenOrigenNombre ?? (m.almacenOrigenId ? ALMACEN_NOMBRE[m.almacenOrigenId] : "—")}</td>
+                      <td>{m.almacenDestinoNombre ?? (m.almacenDestinoId ? ALMACEN_NOMBRE[m.almacenDestinoId] : "—")}</td>
                       <td><strong>{m.cantidad}</strong></td>
                       <td>{m.unidad}</td>
                       <td>{m.motivo ?? "—"}</td>

@@ -2,6 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { adminClient, numberValue, supabaseError } from "@/lib/supabase/api";
 
+export async function GET() {
+  const { data, error } = await adminClient()
+    .from("inventario_movimientos")
+    .select("*, productos(nombre), unidades_medida(nombre), almacen_origen:almacen_origen_id(nombre), almacen_destino:almacen_destino_id(nombre)")
+    .order("fecha", { ascending: false });
+  if (error) return supabaseError(error);
+  const items = data.map((m) => ({
+    id: m.id,
+    fecha: m.fecha,
+    tipoMovimiento: m.tipo_movimiento,
+    productoId: m.producto_id,
+    productoNombre: m.productos?.nombre ?? String(m.producto_id),
+    loteId: m.lote_id ?? undefined,
+    almacenOrigenId: m.almacen_origen_id ?? undefined,
+    almacenOrigenNombre: m.almacen_origen?.nombre,
+    almacenDestinoId: m.almacen_destino_id ?? undefined,
+    almacenDestinoNombre: m.almacen_destino?.nombre,
+    cantidad: numberValue(m.cantidad),
+    unidad: m.unidades_medida?.nombre ?? "",
+    motivo: m.motivo ?? undefined,
+    userId: m.usuario_id,
+  }));
+  return NextResponse.json({ items, total: items.length });
+}
+
 export async function POST(request: NextRequest) {
   const payload = await request.json();
 
