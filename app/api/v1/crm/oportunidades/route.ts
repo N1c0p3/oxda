@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { db, type Oportunidad } from "@/lib/demo-db";
+import { adminClient, dateValue, numberValue, supabaseError } from "@/lib/supabase/api";
 
 export async function POST(request: NextRequest) {
   const payload = await request.json();
@@ -15,24 +15,41 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Datos fuera de rango" }, { status: 400 });
   }
 
-  const etapa = String(payload.etapa) as Oportunidad["etapa"];
+  const { data, error } = await adminClient()
+    .from("crm_oportunidades")
+    .insert({
+      cliente_id: Number(payload.clienteId),
+      responsable_id: Number(payload.vendedorId),
+      nombre: String(payload.nombre),
+      etapa: String(payload.etapa),
+      probabilidad,
+      monto_estimado: montoEstimado,
+      fecha_cierre_estimada: payload.cierreEstimado ? String(payload.cierreEstimado) : null,
+    })
+    .select()
+    .single();
 
-  const registro: Oportunidad = {
-    id: db.oportunidades.length + 1,
-    clienteId: Number(payload.clienteId),
-    vendedorId: Number(payload.vendedorId ?? 0),
-    nombre: String(payload.nombre),
-    etapa,
-    probabilidad,
-    montoEstimado,
-    cierreEstimado: payload.cierreEstimado ? String(payload.cierreEstimado) : undefined,
-    createdAt: new Date().toISOString(),
-  };
-
-  db.oportunidades.push(registro);
-  return NextResponse.json(registro, { status: 201 });
+  if (error) return supabaseError(error);
+  return NextResponse.json({
+    id: data.id,
+    clienteId: data.cliente_id,
+    vendedorId: data.responsable_id,
+    nombre: data.nombre,
+    etapa: data.etapa,
+    probabilidad: numberValue(data.probabilidad),
+    montoEstimado: numberValue(data.monto_estimado),
+    cierreEstimado: dateValue(data.fecha_cierre_estimada),
+    createdAt: data.created_at,
+  }, { status: 201 });
 }
 
 export async function GET() {
-  return NextResponse.json({ items: db.oportunidades, total: db.oportunidades.length });
+  const { data, error } = await adminClient().from("crm_oportunidades").select().order("created_at", { ascending: false });
+  if (error) return supabaseError(error);
+  const items = data.map((item) => ({
+    id: item.id, clienteId: item.cliente_id, vendedorId: item.responsable_id, nombre: item.nombre,
+    etapa: item.etapa, probabilidad: numberValue(item.probabilidad), montoEstimado: numberValue(item.monto_estimado),
+    cierreEstimado: dateValue(item.fecha_cierre_estimada), createdAt: item.created_at,
+  }));
+  return NextResponse.json({ items, total: items.length });
 }

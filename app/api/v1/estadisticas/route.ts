@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/demo-db";
+import { adminClient, numberValue, supabaseError } from "@/lib/supabase/api";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +8,26 @@ function pct(a: number, b: number) {
 }
 
 export async function GET() {
+  const client = adminClient();
+  const [capturasResult, movimientosResult, pedidosResult, enviosResult, oportunidadesResult, areasResult] = await Promise.all([
+    client.from("produccion_capturas").select("kg_procesado, kg_merma, minutos_paro, incidencia, area_id, turno"),
+    client.from("inventario_movimientos").select("tipo_movimiento, cantidad"),
+    client.from("ventas_pedidos").select("total, estatus"),
+    client.from("logistica_envios").select("estatus"),
+    client.from("crm_oportunidades").select("etapa, monto_estimado, probabilidad"),
+    client.from("areas").select("id, nombre"),
+  ]);
+  const error = capturasResult.error ?? movimientosResult.error ?? pedidosResult.error ?? enviosResult.error ?? oportunidadesResult.error ?? areasResult.error;
+  if (error) return supabaseError(error);
+  const db = {
+    capturas: (capturasResult.data ?? []).map((item) => ({ kgProcesado: numberValue(item.kg_procesado), kgMerma: numberValue(item.kg_merma), minutosParo: item.minutos_paro, incidencia: item.incidencia, areaId: item.area_id, turno: item.turno })),
+    movimientos: (movimientosResult.data ?? []).map((item) => ({ tipoMovimiento: item.tipo_movimiento, cantidad: numberValue(item.cantidad) })),
+    pedidos: (pedidosResult.data ?? []).map((item) => ({ total: numberValue(item.total), estatus: item.estatus })),
+    envios: enviosResult.data ?? [],
+    oportunidades: (oportunidadesResult.data ?? []).map((item) => ({ etapa: item.etapa, montoEstimado: numberValue(item.monto_estimado), probabilidad: numberValue(item.probabilidad) })),
+    AREA_NAMES: Object.fromEntries((areasResult.data ?? []).map((item) => [item.id, item.nombre])) as Record<number, string>,
+  };
+
   /* ── PRODUCCIÓN ─────────────────────────────────────────────────── */
   const totalKg     = db.capturas.reduce((s, c) => s + c.kgProcesado, 0);
   const totalMerma  = db.capturas.reduce((s, c) => s + c.kgMerma, 0);
