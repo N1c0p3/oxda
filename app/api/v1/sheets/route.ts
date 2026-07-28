@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { adminClient, numberValue, supabaseError } from "@/lib/supabase/api";
+
 export const dynamic = "force-dynamic";
 
 const INGRESOS_URL =
@@ -28,49 +30,37 @@ async function fetchSheet(url: string): Promise<Record<string, string>[]> {
   return parseCsv(text);
 }
 
-const MOCK_INGRESOS: Record<string, string>[] = [
-  { "Tipo de gasto": "Ingreso",                                     Importe: "12000", Dia: "11", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso",                                     Importe: "10000", Dia: "11", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso",                                     Importe: "500",   Dia: "11", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso mensual",                             Importe: "2000",  Dia: "28", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Campaña, Bot y Plataforma Digital",           Importe: "45000", Dia: "26", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Campaña, bot y plataforma digital",           Importe: "45000", Dia: "26", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso por campaña Facebook Ads",            Importe: "25000", Dia: "5",  Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Campaña Publicitaria",                        Importe: "25000", Dia: "18", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso por campaña y desarrollo de página web", Importe: "35000", Dia: "18", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Desarrollo inmobiliario",                     Importe: "45000", Dia: "23", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Desarrollo del sistema NFC",                  Importe: "35000", Dia: "24", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Desarrollo, campaña e implementación",        Importe: "75000", Dia: "26", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso por radiografías y consulta",         Importe: "25000", Dia: "4",  Mes: "10", "Año": "2025" },
-  { "Tipo de gasto": "Ingreso por servicios",                       Importe: "38000", Dia: "15", Mes: "10", "Año": "2025" },
-  { "Tipo de gasto": "Campaña e implementación QR acceso escolar",  Importe: "45000", Dia: "29", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "CRM inteligente tema dental",                 Importe: "35000", Dia: "1",  Mes: "10", "Año": "2025" },
-];
-
-const MOCK_EGRESOS: Record<string, string>[] = [
-  { "Tipo de gasto": "Gasto",                                      Importe: "11000",  Dia: "11", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Gasto inesperado",                           Importe: "12000",  Dia: "11", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Pago de luz",                                Importe: "45000",  Dia: "14", Mes: "6", "Año": "2025" },
-  { "Tipo de gasto": "Pago de luz",                                Importe: "45000",  Dia: "14", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Internet Consultorio",                       Importe: "1500",   Dia: "25", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Mano de obra",                               Importe: "3500",   Dia: "26", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Impermeabilizante",                          Importe: "35000",  Dia: "26", Mes: "7", "Año": "2025" },
-  { "Tipo de gasto": "Costos operativos de cirugía",               Importe: "12000",  Dia: "2",  Mes: "8", "Año": "2025" },
-  { "Tipo de gasto": "Campaña Publicitaria",                       Importe: "15000",  Dia: "11", Mes: "8", "Año": "2025" },
-  { "Tipo de gasto": "Gastos publicitarios",                       Importe: "15000",  Dia: "12", Mes: "8", "Año": "2025" },
-  { "Tipo de gasto": "Costo y pago de mantenimiento",              Importe: "12000",  Dia: "16", Mes: "8", "Año": "2025" },
-  { "Tipo de gasto": "inversión inicial, Bolsen",                  Importe: "14000",  Dia: "18", Mes: "8", "Año": "2025" },
-  { "Tipo de gasto": "Sueldos Fever",                              Importe: "100000", Dia: "24", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Desarrollo hidráulico",                      Importe: "25000",  Dia: "26", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Gastos de campaña",                          Importe: "25000",  Dia: "23", Mes: "9", "Año": "2025" },
-  { "Tipo de gasto": "Publicidad y desarrollo de crm inteligente", Importe: "120000", Dia: "7",  Mes: "10", "Año": "2025" },
-  { "Tipo de gasto": "costos operativos",                          Importe: "25000",  Dia: "25", Mes: "10", "Año": "2025" },
-];
+async function loadSupabaseFallback() {
+  const { data, error } = await adminClient()
+    .from("ia_sheets_registros")
+    .select("*")
+    .order("id", { ascending: true });
+  if (error) throw error;
+  const ingresos = data
+    .filter((r) => r.tipo === "ingreso")
+    .map((r) => ({
+      "Tipo de gasto": r.categoria,
+      Importe: numberValue(r.importe).toFixed(2),
+      Dia: String(r.dia),
+      Mes: String(r.mes),
+      "Año": String(r.anio),
+    }));
+  const egresos = data
+    .filter((r) => r.tipo === "egreso")
+    .map((r) => ({
+      "Tipo de gasto": r.categoria,
+      Importe: numberValue(r.importe).toFixed(2),
+      Dia: String(r.dia),
+      Mes: String(r.mes),
+      "Año": String(r.anio),
+    }));
+  return { ingresos, egresos };
+}
 
 export async function GET() {
-  let ingresos = MOCK_INGRESOS;
-  let egresos = MOCK_EGRESOS;
-  let source: "sheets" | "mock" = "mock";
+  let ingresos: Record<string, string>[] = [];
+  let egresos: Record<string, string>[] = [];
+  let source: "sheets" | "supabase" = "supabase";
   let error: string | null = null;
 
   try {
@@ -83,9 +73,22 @@ export async function GET() {
 
     if (ingData) ingresos = ingData;
     if (egrData) egresos = egrData;
-    if (ingData || egrData) source = "sheets";
+    if (ingData || egrData) {
+      source = "sheets";
+    } else {
+      const fallback = await loadSupabaseFallback();
+      if (!ingData) ingresos = fallback.ingresos;
+      if (!egrData) egresos = fallback.egresos;
+    }
   } catch (e) {
     error = e instanceof Error ? e.message : "Error desconocido";
+    try {
+      const fallback = await loadSupabaseFallback();
+      ingresos = fallback.ingresos;
+      egresos = fallback.egresos;
+    } catch (fallbackError) {
+      error += `; fallback: ${fallbackError instanceof Error ? fallbackError.message : "error"}`;
+    }
   }
 
   return NextResponse.json({
