@@ -36,39 +36,28 @@ type DashboardAnalytics = {
   trend: Array<{ month: string; sale: number; units: number; factor: number | null }>;
 };
 
+type ZoneMetrics = {
+  inventoryByZone: Record<string, { units: number; rotation: number; critical: number; transit: number; transitValue: number }>;
+  receivablesByZone: Record<string, { total: number; overdue: number; dueSoon: number }>;
+};
+
 const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
-
-const inventoryByZone: Record<string, { units: number; rotation: number; critical: number; transit: number; transitValue: number }> = {
-  GDL: { units: 2220, rotation: 1.21, critical: 0, transit: 1185, transitValue: 327060 },
-  QR: { units: 565, rotation: 1.08, critical: 1, transit: 1512, transitValue: 468720 },
-  CS: { units: 485, rotation: 1.12, critical: 1, transit: 1312, transitValue: 459200 },
-  "MEN VLP": { units: 337, rotation: 0.91, critical: 0, transit: 0, transitValue: 0 },
-  "MAY VLP": { units: 3636, rotation: 0.77, critical: 0, transit: 2268, transitValue: 614628 },
-  "CC CASTEL": { units: 83, rotation: 1, critical: 1, transit: 0, transitValue: 0 },
-  "CC KAIDA1": { units: 52, rotation: 0.98, critical: 1, transit: 0, transitValue: 0 },
-  FARAON: { units: 177, rotation: 1, critical: 1, transit: 177, transitValue: 50445 },
-  VERACRUZ: { units: 145, rotation: 1, critical: 1, transit: 0, transitValue: 0 },
-};
-
-const receivablesByZone: Record<string, { total: number; overdue: number; dueSoon: number }> = {
-  GDL: { total: 101050, overdue: 0, dueSoon: 87400 },
-  QR: { total: 65440, overdue: 0, dueSoon: 53200 },
-  CS: { total: 36507, overdue: 36507, dueSoon: 0 },
-  "MEN VLP": { total: 12143, overdue: 12143, dueSoon: 0 },
-  "MAY VLP": { total: 19147, overdue: 19147, dueSoon: 0 },
-  "CC CASTEL": { total: 55500, overdue: 55500, dueSoon: 0 },
-};
 
 export default function DashboardPage() {
   const { zone } = useZone();
   const [data, setData] = useState<DashboardAnalytics | null>(null);
+  const [zoneMetrics, setZoneMetrics] = useState<ZoneMetrics>({ inventoryByZone: {}, receivablesByZone: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const inventoryByZone = zoneMetrics.inventoryByZone;
+  const receivablesByZone = zoneMetrics.receivablesByZone;
+
   const inventory = zone === "TODAS"
     ? Object.values(inventoryByZone).reduce((total, item) => ({ units: total.units + item.units, rotation: total.rotation + item.rotation, critical: total.critical + item.critical, transit: total.transit + item.transit, transitValue: total.transitValue + item.transitValue }), { units: 0, rotation: 0, critical: 0, transit: 0, transitValue: 0 })
     : inventoryByZone[zone] ?? { units: 0, rotation: 0, critical: 0, transit: 0, transitValue: 0 };
-  if (zone === "TODAS") inventory.rotation = Object.values(inventoryByZone).reduce((sum, item) => sum + item.rotation, 0) / Object.values(inventoryByZone).length;
+  if (zone === "TODAS") inventory.rotation = Object.values(inventoryByZone).reduce((sum, item) => sum + item.rotation, 0) / (Object.values(inventoryByZone).length || 1);
   const receivables = zone === "TODAS"
     ? Object.values(receivablesByZone).reduce((total, item) => ({ total: total.total + item.total, overdue: total.overdue + item.overdue, dueSoon: total.dueSoon + item.dueSoon }), { total: 0, overdue: 0, dueSoon: 0 })
     : receivablesByZone[zone] ?? { total: 0, overdue: 0, dueSoon: 0 };
@@ -77,11 +66,15 @@ export default function DashboardPage() {
     const controller = new AbortController();
     setLoading(true);
     setError("");
-    fetch(`/api/v1/ventas/analitica?zone=${encodeURIComponent(zone)}&month=May`, { signal: controller.signal })
-      .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok) throw new Error(payload.error || "No fue posible cargar el tablero.");
-        setData(payload);
+    Promise.all([
+      fetch(`/api/v1/ventas/analitica?zone=${encodeURIComponent(zone)}&month=May`, { signal: controller.signal }),
+      fetch("/api/v1/dashboard/zonas", { signal: controller.signal }),
+    ])
+      .then(async ([salesRes, zonesRes]) => {
+        const salesPayload = await salesRes.json();
+        if (!salesRes.ok) throw new Error(salesPayload.error || "No fue posible cargar el tablero.");
+        setData(salesPayload);
+        if (zonesRes.ok) setZoneMetrics(await zonesRes.json());
       })
       .catch((fetchError) => {
         if (fetchError.name !== "AbortError") setError(fetchError.message);
