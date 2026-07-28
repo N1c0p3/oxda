@@ -45,68 +45,47 @@ type InventoryMovement = {
   reference: string;
 };
 
-const INITIAL_PRODUCTS: InventoryProduct[] = [
-  { code: "105632", product: "10 MM NATURAL WERISNG", zone: "GDL", warehouse: "FRIJALISCO", lot: "WERISNG-105632", expiry: "2026-09-18", units: 1755, monthlyDemand: 858, costBox: 276, inTransit: 1185 },
-  { code: "102341", product: "10 MM CON COBERTURA", zone: "GDL", warehouse: "FRIJALISCO", lot: "WERISNG-102341", expiry: "2026-08-30", units: 465, monthlyDemand: 303, costBox: 307, inTransit: 0 },
-  { code: "102310", product: "7 MM CON COBERTURA", zone: "QR", warehouse: "CDMX", lot: "WERISNG-102310", expiry: "2026-08-14", units: 99, monthlyDemand: 181, costBox: 310, inTransit: 1512 },
-  { code: "102211", product: "7 MM NATURAL", zone: "QR", warehouse: "CDMX", lot: "WERISNG-102211", expiry: "2026-10-06", units: 466, monthlyDemand: 157, costBox: 295, inTransit: 0 },
-  { code: "104215", product: "10 MM CON COBERTURA Y CÁSCARA", zone: "CS", warehouse: "BAJO CERO", lot: "WERISNG-104215", expiry: "2026-07-28", units: 24, monthlyDemand: 153, costBox: 350, inTransit: 1312 },
-  { code: "114054", product: "GAJOS SAZONADOS", zone: "CS", warehouse: "BAJO CERO", lot: "WERISNG-114054", expiry: "2026-09-09", units: 461, monthlyDemand: 279, costBox: 325, inTransit: 0 },
-  { code: "102419", product: "PAPA ONDULADA", zone: "MEN VLP", warehouse: "VULPES", lot: "WERISNG-102419", expiry: "2026-10-22", units: 337, monthlyDemand: 132, costBox: 298, inTransit: 0 },
-  { code: "505015", product: "10 MM NATURAL KAIDA", zone: "MAY VLP", warehouse: "ABASTOS LÓGICOS", lot: "KAIDA-505015", expiry: "2026-11-16", units: 3636, monthlyDemand: 466, costBox: 271, inTransit: 2268 },
-  { code: "260612", product: "CASTEL STRAIGHT CUT 4X2500G", zone: "CC CASTEL", warehouse: "BAJO CERO", lot: "AVIKO-260612", expiry: "2026-07-19", units: 83, monthlyDemand: 83, costBox: 250, inTransit: 0 },
-  { code: "806982", product: "AROS DE CEBOLLA AVIKO", zone: "CC KAIDA1", warehouse: "FRIJALISCO", lot: "AVIKO-806982", expiry: "2026-08-03", units: 52, monthlyDemand: 53, costBox: 334, inTransit: 0 },
-  { code: "807769", product: "PAPAS FRITAS CORTE REGULAR", zone: "FARAON", warehouse: "BAJO CERO", lot: "BC-807769", expiry: "2026-09-25", units: 177, monthlyDemand: 177, costBox: 285, inTransit: 177 },
-  { code: "807329", product: "AVIKO ORIGINAL 20X450G", zone: "VERACRUZ", warehouse: "CDMX", lot: "BC-807329", expiry: "2026-08-21", units: 145, monthlyDemand: 145, costBox: 290, inTransit: 0 },
-];
+type RotationRow = { month: string; GDL: number; QR: number; CS: number; "MEN VLP": number; "MAY VLP": number; consolidated: number; date?: string };
 
-const INITIAL_MOVEMENTS: InventoryMovement[] = [
-  { id: "MOV-1005", date: "2026-05-13", type: "Salida", zone: "GDL", warehouse: "FRIJALISCO", code: "105632", product: "10 MM NATURAL WERISNG", lot: "WERISNG-105632", units: 96, reference: "FACTURA VLP-16142" },
-  { id: "MOV-1004", date: "2026-05-12", type: "Entrada", zone: "FARAON", warehouse: "BAJO CERO", code: "807769", product: "PAPAS FRITAS CORTE REGULAR", lot: "BC-807769", units: 177, reference: "RECEPCIÓN OC-1841" },
-  { id: "MOV-1003", date: "2026-05-10", type: "Transferencia", zone: "QR", warehouse: "CDMX", code: "102341", product: "10 MM CON COBERTURA", lot: "WERISNG-102341", units: 240, reference: "TR-0048" },
-  { id: "MOV-1002", date: "2026-05-08", type: "Salida", zone: "CS", warehouse: "BAJO CERO", code: "114054", product: "GAJOS SAZONADOS", lot: "WERISNG-114054", units: 54, reference: "FACTURA VLP-16098" },
-  { id: "MOV-1001", date: "2026-05-06", type: "Ajuste", zone: "CC CASTEL", warehouse: "BAJO CERO", code: "260612", product: "CASTEL STRAIGHT CUT", lot: "AVIKO-260612", units: -3, reference: "CONTEO CÍCLICO CC-021" },
-];
+type ReporteData = {
+  products: InventoryProduct[];
+  movements: InventoryMovement[];
+  rotationHistory: RotationRow[];
+  rotationWeekly: RotationRow[];
+};
 
-const ROTATION_HISTORY = [
-  { month: "Ene", GDL: 0.92, QR: 0.78, CS: 0.84, "MEN VLP": 0.66, "MAY VLP": 0.51, consolidated: 0.76 },
-  { month: "Feb", GDL: 1.04, QR: 0.87, CS: 0.91, "MEN VLP": 0.72, "MAY VLP": 0.58, consolidated: 0.85 },
-  { month: "Mar", GDL: 1.17, QR: 0.96, CS: 1.02, "MEN VLP": 0.83, "MAY VLP": 0.64, consolidated: 0.94 },
-  { month: "Abr", GDL: 1.09, QR: 1.02, CS: 0.94, "MEN VLP": 0.88, "MAY VLP": 0.71, consolidated: 0.93 },
-  { month: "May", GDL: 1.21, QR: 1.08, CS: 1.12, "MEN VLP": 0.91, "MAY VLP": 0.77, consolidated: 1.02 },
-];
-
-const ROTATION_WEEKLY = [
-  { date: "2026-04-27", month: "27 Abr", GDL: 1.06, QR: 0.91, CS: 0.88, "MEN VLP": 0.79, "MAY VLP": 0.65, consolidated: 0.86 },
-  { date: "2026-05-04", month: "4 May", GDL: 1.14, QR: 1.02, CS: 1.01, "MEN VLP": 0.84, "MAY VLP": 0.71, consolidated: 0.94 },
-  { date: "2026-05-11", month: "11 May", GDL: 1.21, QR: 1.08, CS: 1.12, "MEN VLP": 0.91, "MAY VLP": 0.77, consolidated: 1.02 },
-  { date: "2026-05-18", month: "18 May", GDL: 1.18, QR: 1.11, CS: 1.04, "MEN VLP": 0.93, "MAY VLP": 0.82, consolidated: 1.03 },
-];
+const emptyData: ReporteData = { products: [], movements: [], rotationHistory: [], rotationWeekly: [] };
 
 const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
 const number = (value: number) => value.toLocaleString("es-MX", { maximumFractionDigits: 1 });
-const uid = () => `MOV-${Date.now().toString(36).toUpperCase()}`;
 
 export default function InventoryCenterPage() {
   const { zone } = useZone();
   const [tab, setTab] = useState<"general" | "desglose" | "movimientos" | "transito" | "calculadora">("general");
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
-  const [movements, setMovements] = useState(INITIAL_MOVEMENTS);
+  const [data, setData] = useState<ReporteData>(emptyData);
+  const { products, movements } = data;
   const [period, setPeriod] = useState<"semana" | "mes" | "personalizado">("mes");
   const [from, setFrom] = useState("2026-05-01");
   const [to, setTo] = useState("2026-05-31");
   const [warehouse, setWarehouse] = useState("TODOS");
-  const [selectedCode, setSelectedCode] = useState(INITIAL_PRODUCTS[0].code);
+  const [selectedCode, setSelectedCode] = useState("");
   const [targetMonths, setTargetMonths] = useState(1.5);
   const [editingExpiry, setEditingExpiry] = useState("");
-  const [movementForm, setMovementForm] = useState({ date: "2026-05-13", type: "Entrada" as InventoryMovement["type"], code: INITIAL_PRODUCTS[0].code, units: "1", reference: "" });
+  const [movementForm, setMovementForm] = useState({ date: "2026-05-13", type: "Entrada" as InventoryMovement["type"], code: "", units: "1", reference: "" });
 
   useEffect(() => {
-    const savedProducts = localStorage.getItem("oxda-inventory-products");
-    const savedMovements = localStorage.getItem("oxda-inventory-movements");
-    if (savedProducts) setProducts(JSON.parse(savedProducts));
-    if (savedMovements) setMovements(JSON.parse(savedMovements));
+    fetch("/api/v1/inventarios/reporte")
+      .then((res) => res.json())
+      .then((payload: ReporteData) => {
+        setData(payload);
+        const first = payload.products[0];
+        if (first) {
+          setSelectedCode(first.code);
+          setMovementForm((current) => ({ ...current, code: first.code }));
+        }
+      })
+      .catch(() => setData(emptyData));
   }, []);
 
   useEffect(() => {
@@ -118,12 +97,10 @@ export default function InventoryCenterPage() {
   }, [zone, products, selectedCode]);
 
   const saveProducts = (next: InventoryProduct[]) => {
-    setProducts(next);
-    localStorage.setItem("oxda-inventory-products", JSON.stringify(next));
+    setData((prev) => ({ ...prev, products: next }));
   };
   const saveMovements = (next: InventoryMovement[]) => {
-    setMovements(next);
-    localStorage.setItem("oxda-inventory-movements", JSON.stringify(next));
+    setData((prev) => ({ ...prev, movements: next }));
   };
 
   const zoneProducts = useMemo(() => products
@@ -135,9 +112,9 @@ export default function InventoryCenterPage() {
   const totalTransit = zoneProducts.reduce((sum, item) => sum + item.inTransit, 0);
   const critical = zoneProducts.filter((item) => inventoryStatus(item.units / item.monthlyDemand) === "Crítico");
   const selected = products.find((item) => item.code === selectedCode) ?? products[0];
-  const idealStock = Math.ceil(selected.monthlyDemand * targetMonths);
-  const replacementUnits = Math.max(0, idealStock - selected.units);
-  const idealSale = Math.max(0, selected.units - idealStock);
+  const idealStock = selected ? Math.ceil(selected.monthlyDemand * targetMonths) : 0;
+  const replacementUnits = selected ? Math.max(0, idealStock - selected.units) : 0;
+  const idealSale = selected ? Math.max(0, selected.units - idealStock) : 0;
 
   const dateRange = period === "semana"
     ? { from: "2026-05-07", to: "2026-05-13" }
@@ -155,36 +132,44 @@ export default function InventoryCenterPage() {
     participation: totalUnits ? item.units / totalUnits * 100 : 0,
   }));
   const rotationSource = period === "mes"
-    ? ROTATION_HISTORY
-    : ROTATION_WEEKLY.filter((item) => period === "semana" ? item.date >= dateRange.from && item.date <= dateRange.to : item.date >= from && item.date <= to);
-  const rotation = rotationSource.map((item) => ({
+    ? data.rotationHistory
+    : data.rotationWeekly.filter((item: RotationRow) => period === "semana" ? (item.date ?? "") >= dateRange.from && (item.date ?? "") <= dateRange.to : (item.date ?? "") >= from && (item.date ?? "") <= to);
+  const rotation = rotationSource.map((item: RotationRow) => ({
     month: item.month,
-    rotation: zone === "TODAS" ? item.consolidated : (item[zone as keyof typeof item] as number) ?? 0,
+    rotation: zone === "TODAS" ? item.consolidated : (item[zone as keyof RotationRow] as number) ?? 0,
   }));
 
-  function updateExpiry(product: InventoryProduct, expiry: string) {
-    saveProducts(products.map((item) => item.code === product.code && item.lot === product.lot ? { ...item, expiry } : item));
-    setEditingExpiry("");
+  async function updateExpiry(product: InventoryProduct, expiry: string) {
+    try {
+      const res = await fetch("/api/v1/inventarios/reporte", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: product.code, expiry }),
+      });
+      if (!res.ok) throw new Error("Error al actualizar caducidad");
+      saveProducts(products.map((item) => item.code === product.code && item.lot === product.lot ? { ...item, expiry } : item));
+    } finally {
+      setEditingExpiry("");
+    }
   }
 
-  function addMovement(event: React.FormEvent) {
+  async function addMovement(event: React.FormEvent) {
     event.preventDefault();
     const product = products.find((item) => item.code === movementForm.code);
     if (!product || !movementForm.reference.trim()) return;
-    const next: InventoryMovement = {
-      id: uid(),
-      date: movementForm.date,
-      type: movementForm.type,
-      zone: product.zone,
-      warehouse: product.warehouse,
-      code: product.code,
-      product: product.product,
-      lot: product.lot,
-      units: Number(movementForm.units),
-      reference: movementForm.reference.toUpperCase(),
-    };
-    saveMovements([next, ...movements]);
-    setMovementForm((current) => ({ ...current, units: "1", reference: "" }));
+    try {
+      const res = await fetch("/api/v1/inventarios/reporte", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: movementForm.date, type: movementForm.type, code: movementForm.code, units: Number(movementForm.units), reference: movementForm.reference }),
+      });
+      if (!res.ok) throw new Error("Error al guardar movimiento");
+      const next: InventoryMovement = await res.json();
+      saveMovements([next, ...movements]);
+      setMovementForm((current) => ({ ...current, units: "1", reference: "" }));
+    } catch {
+      // ignore
+    }
   }
 
   function exportInventory() {
