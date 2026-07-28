@@ -181,15 +181,13 @@ export default function CrmPage() {
     fechaProxima: "",
   });
 
-  /* Cargar / guardar localStorage */
+  /* Cargar desde Supabase */
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setProspectos(JSON.parse(raw).map((item: Prospecto) => ({ ...item, zona: item.zona || "GDL" })));
-    } catch {
-      /* ignore */
-    }
-    setCargado(true);
+    fetch("/api/v1/crm/prospectos")
+      .then((res) => res.json())
+      .then((data: { items?: Prospecto[] }) => setProspectos(data.items ?? []))
+      .catch(() => setProspectos([]))
+      .finally(() => setCargado(true));
   }, []);
 
   useEffect(() => {
@@ -207,7 +205,7 @@ export default function CrmPage() {
     setEditando(null);
   }
 
-  function guardarProspecto(e: React.FormEvent) {
+  async function guardarProspecto(e: React.FormEvent) {
     e.preventDefault();
     if (!form.nombreProspecto.trim() || !form.nombreNegocio.trim() || !form.contacto1.trim()) {
       mostrarMsg("Nombre del prospecto, negocio y número de contacto son obligatorios.", "error");
@@ -234,29 +232,46 @@ export default function CrmPage() {
       return;
     }
 
-    const payload: Prospecto = {
-      ...form,
-      id: editando ? editando.id : uid(),
-      creadoEn: editando ? editando.creadoEn : new Date().toISOString(),
-    };
-
-    setProspectos((prev) => {
+    try {
       if (editando) {
-        return prev.map((p) => (p.id === payload.id ? payload : p));
+        const res = await fetch(`/api/v1/crm/prospectos/${editando.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...form, id: editando.id }),
+        });
+        if (!res.ok) throw new Error("Error al actualizar");
+        setProspectos((prev) => prev.map((p) => (p.id === editando.id ? { ...form, id: editando.id, creadoEn: editando.creadoEn, seguimientos: editando.seguimientos } : p)));
+        mostrarMsg("Prospecto actualizado.");
+      } else {
+        const res = await fetch("/api/v1/crm/prospectos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+        if (!res.ok) throw new Error("Error al guardar");
+        const created = await res.json();
+        const newProspecto: Prospecto = { ...form, id: String(created.id), creadoEn: new Date().toISOString(), seguimientos: [] };
+        setProspectos((prev) => [newProspecto, ...prev]);
+        mostrarMsg("Prospecto capturado correctamente.");
       }
-      return [payload, ...prev];
-    });
-
-    mostrarMsg(editando ? "Prospecto actualizado." : "Prospecto capturado correctamente.");
-    resetForm();
-    setVista("prospectos");
+      resetForm();
+      setVista("prospectos");
+    } catch {
+      mostrarMsg("No se pudo guardar en Supabase.", "error");
+    }
   }
 
-  function eliminarProspecto(id: string) {
+  async function eliminarProspecto(id: string) {
     if (!confirm("¿Eliminar este prospecto y todo su seguimiento?")) return;
-    setProspectos((prev) => prev.filter((p) => p.id !== id));
-    if (prospectoActivo?.id === id) setProspectoActivo(null);
-    mostrarMsg("Prospecto eliminado.");
+    try {
+      const res = await fetch(`/api/v1/crm/prospectos/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al eliminar");
+      setProspectos((prev) => prev.filter((p) => p.id !== id));
+      if (prospectoActivo?.id === id) setProspectoActivo(null);
+      mostrarMsg("Prospecto eliminado.");
+    } catch {
+      mostrarMsg("No se pudo eliminar en Supabase.", "error");
+    }
   }
 
   function abrirEditar(p: Prospecto) {
@@ -270,7 +285,7 @@ export default function CrmPage() {
     setVista("seguimientos");
   }
 
-  function agregarSeguimiento(e: React.FormEvent) {
+  async function agregarSeguimiento(e: React.FormEvent) {
     e.preventDefault();
     if (!prospectoActivo) return;
     if (!formSeg.comentario.trim()) {
@@ -278,52 +293,61 @@ export default function CrmPage() {
       return;
     }
 
-    const seg: Seguimiento = {
-      id: uid(),
-      fecha: formSeg.fecha,
-      tipo: formSeg.tipo,
-      comentario: formSeg.comentario.trim(),
-      proximaAccion: formSeg.proximaAccion.trim() || undefined,
-      fechaProxima: formSeg.fechaProxima || undefined,
-    };
+    try {
+      const res = await fetch(`/api/v1/crm/prospectos/${prospectoActivo.id}/seguimientos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formSeg),
+      });
+      if (!res.ok) throw new Error("Error al guardar seguimiento");
+      const seg: Seguimiento = await res.json();
 
-    setProspectos((prev) =>
-      prev.map((p) =>
-        p.id === prospectoActivo.id
-          ? { ...p, seguimientos: [seg, ...p.seguimientos] }
-          : p
-      )
-    );
+      setProspectos((prev) =>
+        prev.map((p) =>
+          p.id === prospectoActivo.id
+            ? { ...p, seguimientos: [seg, ...p.seguimientos] }
+            : p
+        )
+      );
 
-    setProspectoActivo((prev) =>
-      prev ? { ...prev, seguimientos: [seg, ...prev.seguimientos] } : null
-    );
+      setProspectoActivo((prev) =>
+        prev ? { ...prev, seguimientos: [seg, ...prev.seguimientos] } : null
+      );
 
-    setFormSeg({
-      fecha: hoyISO(),
-      tipo: "llamada",
-      comentario: "",
-      proximaAccion: "",
-      fechaProxima: "",
-    });
-    mostrarMsg("Seguimiento registrado.");
+      setFormSeg({
+        fecha: hoyISO(),
+        tipo: "llamada",
+        comentario: "",
+        proximaAccion: "",
+        fechaProxima: "",
+      });
+      mostrarMsg("Seguimiento registrado.");
+    } catch {
+      mostrarMsg("No se pudo guardar el seguimiento.", "error");
+    }
   }
 
-  function eliminarSeguimiento(segId: string) {
+  async function eliminarSeguimiento(segId: string) {
     if (!prospectoActivo) return;
     if (!confirm("¿Eliminar este seguimiento?")) return;
-    setProspectos((prev) =>
-      prev.map((p) =>
-        p.id === prospectoActivo.id
-          ? { ...p, seguimientos: p.seguimientos.filter((s) => s.id !== segId) }
-          : p
-      )
-    );
-    setProspectoActivo((prev) =>
-      prev
-        ? { ...prev, seguimientos: prev.seguimientos.filter((s) => s.id !== segId) }
-        : null
-    );
+    try {
+      const res = await fetch(`/api/v1/crm/prospectos/${prospectoActivo.id}/seguimientos?segId=${segId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al eliminar");
+      setProspectos((prev) =>
+        prev.map((p) =>
+          p.id === prospectoActivo.id
+            ? { ...p, seguimientos: p.seguimientos.filter((s) => s.id !== segId) }
+            : p
+        )
+      );
+      setProspectoActivo((prev) =>
+        prev
+          ? { ...prev, seguimientos: prev.seguimientos.filter((s) => s.id !== segId) }
+          : null
+      );
+    } catch {
+      mostrarMsg("No se pudo eliminar el seguimiento.", "error");
+    }
   }
 
   const prospectosFiltrados = useMemo(() => {
