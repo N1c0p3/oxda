@@ -5,48 +5,43 @@ import { BellRing, Calculator, Download, Megaphone, Package, Save } from "lucide
 import { BarChartComponent, ChartCard, StatCard } from "@/components/charts";
 import { useZone } from "@/components/zone-filter";
 
-const initialProducts = [
-  { code: "105632", product: "10 MM NATURAL WERISNG", category: "PAPA", kgBox: 10, costBox: 276, price: 355 },
-  { code: "102341", product: "10 MM CON COBERTURA", category: "PAPA", kgBox: 10, costBox: 307, price: 410 },
-  { code: "114054", product: "GAJOS SAZONADOS", category: "PAPA", kgBox: 10, costBox: 325, price: 465 },
-  { code: "260612", product: "CASTEL STRAIGHT CUT", category: "PAPA", kgBox: 10, costBox: 250, price: 310 },
-  { code: "505015", product: "FROZEN STRAIGHT CUT KAIDA", category: "PAPA", kgBox: 12, costBox: 348, price: 440 },
-  { code: "806982", product: "AROS DE CEBOLLA AVIKO", category: "SECOS", kgBox: 6, costBox: 334, price: 510 },
-  { code: "807329", product: "AVIKO ORIGINAL 20X450G", category: "PAPA", kgBox: 9, costBox: 290, price: 385 },
-];
+type Product = { code: string; product: string; category: string; kgBox: number; costBox: number; price: number };
 
 const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 });
 
 export default function CostingPage() {
   const { zone } = useZone();
-  const [products, setProducts] = useState(initialProducts);
-  const [selectedCode, setSelectedCode] = useState(initialProducts[0].code);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedCode, setSelectedCode] = useState<string>("");
   const [targetMargin, setTargetMargin] = useState(22);
   const [publishedAt, setPublishedAt] = useState("");
   const [communications, setCommunications] = useState<Array<{ date: string; zone: string; products: number }>>([]);
-  const [loaded, setLoaded] = useState(false);
   const selected = products.find((item) => item.code === selectedCode) ?? products[0];
-  const suggestedPrice = selected.costBox / (1 - targetMargin / 100);
+  const suggestedPrice = selected ? selected.costBox / (1 - targetMargin / 100) : 0;
 
   useEffect(() => {
-    const savedProducts = localStorage.getItem("oxda-price-list");
+    fetch("/api/v1/productos")
+      .then((res) => res.json())
+      .then((data: { items?: Product[] }) => {
+        const items = data.items ?? [];
+        setProducts(items);
+        if (items.length > 0 && !selectedCode) setSelectedCode(items[0].code);
+      })
+      .catch(() => setProducts([]));
+
     const savedCommunications = localStorage.getItem("oxda-price-communications");
-    if (savedProducts) setProducts(JSON.parse(savedProducts));
     if (savedCommunications) {
       const history = JSON.parse(savedCommunications);
       setCommunications(history);
       setPublishedAt(history[0]?.date ?? "");
     }
-    setLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (loaded) localStorage.setItem("oxda-price-list", JSON.stringify(products));
-  }, [products, loaded]);
+  }, [selectedCode]);
 
   const averageMargin = useMemo(() =>
-    products.reduce((sum, item) => sum + ((item.price - item.costBox) / item.price) * 100, 0) / products.length, [products]);
+    products.length
+      ? products.reduce((sum, item) => sum + ((item.price - item.costBox) / item.price) * 100, 0) / products.length
+      : 0, [products]);
 
   const chart = products.map((item) => ({
     code: item.code,
@@ -55,10 +50,25 @@ export default function CostingPage() {
     margin: ((item.price - item.costBox) / item.price) * 100,
   }));
 
-  function applyPrice() {
-    setProducts((current) => current.map((item) =>
-      item.code === selected.code ? { ...item, price: Math.round(suggestedPrice * 100) / 100 } : item
-    ));
+  async function applyPrice() {
+    if (!selected) return;
+    const newPrice = Math.round(suggestedPrice * 100) / 100;
+    try {
+      const res = await fetch("/api/v1/productos", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: selected.code, price: newPrice }),
+      });
+      if (!res.ok) throw new Error("Error al actualizar");
+      setProducts((current) => current.map((item) =>
+        item.code === selected.code ? { ...item, price: newPrice } : item
+      ));
+    } catch {
+      // fallback local
+      setProducts((current) => current.map((item) =>
+        item.code === selected.code ? { ...item, price: newPrice } : item
+      ));
+    }
   }
 
   function publishPrices() {
@@ -107,22 +117,28 @@ export default function CostingPage() {
       <div style={{ display: "grid", gridTemplateColumns: "minmax(320px,1fr) minmax(0,2fr)", gap: 18, marginBottom: 18 }}>
         <div className="card">
           <h2 className="card-title"><Calculator size={17} /> Calculadora de precio</h2>
-          <div className="form-group">
-            <label className="form-label">Producto</label>
-            <select className="form-input" value={selectedCode} onChange={(event) => setSelectedCode(event.target.value)}>
-              {products.map((item) => <option key={item.code} value={item.code}>{item.code} · {item.product}</option>)}
-            </select>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            <div className="form-group"><label className="form-label">Costo por caja</label><input className="form-input" value={money(selected.costBox)} readOnly /></div>
-            <div className="form-group"><label className="form-label">Margen objetivo %</label><input className="form-input" type="number" min={1} max={90} value={targetMargin} onChange={(event) => setTargetMargin(Number(event.target.value))} /></div>
-          </div>
-          <div className="kpi-card blue" style={{ margin: "10px 0 14px" }}>
-            <div className="kpi-label">Precio sugerido por caja</div>
-            <div className="kpi-value">{money(suggestedPrice)}</div>
-            <div className="kpi-unit">Fórmula: costo ÷ (1 − margen objetivo)</div>
-          </div>
-          <button className="btn btn-primary" onClick={applyPrice}><Save size={16} /> Aplicar a lista</button>
+          {selected ? (
+            <>
+              <div className="form-group">
+                <label className="form-label">Producto</label>
+                <select className="form-input" value={selectedCode} onChange={(event) => setSelectedCode(event.target.value)}>
+                  {products.map((item) => <option key={item.code} value={item.code}>{item.code} · {item.product}</option>)}
+                </select>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div className="form-group"><label className="form-label">Costo por caja</label><input className="form-input" value={money(selected.costBox)} readOnly /></div>
+                <div className="form-group"><label className="form-label">Margen objetivo %</label><input className="form-input" type="number" min={1} max={90} value={targetMargin} onChange={(event) => setTargetMargin(Number(event.target.value))} /></div>
+              </div>
+              <div className="kpi-card blue" style={{ margin: "10px 0 14px" }}>
+                <div className="kpi-label">Precio sugerido por caja</div>
+                <div className="kpi-value">{money(suggestedPrice)}</div>
+                <div className="kpi-unit">Fórmula: costo ÷ (1 − margen objetivo)</div>
+              </div>
+              <button className="btn btn-primary" onClick={applyPrice}><Save size={16} /> Aplicar a lista</button>
+            </>
+          ) : (
+            <p className="page-subtitle">Cargando productos…</p>
+          )}
         </div>
 
         <ChartCard title="Costo vs precio por producto" subtitle="Valores por caja">
