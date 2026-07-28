@@ -14,25 +14,19 @@ type Commission = {
   paymentDate: string;
 };
 
-const SEED: Commission[] = [
-  { id: "COM-001", seller: "MARIO", zone: "GDL", sale: 916518, rate: 1.5, status: "Por autorizar", paymentDate: "" },
-  { id: "COM-002", seller: "GABRIELA", zone: "MEN VLP", sale: 159504, rate: 2, status: "Programada", paymentDate: "2026-07-31" },
-  { id: "COM-003", seller: "DIEGO", zone: "CS", sale: 144616, rate: 2, status: "Pagada", paymentDate: "2026-07-15" },
-  { id: "COM-004", seller: "GAMALIEL", zone: "QR", sale: 44661, rate: 2.5, status: "Por autorizar", paymentDate: "" },
-  { id: "COM-005", seller: "MKT", zone: "MAY VLP", sale: 40408, rate: 1, status: "Programada", paymentDate: "2026-07-31" },
-];
-
 const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
 
 export default function AccountsPayablePage() {
   const { zone } = useZone();
-  const [rows, setRows] = useState(SEED);
+  const [rows, setRows] = useState<Commission[]>([]);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("oxda-accounts-payable-commissions");
-    if (stored) setRows(JSON.parse(stored));
+    fetch("/api/v1/comisiones")
+      .then((res) => res.json())
+      .then((data: { items?: Commission[] }) => setRows(data.items ?? []))
+      .catch(() => setRows([]));
   }, []);
 
   const visible = rows.filter((item) => zone === "TODAS" || item.zone === zone);
@@ -40,13 +34,26 @@ export default function AccountsPayablePage() {
   const paid = visible.filter((item) => item.status === "Pagada").reduce((sum, item) => sum + item.sale * item.rate / 100, 0);
 
   function update(id: string, change: Partial<Commission>) {
-    setRows((current) => current.map((item) => item.id === id ? { ...item, ...change } : item));
+    const updated = rows.map((item) => item.id === id ? { ...item, ...change } : item);
+    setRows(updated);
     setSaved(false);
   }
 
-  function save() {
-    localStorage.setItem("oxda-accounts-payable-commissions", JSON.stringify(rows));
-    setSaved(true);
+  async function save() {
+    try {
+      await Promise.all(
+        rows.map((item) =>
+          fetch("/api/v1/comisiones", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: item.id, rate: item.rate, status: item.status, paymentDate: item.paymentDate }),
+          })
+        )
+      );
+      setSaved(true);
+    } catch {
+      setSaved(false);
+    }
   }
 
   return (

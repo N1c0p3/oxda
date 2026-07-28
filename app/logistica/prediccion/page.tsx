@@ -127,13 +127,6 @@ type Commission = {
   paymentDate: string;
 };
 
-const COMMISSION_SEED: Commission[] = [
-  { id: "COM-001", seller: "MARIO", zone: "GDL", sale: 916518, rate: 1.5, status: "Por autorizar", paymentDate: "" },
-  { id: "COM-002", seller: "GABRIELA", zone: "MEN VLP", sale: 159504, rate: 2, status: "Programada", paymentDate: "2026-07-31" },
-  { id: "COM-003", seller: "DIEGO", zone: "CS", sale: 144616, rate: 2, status: "Pagada", paymentDate: "2026-07-15" },
-  { id: "COM-004", seller: "GAMALIEL", zone: "QR", sale: 44661, rate: 2.5, status: "Por autorizar", paymentDate: "" },
-  { id: "COM-005", seller: "MKT", zone: "MAY VLP", sale: 40408, rate: 1, status: "Programada", paymentDate: "2026-07-31" },
-];
 
 const MESES_ORD = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -167,20 +160,25 @@ export default function LogisticaPrediccionPage() {
   const [tab, setTab] = useState<"resumen" | "rotacion" | "predicciones" | "contenedores" | "comisiones">("resumen");
   const [rotationWarehouse, setRotationWarehouse] = useState("TODOS");
   const [rotationPeriod, setRotationPeriod] = useState("Todos");
-  const [commissions, setCommissions] = useState(COMMISSION_SEED);
+  const [commissions, setCommissions] = useState<Commission[]>([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const [r1, r2, r3] = await Promise.all([
+        const [r1, r2, r3, r4] = await Promise.all([
           fetch("/data/logistica.json"),
           fetch("/data/ventas_mensual.json"),
           fetch("/data/predicciones.json"),
+          fetch("/api/v1/comisiones"),
         ]);
         if (!r1.ok || !r2.ok || !r3.ok) throw new Error("No se pudieron cargar los datos");
         setLogistics(await r1.json());
         setSales(await r2.json());
         setPredictions(await r3.json());
+        if (r4.ok) {
+          const comData = await r4.json();
+          setCommissions(comData.items ?? []);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error desconocido");
       } finally {
@@ -190,14 +188,21 @@ export default function LogisticaPrediccionPage() {
     load();
   }, []);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("oxda-accounts-payable-commissions");
-    if (saved) setCommissions(JSON.parse(saved));
-  }, []);
-
-  const saveCommissions = (next: Commission[]) => {
+  const saveCommissions = async (next: Commission[]) => {
     setCommissions(next);
-    localStorage.setItem("oxda-accounts-payable-commissions", JSON.stringify(next));
+    try {
+      await Promise.all(
+        next.map((item) =>
+          fetch("/api/v1/comisiones", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: item.id, rate: item.rate, status: item.status, paymentDate: item.paymentDate }),
+          })
+        )
+      );
+    } catch {
+      // silent
+    }
   };
 
   /* KPIs y datos derivados */
