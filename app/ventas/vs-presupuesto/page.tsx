@@ -1,18 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { BarChartComponent, LineChartComponent, StatCard, ChartCard } from "@/components/charts";
 import { Target, TrendingUp, AlertTriangle, DollarSign, CheckCircle, XCircle, Calendar } from "lucide-react";
 
-// Datos reales de Resumen Global-Tabla 1.csv: Presupuesto vs Real Mayo 2026
-const ventasVsPresupuesto = [
-  { division: "GDL", presupuesto: 976665, real: 323732, diferencia: -652933, avance: 33 },
-  { division: "QR", presupuesto: 941850, real: 202470, diferencia: -739380, avance: 21 },
-  { division: "CS", presupuesto: 727054, real: 177115, diferencia: -549939, avance: 24 },
-  { division: "CC CASTEL", presupuesto: 621000, real: 621000, diferencia: 0, avance: 100 },
-  { division: "CC KAIDA1", presupuesto: 316800, real: 316800, diferencia: 0, avance: 100 },
-  { division: "MEN VLP", presupuesto: 902885, real: 367622, diferencia: -535263, avance: 41 },
-  { division: "MAY VLP", presupuesto: 766144, real: 117981, diferencia: -648163, avance: 15 },
-];
+type Division = { division: string; presupuesto: number; real: number; diferencia: number; avance: number };
 
 // Histórico mensual acumulado (Tablas-Tabla 1.csv + Objetivos)
 const historialMensual = [
@@ -24,10 +16,19 @@ const historialMensual = [
 ];
 
 export default function VentasVsPresupuestoPage() {
+  const [ventasVsPresupuesto, setVentasVsPresupuesto] = useState<Division[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/presupuestos/divisiones")
+      .then((res) => res.json())
+      .then((data: { items?: Division[] }) => setVentasVsPresupuesto(data.items ?? []))
+      .catch(() => setVentasVsPresupuesto([]));
+  }, []);
+
   const totalPresupuesto = ventasVsPresupuesto.reduce((acc, d) => acc + d.presupuesto, 0);
   const totalReal = ventasVsPresupuesto.reduce((acc, d) => acc + d.real, 0);
   const totalDiferencia = totalReal - totalPresupuesto;
-  const avanceGlobal = Math.round((totalReal / totalPresupuesto) * 100);
+  const avanceGlobal = totalPresupuesto ? Math.round((totalReal / totalPresupuesto) * 100) : 0;
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: "1600px", margin: "0 auto" }}>
