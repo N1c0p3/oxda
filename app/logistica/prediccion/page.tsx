@@ -206,19 +206,19 @@ export default function LogisticaPrediccionPage() {
 
   /* KPIs y datos derivados */
   const totalSales2026 = useMemo(
-    () => sales?.monthly.reduce((acc, m) => acc + m.venta, 0) ?? 0,
+    () => sales?.monthly?.reduce((acc, m) => acc + m.venta, 0) ?? 0,
     [sales]
   );
 
-  const leadGlobal = logistics?.metrics.leadTimesGlobal;
+  const leadGlobal = logistics?.metrics?.leadTimesGlobal;
 
   const topProduct = useMemo(() => {
-    if (!sales?.productWarehouse.length) return null;
+    if (!sales?.productWarehouse?.length) return null;
     return sales.productWarehouse.reduce((a, b) => (a.unidades > b.unidades ? a : b));
   }, [sales]);
 
   const rotationRows = useMemo(() => {
-    if (!sales) return [];
+    if (!sales?.productWarehouse || !sales?.monthly) return [];
     if (rotationPeriod === "Todos") {
       return sales.productWarehouse
         .filter((item) => zone === "TODAS" || item.rubro.toUpperCase() === zone)
@@ -254,7 +254,7 @@ export default function LogisticaPrediccionPage() {
   }, [sales, zone, rotationWarehouse, rotationPeriod]);
 
   const warehouseOptions = useMemo(() =>
-    ["TODOS", ...new Set(sales?.productWarehouse.map((item) => item.nombreAlmacen) ?? [])], [sales]);
+    ["TODOS", ...new Set(sales?.productWarehouse?.map((item) => item.nombreAlmacen) ?? [])], [sales]);
 
   const commissionRows = commissions.filter((item) => zone === "TODAS" || item.zone === zone);
 
@@ -269,7 +269,7 @@ export default function LogisticaPrediccionPage() {
   }, [leadGlobal]);
 
   const leadPortChart = useMemo(() => {
-    if (!logistics) return [];
+    if (!logistics?.metrics?.leadTimesByPort) return [];
     return Object.entries(logistics.metrics.leadTimesByPort)
       .filter(([, v]) => v.count && v.count > 2)
       .map(([puerto, v]) => ({ puerto, dias: v.avg }))
@@ -277,7 +277,7 @@ export default function LogisticaPrediccionPage() {
   }, [logistics]);
 
   const monthlySalesChart = useMemo(() => {
-    if (!sales) return [];
+    if (!sales?.monthly) return [];
     const agg: Record<string, { mes: string; unidades: number; venta: number }> = {};
     for (const m of sales.monthly) {
       if (!agg[m.Mes]) agg[m.Mes] = { mes: m.Mes, unidades: 0, venta: 0 };
@@ -285,7 +285,7 @@ export default function LogisticaPrediccionPage() {
       agg[m.Mes].venta += m.venta;
     }
     const projected: Record<string, { mes: string; unidades: number; venta: number }> = {};
-    if (predictions) {
+    if (predictions?.monthlyProjection) {
       for (const p of predictions.monthlyProjection) {
         if (!projected[p.mes]) projected[p.mes] = { mes: p.mes, unidades: 0, venta: 0 };
         projected[p.mes].unidades += p.unidadesProyectadas;
@@ -300,7 +300,7 @@ export default function LogisticaPrediccionPage() {
   }, [sales, predictions]);
 
   const portDistribution = useMemo(() => {
-    if (!logistics) return [];
+    if (!logistics?.containers) return [];
     const counts: Record<string, number> = {};
     for (const c of logistics.containers) {
       if (c.puerto) counts[c.puerto] = (counts[c.puerto] || 0) + 1;
