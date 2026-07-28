@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AreaChartComponent,
   BarChartComponent,
@@ -22,31 +22,36 @@ import {
   Layers,
 } from "lucide-react";
 
-// Datos de análisis
-const analisisTendencias = [
-  { periodo: "Semana 1", inventario: 5800000, ventas: 420000, rotacion: 1.45 },
-  { periodo: "Semana 2", inventario: 5200000, ventas: 580000, rotacion: 1.89 },
-  { periodo: "Semana 3", inventario: 4800000, ventas: 720000, rotacion: 2.35 },
-  { periodo: "Semana 4", inventario: 4190810, ventas: 249636, rotacion: 1.77 },
-];
+type Tendencia = { periodo: string; inventario: number; ventas: number; rotacion: number };
+type EficienciaCliente = { cliente: string; rotacion: number; eficiencia: number; stockIdeal: number };
+type Proyeccion = { mes: string; escenario: string; valor: number; probabilidad: number };
+type Kpis = { rotacionPromedio: number; eficienciaGlobal: number; diasInventario: number; clientesCriticos: number };
 
-const eficienciaClientes = [
-  { cliente: "Abastos logicos", rotacion: 2.84, eficiencia: 85, stockIdeal: 3500 },
-  { cliente: "CDMX Arcosa", rotacion: 1.45, eficiencia: 92, stockIdeal: 5200 },
-  { cliente: "Bajo Cero", rotacion: 0.0, eficiencia: 65, stockIdeal: 3800 },
-];
+type AnalisisData = {
+  analisisTendencias: Tendencia[];
+  eficienciaClientes: EficienciaCliente[];
+  proyeccionTrimestre: Proyeccion[];
+  kpis: Kpis;
+};
 
-const proyeccionTrimestre = [
-  { mes: "Mayo", escenario: "Conservador", valor: 6800000, probabilidad: 60 },
-  { mes: "Mayo", escenario: "Optimista", valor: 7500000, probabilidad: 30 },
-  { mes: "Junio", escenario: "Conservador", valor: 6200000, probabilidad: 55 },
-  { mes: "Junio", escenario: "Optimista", valor: 7200000, probabilidad: 35 },
-  { mes: "Julio", escenario: "Conservador", valor: 5800000, probabilidad: 50 },
-  { mes: "Julio", escenario: "Optimista", valor: 7000000, probabilidad: 40 },
-];
+const defaultAnalisis: AnalisisData = {
+  analisisTendencias: [],
+  eficienciaClientes: [],
+  proyeccionTrimestre: [],
+  kpis: { rotacionPromedio: 0, eficienciaGlobal: 0, diasInventario: 0, clientesCriticos: 0 },
+};
 
 export default function AnalisisPage() {
   const [periodoAnalisis, setPeriodoAnalisis] = useState("mensual");
+  const [analisis, setAnalisis] = useState<AnalisisData>(defaultAnalisis);
+  const { analisisTendencias, eficienciaClientes, proyeccionTrimestre, kpis } = analisis;
+
+  useEffect(() => {
+    fetch("/api/v1/analisis?periodo=2026")
+      .then((res) => res.json())
+      .then((data: Partial<AnalisisData>) => setAnalisis({ ...defaultAnalisis, ...data }))
+      .catch(() => setAnalisis(defaultAnalisis));
+  }, []);
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: "1600px", margin: "0 auto" }}>
