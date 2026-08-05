@@ -110,7 +110,11 @@ export default function InventoryCenterPage() {
   const totalUnits = zoneProducts.reduce((sum, item) => sum + item.units, 0);
   const totalValue = zoneProducts.reduce((sum, item) => sum + item.units * item.costBox, 0);
   const totalTransit = zoneProducts.reduce((sum, item) => sum + item.inTransit, 0);
-  const critical = zoneProducts.filter((item) => inventoryStatus(item.units / item.monthlyDemand) === "Crítico");
+  const coverageOf = (item: InventoryProduct) => item.monthlyDemand > 0 ? item.units / item.monthlyDemand : null;
+  const critical = zoneProducts.filter((item) => {
+    const coverage = coverageOf(item);
+    return coverage !== null && inventoryStatus(coverage) === "Crítico";
+  });
   const selected = products.find((item) => item.code === selectedCode) ?? products[0];
   const idealStock = selected ? Math.ceil(selected.monthlyDemand * targetMonths) : 0;
   const replacementUnits = selected ? Math.max(0, idealStock - selected.units) : 0;
@@ -175,7 +179,7 @@ export default function InventoryCenterPage() {
   function exportInventory() {
     const rows = [
       ["CÓDIGO", "PRODUCTO", "ZONA", "ALMACÉN", "LOTE", "CADUCIDAD", "UNIDADES", "DEMANDA MENSUAL", "COBERTURA", "TRÁNSITO"],
-      ...zoneProducts.map((item) => [item.code, item.product, item.zone, item.warehouse, item.lot, item.expiry, item.units, item.monthlyDemand, (item.units / item.monthlyDemand).toFixed(2), item.inTransit]),
+      ...zoneProducts.map((item) => [item.code, item.product, item.zone, item.warehouse, item.lot, item.expiry, item.units, item.monthlyDemand, coverageOf(item)?.toFixed(2) ?? "Sin consumo", item.inTransit]),
     ];
     const csv = rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
     const link = document.createElement("a");

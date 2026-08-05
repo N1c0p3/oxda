@@ -1,5 +1,24 @@
 # Papas Demo
 
+## Actualización de cortes de negocio
+
+Los archivos fuente no se modifican. Cuando se reciba un nuevo corte de ventas,
+inventario o logística, reemplázalo con el nombre definido en los scripts y ejecuta:
+
+```bash
+npm run data:refresh
+```
+
+El proceso genera los derivados auditables para ventas, logística y predicción.
+Si se requiere publicar esos cortes en la base de datos, después ejecuta:
+
+```bash
+npm run data:predicciones
+```
+
+La aplicación conserva el último corte validado como respaldo: una tabla vacía
+en la base no deja sin información al módulo predictivo.
+
 Sistema inteligente para operatividad de empresa papera (papa en general), integrando ERP + CRM en una sola plataforma, construido en Next.js (full-stack).
 
 ## Objetivo

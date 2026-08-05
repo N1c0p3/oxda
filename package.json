@@ -6,7 +6,9 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "data:refresh": "python3 extract_logistica_ventas.py && python3 scripts/exportar_ventas_reporte.py",
+    "data:predicciones": "node scripts/importar_predicciones.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.9",

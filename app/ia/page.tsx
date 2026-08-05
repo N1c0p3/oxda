@@ -7,7 +7,7 @@ type SheetRow = Record<string, string>;
 type SheetData = {
   ingresos: SheetRow[];
   egresos: SheetRow[];
-  source: "sheets" | "mock";
+  source: "data" | "respaldo";
   error: string | null;
   fetchedAt: string;
 };
@@ -64,6 +64,7 @@ export default function IaPage() {
   const [data, setData] = useState<SheetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"ingresos" | "egresos">("ingresos");
+  const [year, setYear] = useState("todos");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -122,13 +123,20 @@ export default function IaPage() {
     margen < 0  && { icon: "🚨", color: "var(--danger)",  text: `Margen negativo (${margen}%). Los egresos superan a los ingresos totales` },
   ].filter(Boolean) as { icon: string; color: string; text: string }[];
 
-  const rows = activeTab === "ingresos" ? (data?.ingresos ?? []) : (data?.egresos ?? []);
+  const availableYears = Array.from(new Set([...(data?.ingresos ?? []), ...(data?.egresos ?? [])]
+    .map((row) => row["Año"])
+    .filter(Boolean)))
+    .sort((a, b) => Number(b) - Number(a));
+  const rows = (activeTab === "ingresos" ? (data?.ingresos ?? []) : (data?.egresos ?? []))
+    .filter((row) => year === "todos" || row["Año"] === year)
+    .slice()
+    .sort((a, b) => new Date(Number(b["Año"] || 0), Number(b.Mes || 1) - 1, Number(b.Dia || 1)).getTime() - new Date(Number(a["Año"] || 0), Number(a.Mes || 1) - 1, Number(a.Dia || 1)).getTime());
 
   return (
     <>
       <div className="topbar">
-        <span className="topbar-title">🧠 IA e Integraciones</span>
-        <span className="topbar-badge">Google Sheets</span>
+        <span className="topbar-title">🧠 Data financiera</span>
+        <span className="topbar-badge">Datos sincronizados</span>
 
         <button
           className="btn btn-ghost"
@@ -137,7 +145,7 @@ export default function IaPage() {
           disabled={loading}
         >
           <span style={{ display: "inline-block", animation: loading ? "spin 1s linear infinite" : "none" }}>🔄</span>
-          {loading ? "Actualizando…" : "Actualizar hoja"}
+          {loading ? "Actualizando…" : "Actualizar datos"}
         </button>
       </div>
 
@@ -145,14 +153,14 @@ export default function IaPage() {
         <div className="page-header">
           <h1 className="page-title gradient-text">Análisis financiero inteligente</h1>
           <p className="page-subtitle">
-            Datos sincronizados directamente desde Google Sheets con análisis automático
+            Registros financieros ordenados por fecha con análisis automático
           </p>
         </div>
 
         {/* Connection status */}
         <div style={{ display: "flex", gap: ".6rem", marginBottom: "1.1rem", flexWrap: "wrap", alignItems: "center" }}>
-          <span className={`badge ${data?.source === "sheets" ? "badge-green" : "badge-orange"}`}>
-            {data?.source === "sheets" ? "🟢 Conectado a Sheets" : "🟡 Datos de demostración"}
+          <span className={`badge ${data?.source === "data" ? "badge-green" : "badge-orange"}`}>
+            {data?.source === "data" ? "🟢 Datos actualizados" : "🟡 Usando respaldo validado"}
           </span>
           {data?.fetchedAt && (
             <span style={{ fontSize: ".72rem", color: "var(--text-muted)" }}>
@@ -161,7 +169,7 @@ export default function IaPage() {
           )}
           {data?.error && (
             <span className="badge badge-red" title={data.error}>
-              ⚠️ Error al conectar — usando datos demo
+              ⚠️ Sincronización pendiente — usando respaldo validado
             </span>
           )}
         </div>
@@ -318,13 +326,17 @@ export default function IaPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem", flexWrap: "wrap" }}>
             <div className="card-title" style={{ margin: 0, flex: 1 }}>Detalle de transacciones</div>
             <div style={{ display: "flex", gap: ".4rem" }}>
-              <button
+            <button
                 className={`btn ${activeTab === "ingresos" ? "btn-primary" : "btn-ghost"}`}
                 style={{ padding: ".3rem .8rem", fontSize: ".78rem" }}
                 onClick={() => setActiveTab("ingresos")}
               >
                 ↑ Ingresos ({data?.ingresos.length ?? 0})
-              </button>
+            </button>
+            <select className="form-input" value={year} onChange={(event) => setYear(event.target.value)} aria-label="Filtrar por año">
+              <option value="todos">Todos los años</option>
+              {availableYears.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
               <button
                 className={`btn ${activeTab === "egresos" ? "btn-danger" : "btn-ghost"}`}
                 style={{ padding: ".3rem .8rem", fontSize: ".78rem" }}

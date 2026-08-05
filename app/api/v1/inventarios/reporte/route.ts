@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminClient, dateValue, numberValue, supabaseError } from "@/lib/supabase/api";
+import { inventorySnapshotMeta, inventorySnapshotProducts } from "@/lib/inventory-snapshot";
 
 export const dynamic = "force-dynamic";
 
@@ -15,18 +16,9 @@ export async function GET() {
   if (movementsRes.error) return supabaseError(movementsRes.error);
   if (rotationRes.error) return supabaseError(rotationRes.error);
 
-  const products = productsRes.data.map((p) => ({
-    code: p.code,
-    product: p.product,
-    zone: p.zone,
-    warehouse: p.warehouse,
-    lot: p.lot,
-    expiry: dateValue(p.expiry) ?? "",
-    units: numberValue(p.units),
-    monthlyDemand: numberValue(p.monthly_demand),
-    costBox: numberValue(p.cost_box),
-    inTransit: numberValue(p.in_transit),
-  }));
+  // El corte físico completo tiene prioridad sobre la semilla parcial. Lote y
+  // caducidad se muestran como no informados hasta que se capturen en origen.
+  const products = inventorySnapshotProducts();
 
   const movements = movementsRes.data.map((m) => ({
     id: String(m.id),
@@ -49,21 +41,16 @@ export async function GET() {
     .filter((r) => r.tipo === "semanal")
     .map((r) => ({ date: `2026-${r.periodo.replace(" ", "-")}`, month: r.periodo, GDL: numberValue(r.gdl), QR: numberValue(r.qr), CS: numberValue(r.cs), "MEN VLP": numberValue(r.men_vlp), "MAY VLP": numberValue(r.may_vlp), consolidated: numberValue(r.consolidated) }));
 
-  return NextResponse.json({ products, movements, rotationHistory, rotationWeekly });
+  return NextResponse.json({ products, movements, rotationHistory, rotationWeekly, source: inventorySnapshotMeta });
 }
 
 export async function POST(request: NextRequest) {
   const payload = await request.json();
-  if (!payload.date || !payload.type || !payload.code || !payload.units || !payload.reference) {
+  if (!payload.date || !payload.type || !payload.code || Number(payload.units) === 0 || !payload.reference) {
     return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
   }
-  const productRes = await adminClient()
-    .from("inventario_reporte_productos")
-    .select("*")
-    .eq("code", String(payload.code))
-    .single();
-  if (productRes.error) return supabaseError(productRes.error);
-  const p = productRes.data;
+  const p = inventorySnapshotProducts().find((item) => item.code === String(payload.code));
+  if (!p) return NextResponse.json({ error: "Producto no encontrado en el corte físico" }, { status: 404 });
   const { data, error } = await adminClient()
     .from("inventario_reporte_movimientos")
     .insert({

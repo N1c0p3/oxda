@@ -18,6 +18,7 @@ import { AreaChartComponent, BarChartComponent, ChartCard, StatCard } from "@/co
 import { useZone } from "@/components/zone-filter";
 
 type DashboardAnalytics = {
+  source?: { cutOff: string };
   kpis: {
     sale: number;
     budget: number;
@@ -67,7 +68,7 @@ export default function DashboardPage() {
     setLoading(true);
     setError("");
     Promise.all([
-      fetch(`/api/v1/ventas/analitica?zone=${encodeURIComponent(zone)}&month=May`, { signal: controller.signal }),
+      fetch(`/api/v1/ventas/analitica?zone=${encodeURIComponent(zone)}&month=Acumulado`, { signal: controller.signal }),
       fetch("/api/v1/dashboard/zonas", { signal: controller.signal }),
     ])
       .then(async ([salesRes, zonesRes]) => {
@@ -89,7 +90,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="page-title">Dashboard OXDA</h1>
           <p className="page-subtitle">
-            Mayo 2026 · {zone === "TODAS" ? "visión consolidada" : `zona ${zone}`} · facturación al 13/05/2026
+            {zone === "TODAS" ? "Visión consolidada" : `Zona ${zone}`} · facturación al {data?.source?.cutOff ? new Date(`${data.source.cutOff}T12:00:00`).toLocaleDateString("es-MX") : "último corte disponible"}
           </p>
         </div>
         <Link className="btn btn-primary" href="/ventas/reporte">

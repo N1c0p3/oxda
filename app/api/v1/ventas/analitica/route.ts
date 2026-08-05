@@ -91,6 +91,8 @@ function normalize(value = "") {
 }
 
 function isoDate(value: string) {
+  const iso = value.trim().match(/^(\d{4}-\d{2}-\d{2})/);
+  if (iso) return iso[1];
   const match = value.trim().toLowerCase().match(/^(\d{1,2})-([a-záéíóú]{3})-(\d{2,4})$/i);
   if (!match) return "";
   const month = DATE_MONTHS[match[2].normalize("NFD").replace(/\p{Diacritic}/gu, "")];
@@ -104,7 +106,7 @@ let rowsPromise: Promise<SaleRow[]> | null = null;
 async function loadRows() {
   if (rowsPromise) return rowsPromise;
   rowsPromise = (async () => {
-    const filePath = path.join(process.cwd(), "Reporte de Venta-Tabla 1.csv");
+    const filePath = path.join(process.cwd(), "data", "ventas-reporte-2026.csv");
     const parsed = parseCsv(await readFile(filePath, "utf8"));
     const headerIndex = parsed.findIndex((row) => row[0] === "Item");
     if (headerIndex < 0) throw new Error("No se encontró el encabezado del reporte de ventas.");
@@ -128,7 +130,11 @@ async function loadRows() {
           units: numberValue(row[column("Unidades")]),
           net,
           cost,
-          margin: numberValue(row[column("Margen")]) || net - cost,
+          // La base oficial de rentabilidad es venta neta menos costo. El
+          // libro tiene algunos renglones donde "Margen" se calculó con Total;
+          // se conserva el Excel sin alterarlo y se normaliza aquí para todos
+          // los KPIs, productos y clientes.
+          margin: net - cost,
           zone: normalize(row[column("RUBRO")]),
           seller: normalize(row[column("Vendedor")]),
           customerCode: normalize(row[column("Código Cliente")]),
@@ -334,6 +340,7 @@ export async function GET(request: NextRequest) {
       : totalSale;
 
     return NextResponse.json({
+      source: { file: "ventas-reporte-2026.csv", cutOff: lastDate || "2026-06-24", metricBase: "neto" },
       filters: { zone, month, from, to, firstDate, lastDate, periodDays, trendDimension, trendKey },
       kpis: {
         sale: totalSale,

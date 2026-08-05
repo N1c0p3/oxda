@@ -1270,9 +1270,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 81.0,
-      "venta": 31641.0,
+      "venta": 30969.0,
       "costo": 20007.0,
-      "margen": 11634.0
+      "margen": 10962.0
     },
     {
       "A\u00f1o": 2026,
@@ -1298,9 +1298,9 @@
       "DIVISION": "oxda",
       "RUBRO": "GDL",
       "unidades": 1098.0,
-      "venta": 338959.4,
+      "venta": 338295.0,
       "costo": 281472.30000000005,
-      "margen": 57487.09999999999
+      "margen": 56822.7
     },
     {
       "A\u00f1o": 2026,
@@ -1438,9 +1438,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 97.0,
-      "venta": 47135.0,
+      "venta": 46640.0,
       "costo": 35905.520000000004,
-      "margen": 11229.48
+      "margen": 10734.48
     },
     {
       "A\u00f1o": 2026,
@@ -1536,9 +1536,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 865.0,
-      "venta": 395065.0,
+      "venta": 393421.0,
       "costo": 275243.0,
-      "margen": 119822.0
+      "margen": 118178.0
     },
     {
       "A\u00f1o": 2026,
@@ -1592,9 +1592,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 2.0,
-      "venta": 890.0,
+      "venta": 0.0,
       "costo": 594.02,
-      "margen": 295.98
+      "margen": -594.02
     },
     {
       "A\u00f1o": 2026,
@@ -1676,9 +1676,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 82.0,
-      "venta": 35672.0,
+      "venta": 33960.0,
       "costo": 25759.479999999996,
-      "margen": 9912.520000000002
+      "margen": 8200.520000000002
     },
     {
       "A\u00f1o": 2026,
@@ -1732,9 +1732,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 0.0,
-      "venta": 438.0,
+      "venta": 0.0,
       "costo": 0.0,
-      "margen": 438.0
+      "margen": 0.0
     },
     {
       "A\u00f1o": 2026,
@@ -1746,9 +1746,9 @@
       "DIVISION": "oxda",
       "RUBRO": "CS",
       "unidades": 1.0,
-      "venta": 438.0,
+      "venta": 0.0,
       "costo": 346.43,
-      "margen": 91.57
+      "margen": -346.43
     },
     {
       "A\u00f1o": 2026,
@@ -7878,9 +7878,9 @@
       "DIVISION": "oxda",
       "RUBRO": "gdl",
       "unidades": 1.0,
-      "venta": 5763.89,
+      "venta": 4968.87,
       "costo": 244.0,
-      "margen": 5519.89
+      "margen": 4724.87
     },
     {
       "A\u00f1o": 2026,
@@ -14954,12 +14954,12 @@
       "division": "oxda",
       "rubro": "gdl",
       "unidades": 1.0,
-      "venta": 5763.89,
+      "venta": 4968.87,
       "costoTotal": 244.0,
-      "margen": 5519.89,
+      "margen": 4724.87,
       "promedioDiarioUnidades": 1.0,
-      "promedioDiarioVenta": 5763.89,
-      "margenPct": 95.77
+      "promedioDiarioVenta": 4968.87,
+      "margenPct": 95.09
     },
     {
       "codigoProducto": "01AVKARO",
@@ -20429,12 +20429,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 170.0,
-      "venta": 65832.0,
+      "venta": 65160.0,
       "costoTotal": 42041.17112,
-      "margen": 23790.828879999997,
+      "margen": 23118.828879999997,
       "promedioDiarioUnidades": 2.36,
-      "promedioDiarioVenta": 914.33,
-      "margenPct": 36.14
+      "promedioDiarioVenta": 905.0,
+      "margenPct": 35.48
     },
     {
       "codigoProducto": "505015",
@@ -20474,12 +20474,12 @@
       "division": "oxda",
       "rubro": "GDL",
       "unidades": 1383.0,
-      "venta": 439330.4,
+      "venta": 438666.0,
       "costoTotal": 354152.0275,
-      "margen": 85178.37249999998,
+      "margen": 84513.97249999999,
       "promedioDiarioUnidades": 17.96,
-      "promedioDiarioVenta": 5705.59,
-      "margenPct": 19.39
+      "promedioDiarioVenta": 5696.96,
+      "margenPct": 19.27
     },
     {
       "codigoProducto": "505015",
@@ -20984,12 +20984,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 334.0,
-      "venta": 162122.0,
+      "venta": 161627.0,
       "costoTotal": 122880.26256,
-      "margen": 39241.73744,
+      "margen": 38746.73744,
       "promedioDiarioUnidades": 3.75,
-      "promedioDiarioVenta": 1821.6,
-      "margenPct": 24.21
+      "promedioDiarioVenta": 1816.03,
+      "margenPct": 23.97
     },
     {
       "codigoProducto": "804109",
@@ -21239,12 +21239,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 1948.0,
-      "venta": 877056.0,
+      "venta": 875412.0,
       "costoTotal": 619853.6,
-      "margen": 257202.4,
+      "margen": 255558.4,
       "promedioDiarioUnidades": 18.55,
-      "promedioDiarioVenta": 8352.91,
-      "margenPct": 29.33
+      "promedioDiarioVenta": 8337.26,
+      "margenPct": 29.19
     },
     {
       "codigoProducto": "806685",
@@ -21419,12 +21419,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 88.0,
-      "venta": 35560.0,
+      "venta": 34670.0,
       "costoTotal": 27196.68,
-      "margen": 8363.32,
+      "margen": 7473.32,
       "promedioDiarioUnidades": 1.73,
-      "promedioDiarioVenta": 697.25,
-      "margenPct": 23.52
+      "promedioDiarioVenta": 679.8,
+      "margenPct": 21.56
     },
     {
       "codigoProducto": "806686",
@@ -21704,12 +21704,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 158.0,
-      "venta": 68892.0,
+      "venta": 67180.0,
       "costoTotal": 49634.119999999995,
-      "margen": 19257.880000000005,
+      "margen": 17545.880000000005,
       "promedioDiarioUnidades": 2.26,
-      "promedioDiarioVenta": 984.17,
-      "margenPct": 27.95
+      "promedioDiarioVenta": 959.71,
+      "margenPct": 26.12
     },
     {
       "codigoProducto": "806980",
@@ -21989,12 +21989,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 0.0,
-      "venta": 438.0,
+      "venta": 0.0,
       "costoTotal": 0.0,
-      "margen": 438.0,
+      "margen": 0.0,
       "promedioDiarioUnidades": 0.0,
-      "promedioDiarioVenta": 438.0,
-      "margenPct": 100.0
+      "promedioDiarioVenta": 0.0,
+      "margenPct": 0
     },
     {
       "codigoProducto": "807769",
@@ -22049,12 +22049,12 @@
       "division": "oxda",
       "rubro": "CS",
       "unidades": 10.0,
-      "venta": 4380.0,
+      "venta": 3942.0,
       "costoTotal": 3464.49084,
-      "margen": 915.50916,
+      "margen": 477.50915999999995,
       "promedioDiarioUnidades": 0.1,
-      "promedioDiarioVenta": 43.8,
-      "margenPct": 20.9
+      "promedioDiarioVenta": 39.42,
+      "margenPct": 12.11
     },
     {
       "codigoProducto": "807769",
@@ -24478,7 +24478,7 @@
       },
       "Abril": {
         "unidades": 6841.19168,
-        "venta": 2175116.02
+        "venta": 2173779.62
       },
       "Mayo": {
         "unidades": 6052.16667,
@@ -24556,7 +24556,7 @@
       },
       "Abril": {
         "unidades": 142.6,
-        "venta": 68978.06
+        "venta": 68483.06
       },
       "Mayo": {
         "unidades": 133.0,
@@ -24686,7 +24686,7 @@
       },
       "Abril": {
         "unidades": 965.25,
-        "venta": 432591.8
+        "venta": 430947.8
       },
       "Mayo": {
         "unidades": 1019.0,
@@ -24712,7 +24712,7 @@
       },
       "Abril": {
         "unidades": 2.0,
-        "venta": 890.0
+        "venta": 0.0
       },
       "Mayo": {
         "unidades": 0,
@@ -24790,7 +24790,7 @@
       },
       "Abril": {
         "unidades": 82.0,
-        "venta": 35672.0
+        "venta": 33960.0
       },
       "Mayo": {
         "unidades": 74.0,
@@ -24894,7 +24894,7 @@
       },
       "Abril": {
         "unidades": 79.0,
-        "venta": 36600.0
+        "venta": 35724.0
       },
       "Mayo": {
         "unidades": 27.0,
@@ -27528,7 +27528,7 @@
       },
       "Junio": {
         "unidades": 1.0,
-        "venta": 5763.89
+        "venta": 4968.87
       }
     },
     "101245": {

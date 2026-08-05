@@ -2,7 +2,7 @@ export type InventoryStatus = "Crítico" | "Óptimo" | "Exceso";
 
 export function inventoryStatus(coverageMonths: number): InventoryStatus {
   if (coverageMonths < 1.5) return "Crítico";
-  if (coverageMonths < 2) return "Óptimo";
+  if (coverageMonths <= 3) return "Óptimo";
   return "Exceso";
 }
 

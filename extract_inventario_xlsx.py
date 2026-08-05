@@ -301,9 +301,9 @@ def determine_status(cobertura: Optional[float], ventas_estimadas: Optional[floa
         return "sin movimiento"
     if cobertura is None:
         return "sin movimiento"
-    if cobertura < 3:
+    if cobertura < 1.5:
         return "alerta"
-    if cobertura > 7:
+    if cobertura > 3:
         return "exceso"
     return "optimo"
 

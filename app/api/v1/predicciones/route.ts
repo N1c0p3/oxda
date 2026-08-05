@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import logisticsSnapshot from "@/public/data/logistica.json";
+import salesSnapshot from "@/public/data/ventas_mensual.json";
+import predictionsSnapshot from "@/public/data/predicciones.json";
 
 import { adminClient, supabaseError } from "@/lib/supabase/api";
 
@@ -16,9 +19,19 @@ export async function GET() {
     result[row.clave] = row.datos ?? {};
   });
 
-  const logistics = (result.logistica ?? {}) as Record<string, unknown>;
-  const sales = (result.ventas_mensual ?? {}) as Record<string, unknown>;
-  const predictions = (result.predicciones ?? {}) as Record<string, unknown>;
+  // Los JSON son el último corte validado de los libros. Supabase puede ser
+  // actualizado por el importador, pero una tabla vacía no debe dejar el
+  // módulo predictivo sin datos.
+  const logistics = Object.keys((result.logistica ?? {}) as Record<string, unknown>).length
+    ? result.logistica as Record<string, unknown>
+    : logisticsSnapshot as Record<string, unknown>;
+  const sales = Object.keys((result.ventas_mensual ?? {}) as Record<string, unknown>).length
+    ? result.ventas_mensual as Record<string, unknown>
+    : salesSnapshot as Record<string, unknown>;
+  const predictions = Object.keys((result.predicciones ?? {}) as Record<string, unknown>).length
+    ? result.predicciones as Record<string, unknown>
+    : predictionsSnapshot as Record<string, unknown>;
+  const source = result.logistica && result.ventas_mensual && result.predicciones ? "base" : "corte_validado";
 
   return NextResponse.json({
     logistics: {
@@ -45,5 +58,7 @@ export async function GET() {
       demandPredictions: predictions.demandPredictions ?? [],
       monthlyProjection: predictions.monthlyProjection ?? [],
     },
+    source,
+    refreshedAt: new Date().toISOString(),
   });
 }

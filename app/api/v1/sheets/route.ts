@@ -10,16 +10,39 @@ const EGRESOS_URL =
   "https://docs.google.com/spreadsheets/d/1Okkoehf_pIPqD0nw9cP0NFPoL2GiBd53P6fmvO8bWt8/export?format=csv&gid=0";
 
 function parseCsv(csv: string): Record<string, string>[] {
-  const lines = csv.replace(/\r/g, "").trim().split("\n");
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
-  return lines
-    .slice(1)
-    .filter((l) => l.trim())
-    .map((line) => {
-      const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
-      return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? ""]));
-    });
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let value = "";
+  let quoted = false;
+  const input = csv.replace(/\r/g, "");
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    if (quoted) {
+      if (char === '"' && input[index + 1] === '"') {
+        value += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else value += char;
+    } else if (char === '"') {
+      quoted = true;
+    } else if (char === ",") {
+      row.push(value.trim());
+      value = "";
+    } else if (char === "\n") {
+      row.push(value.trim());
+      if (row.some(Boolean)) rows.push(row);
+      row = [];
+      value = "";
+    } else value += char;
+  }
+  if (value || row.length) {
+    row.push(value.trim());
+    if (row.some(Boolean)) rows.push(row);
+  }
+  if (rows.length < 2) return [];
+  const [headers, ...data] = rows;
+  return data.map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])));
 }
 
 async function fetchSheet(url: string): Promise<Record<string, string>[]> {
@@ -60,7 +83,7 @@ async function loadSupabaseFallback() {
 export async function GET() {
   let ingresos: Record<string, string>[] = [];
   let egresos: Record<string, string>[] = [];
-  let source: "sheets" | "supabase" = "supabase";
+  let source: "data" | "respaldo" = "respaldo";
   let error: string | null = null;
 
   try {
@@ -73,13 +96,10 @@ export async function GET() {
 
     if (ingData) ingresos = ingData;
     if (egrData) egresos = egrData;
-    if (ingData || egrData) {
-      source = "sheets";
-    } else {
-      const fallback = await loadSupabaseFallback();
-      if (!ingData) ingresos = fallback.ingresos;
-      if (!egrData) egresos = fallback.egresos;
-    }
+    const fallback = !ingData || !egrData ? await loadSupabaseFallback() : null;
+    if (!ingData) ingresos = fallback?.ingresos ?? [];
+    if (!egrData) egresos = fallback?.egresos ?? [];
+    if (ingData || egrData) source = "data";
   } catch (e) {
     error = e instanceof Error ? e.message : "Error desconocido";
     try {
@@ -91,9 +111,14 @@ export async function GET() {
     }
   }
 
+  const byNewestDate = (a: Record<string, string>, b: Record<string, string>) => {
+    const aDate = new Date(Number(a["Año"] || 0), Number(a["Mes"] || 1) - 1, Number(a.Dia || 1)).getTime();
+    const bDate = new Date(Number(b["Año"] || 0), Number(b["Mes"] || 1) - 1, Number(b.Dia || 1)).getTime();
+    return bDate - aDate;
+  };
   return NextResponse.json({
-    ingresos,
-    egresos,
+    ingresos: ingresos.sort(byNewestDate),
+    egresos: egresos.sort(byNewestDate),
     source,
     error,
     fetchedAt: new Date().toISOString(),

@@ -42,7 +42,7 @@ def to_date(v):
         return v.date().isoformat()
     if isinstance(v, str):
         try:
-            return pd.to_datetime(v).date().isoformat()
+            return pd.to_datetime(v, dayfirst=True).date().isoformat()
         except Exception:
             return None
     return None
@@ -225,17 +225,23 @@ def extract_sales():
     # Limpieza básica
     df = df[df["Fecha"].notna()].copy()
     df["Año"] = df["Año"].fillna(2026).astype(int)
+    # La utilidad corporativa siempre se construye con venta neta. En algunos
+    # renglones del libro el Margen heredado usa Total; se normaliza aquí sin
+    # modificar el archivo de origen.
+    df["Neto"] = pd.to_numeric(df["Neto"], errors="coerce").fillna(0)
+    df["Costo total"] = pd.to_numeric(df["Costo total"], errors="coerce").fillna(0)
+    df["Margen"] = df["Neto"] - df["Costo total"]
 
     monthly = (
         df.groupby(["Año", "Mes", "Código Producto", "Nombre (Producto)", "Código Almacén", "Nombre (Almacén)", "DIVISION", "RUBRO"])
-        .agg({"Unidades": "sum", "Total": "sum", "Costo total": "sum", "Margen": "sum"})
+        .agg({"Unidades": "sum", "Neto": "sum", "Costo total": "sum", "Margen": "sum"})
         .reset_index()
     )
 
     # Agregar por producto/almacén
     product_warehouse = (
         df.groupby(["Código Producto", "Nombre (Producto)", "Código Almacén", "Nombre (Almacén)", "DIVISION", "RUBRO"])
-        .agg({"Unidades": "sum", "Total": "sum", "Costo total": "sum", "Margen": "sum", "Fecha": ["min", "max", "count"]})
+        .agg({"Unidades": "sum", "Neto": "sum", "Costo total": "sum", "Margen": "sum", "Fecha": ["min", "max", "count"]})
         .reset_index()
     )
     product_warehouse.columns = [
@@ -247,17 +253,17 @@ def extract_sales():
     # Agregar mensual por producto (para serie de tiempo y proyección)
     monthly_by_product = (
         df.groupby(["Mes", "Código Producto", "Nombre (Producto)"])
-        .agg({"Unidades": "sum", "Total": "sum"})
+        .agg({"Unidades": "sum", "Neto": "sum"})
         .reset_index()
     )
 
     monthly_records = monthly.to_dict(orient="records")
     for r in monthly_records:
         r["unidades"] = float(r["Unidades"]) if pd.notna(r["Unidades"]) else 0
-        r["venta"] = float(r["Total"]) if pd.notna(r["Total"]) else 0
+        r["venta"] = float(r["Neto"]) if pd.notna(r["Neto"]) else 0
         r["costo"] = float(r["Costo total"]) if pd.notna(r["Costo total"]) else 0
         r["margen"] = float(r["Margen"]) if pd.notna(r["Margen"]) else 0
-        del r["Unidades"], r["Total"], r["Costo total"], r["Margen"]
+        del r["Unidades"], r["Neto"], r["Costo total"], r["Margen"]
 
     pw_records = []
     for _, r in product_warehouse.iterrows():
@@ -283,7 +289,7 @@ def extract_sales():
     for _, r in monthly_by_product.iterrows():
         series[r["Código Producto"]][r["Mes"]] = {
             "unidades": float(r["Unidades"]) if pd.notna(r["Unidades"]) else 0,
-            "venta": float(r["Total"]) if pd.notna(r["Total"]) else 0,
+            "venta": float(r["Neto"]) if pd.notna(r["Neto"]) else 0,
         }
 
     product_names = dict(zip(df["Código Producto"], df["Nombre (Producto)"]))
@@ -312,7 +318,7 @@ def build_predictions(sales, logistics):
     top = sorted(sales["productWarehouse"], key=lambda x: x["unidades"], reverse=True)[:40]
 
     predictions = []
-    today = datetime(2026, 6, 24).date()  # fecha del reporte
+    today = datetime.fromisoformat(sales["dateRange"]["max"]).date()
     for item in top:
         adu = item["promedioDiarioUnidades"]
         adv = item["promedioDiarioVenta"]

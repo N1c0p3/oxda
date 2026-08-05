@@ -35,6 +35,7 @@ const sections = [
   {
     label: "Operaciones",
     links: [
+      { href: "/logistica", label: "Envíos y seguimiento", icon: "🚛" },
       { href: "/costeo", label: "Costeo", icon: "🧮" },
       { href: "/logistica/prediccion", label: "Logística & Predicción", icon: "🚢" },
       { href: "/cuentas-por-pagar", label: "Cuentas por pagar", icon: "💳" },
