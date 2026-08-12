@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { adminClient, dateValue, numberValue, supabaseError } from "@/lib/supabase/api";
+import { commercialZoneFromSource } from "@/lib/commercial-catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET() {
   const items = data.map((d) => ({
     document: d.documento,
     customer: d.cliente,
-    zone: d.zona ?? "",
+    zone: commercialZoneFromSource(d.zona ?? ""),
     seller: d.vendedor ?? "",
     balance: numberValue(d.saldo),
     dueDate: dateValue(d.fecha_vencimiento) ?? "",

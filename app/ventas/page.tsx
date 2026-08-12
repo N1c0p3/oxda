@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useZone } from "@/components/zone-filter";
 
-type PedidoItem = { productoId: number; productoNombre?: string; cantidad: number; precioUnitario: number };
+type PedidoItem = { productoId: number; productoCodigo?: string; productoNombre?: string; cantidad: number; kgCaja?: number; precioUnitario: number };
 type Pedido = {
   id: number;
   clienteId: number;
   cliente?: string;
+  clienteCodigo?: string;
   items: PedidoItem[];
   comentarios?: string;
   subtotal: number;
@@ -16,25 +17,32 @@ type Pedido = {
   estatus: string;
   fechaCompromiso?: string;
   createdAt: string;
+  zona?: string;
+  ejecutivo?: string;
 };
+
+type CustomerOption = { id: number; code: string; name: string; label: string; zone: string; seller: string };
+type ProductOption = { id: number; code: string; vulpesCode: string; name: string; label: string; kgBox: number; salesUnit: string };
+type PriceHistory = { customerCode: string; productCode: string; prices: Array<{ price: number; date: string; document: string }> };
+type Catalogs = { customers: CustomerOption[]; products: ProductOption[]; priceHistory: PriceHistory[] };
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
 }
 
-type PendienteItem = { id: string; cliente: string; producto: string; zona: string; cajas: number; unidadesPorCaja: number; avance: number; fechaCompromiso: string; ejecutivo: string; listo: boolean };
+type PendienteItem = { id: string; cliente: string; producto: string; zona: string; cajas: number; kilos: number; avance: number; fechaCompromiso: string; ejecutivo: string; listo: boolean };
 
 function toPendiente(pedido: Pedido): PendienteItem {
   return {
     id: String(pedido.id),
     cliente: pedido.cliente ?? `Cliente #${pedido.clienteId}`,
     producto: pedido.items.map((i) => i.productoNombre ?? `Producto #${i.productoId}`).join(", ") || "Sin productos",
-    zona: "—",
-    cajas: 0,
-    unidadesPorCaja: 1,
+    zona: pedido.zona || "—",
+    cajas: pedido.items.reduce((sum, item) => sum + item.cantidad, 0),
+    kilos: pedido.items.reduce((sum, item) => sum + item.cantidad * (item.kgCaja ?? 0), 0),
     avance: pedido.estatus === "listo" ? 100 : 0,
     fechaCompromiso: pedido.fechaCompromiso ?? new Date(pedido.createdAt).toISOString().slice(0, 10),
-    ejecutivo: "—",
+    ejecutivo: pedido.ejecutivo || "—",
     listo: pedido.estatus === "listo",
   };
 }
@@ -45,11 +53,24 @@ export default function VentasPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [catalogs, setCatalogs] = useState<Catalogs>({ customers: [], products: [], priceHistory: [] });
 
   useEffect(() => {
     fetch("/api/v1/ventas/pedidos")
       .then((res) => res.json())
-      .then((data: { items?: Pedido[] }) => setPedidos(data.items ?? []))
+      .then((data: { items?: Pedido[]; catalogs?: Catalogs }) => {
+        setPedidos(data.items ?? []);
+        setCatalogs(data.catalogs ?? { customers: [], products: [], priceHistory: [] });
+        const firstCustomer = data.catalogs?.customers[0];
+        const firstProduct = data.catalogs?.products[0];
+        if (firstCustomer) setForm((current) => ({ ...current, clienteId: String(firstCustomer.id) }));
+        if (firstProduct) {
+          const recentPrice = firstCustomer
+            ? data.catalogs?.priceHistory.find((entry) => entry.customerCode === firstCustomer.code && entry.productCode === firstProduct.code)?.prices[0]?.price
+            : undefined;
+          setItems([{ productoId: String(firstProduct.id), cantidad: "", precioUnitario: recentPrice ? String(recentPrice) : "" }]);
+        }
+      })
       .catch(() => setMsg({ type: "error", text: "No se pudieron cargar los pedidos" }));
   }, []);
 
@@ -71,24 +92,59 @@ export default function VentasPage() {
     : 0;
 
   const [form, setForm] = useState({
-    clienteId: "1",
+    clienteId: "",
     fechaCompromiso: "",
     comentarios: "",
   });
 
   const [items, setItems] = useState<{ productoId: string; cantidad: string; precioUnitario: string }[]>([
-    { productoId: "1", cantidad: "", precioUnitario: "" },
+    { productoId: "", cantidad: "", precioUnitario: "" },
   ]);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
 
-  const setItem = (i: number, k: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const setItem = (i: number, k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setItems((prev) => prev.map((item, idx) => idx === i ? { ...item, [k]: e.target.value } : item));
   };
 
+  const selectedCustomer = catalogs.customers.find((customer) => String(customer.id) === form.clienteId);
+
+  function historyFor(productId: string) {
+    const product = catalogs.products.find((item) => String(item.id) === productId);
+    if (!selectedCustomer || !product) return [];
+    return catalogs.priceHistory.find((entry) =>
+      entry.customerCode === selectedCustomer.code && entry.productCode === product.code
+    )?.prices ?? [];
+  }
+
+  function selectProduct(index: number, productId: string) {
+    const history = historyFor(productId);
+    setItems((current) => current.map((item, itemIndex) => itemIndex === index
+      ? { ...item, productoId: productId, precioUnitario: history[0] ? String(history[0].price) : "" }
+      : item));
+  }
+
+  function selectCustomer(clienteId: string) {
+    const customer = catalogs.customers.find((item) => String(item.id) === clienteId);
+    setForm((current) => ({ ...current, clienteId }));
+    setItems((current) => current.map((item) => {
+      const product = catalogs.products.find((entry) => String(entry.id) === item.productoId);
+      const history = customer && product
+        ? catalogs.priceHistory.find((entry) => entry.customerCode === customer.code && entry.productCode === product.code)?.prices ?? []
+        : [];
+      return { ...item, precioUnitario: history[0] ? String(history[0].price) : "" };
+    }));
+  }
+
   function addItem() {
-    setItems((prev) => [...prev, { productoId: "1", cantidad: "", precioUnitario: "" }]);
+    const firstProduct = catalogs.products[0];
+    const recentPrice = firstProduct ? historyFor(String(firstProduct.id))[0]?.price : undefined;
+    setItems((prev) => [...prev, {
+      productoId: firstProduct ? String(firstProduct.id) : "",
+      cantidad: "",
+      precioUnitario: recentPrice ? String(recentPrice) : "",
+    }]);
   }
 
   function removeItem(i: number) {
@@ -116,9 +172,26 @@ export default function VentasPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Error desconocido");
-      setPedidos((prev) => [data, ...prev]);
-      setForm({ clienteId: "1", fechaCompromiso: "", comentarios: "" });
-      setItems([{ productoId: "1", cantidad: "", precioUnitario: "" }]);
+      const enriched: Pedido = {
+        ...data,
+        cliente: selectedCustomer?.name,
+        clienteCodigo: selectedCustomer?.code,
+        zona: selectedCustomer?.zone,
+        ejecutivo: selectedCustomer?.seller,
+        items: data.items.map((item: PedidoItem) => {
+          const product = catalogs.products.find((entry) => entry.id === Number(item.productoId));
+          return { ...item, productoCodigo: product?.code, productoNombre: product?.name, kgCaja: product?.kgBox };
+        }),
+      };
+      setPedidos((prev) => [enriched, ...prev]);
+      setForm((current) => ({ clienteId: current.clienteId, fechaCompromiso: "", comentarios: "" }));
+      const firstProduct = catalogs.products[0];
+      const recentPrice = firstProduct ? historyFor(String(firstProduct.id))[0]?.price : undefined;
+      setItems([{
+        productoId: firstProduct ? String(firstProduct.id) : "",
+        cantidad: "",
+        precioUnitario: recentPrice ? String(recentPrice) : "",
+      }]);
       setMsg({ type: "success", text: `Pedido #${data.id} creado — Total: $${data.total.toLocaleString("es-MX")}` });
     } catch (err) {
       setMsg({ type: "error", text: err instanceof Error ? err.message : "Error al guardar" });
@@ -132,7 +205,7 @@ export default function VentasPage() {
   return (
     <>
       <div className="topbar">
-        <span className="topbar-title">� Reporte de Ventas OXDA</span>
+        <span className="topbar-title">Reporte de Ventas OXDA</span>
         <span className="topbar-badge">Nuevo pedido · Pendientes</span>
       </div>
       <div className="page">
@@ -175,7 +248,7 @@ export default function VentasPage() {
               <div className="kpi-card blue">
                 <div className="kpi-label">Avance de picking</div>
                 <div className="kpi-value">{pickingPromedio}%</div>
-                <div className="kpi-unit">{pendientesZona.reduce((sum, item) => sum + item.cajas * item.unidadesPorCaja, 0).toLocaleString("es-MX")} unidades</div>
+                <div className="kpi-unit">{pendientesZona.reduce((sum, item) => sum + item.kilos, 0).toLocaleString("es-MX")} kg</div>
               </div>
             </div>
             <div className="card">
@@ -189,7 +262,7 @@ export default function VentasPage() {
                       <th>Cliente</th>
                       <th>Producto</th>
                       <th style={{ textAlign: "right" }}>Cajas</th>
-                      <th style={{ textAlign: "right" }}>Unidades</th>
+                      <th style={{ textAlign: "right" }}>Kg estimados</th>
                       <th>Compromiso</th>
                       <th>Ejecutivo</th>
                       <th>Picking</th>
@@ -206,7 +279,7 @@ export default function VentasPage() {
                         <td><strong style={{ textDecoration: p.listo ? "line-through" : "none" }}>{p.cliente}</strong></td>
                         <td style={{ color: "var(--text-muted)" }}>{p.producto}</td>
                         <td style={{ textAlign: "right", fontWeight: 700 }}>{p.cajas}</td>
-                        <td style={{ textAlign: "right" }}>{(p.cajas * p.unidadesPorCaja).toLocaleString("es-MX")}</td>
+                        <td style={{ textAlign: "right" }}>{p.kilos.toLocaleString("es-MX")}</td>
                         <td>{new Date(p.fechaCompromiso).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}</td>
                         <td style={{ color: "var(--text-muted)" }}>{p.ejecutivo}</td>
                         <td style={{ minWidth: 150 }}>
@@ -235,8 +308,14 @@ export default function VentasPage() {
           <form onSubmit={handleSubmit}>
             <div className="form-grid" style={{ marginBottom: "1rem" }}>
               <div className="form-group">
-                <label className="form-label">Cliente (ID)</label>
-                <input className="form-input" type="number" min="1" value={form.clienteId} onChange={set("clienteId")} required />
+                <label className="form-label">Cliente · ID anexo</label>
+                <select className="form-input" value={form.clienteId} onChange={(event) => selectCustomer(event.target.value)} required>
+                  <option value="">Selecciona un cliente…</option>
+                  {catalogs.customers.map((customer) => (
+                    <option key={customer.id} value={customer.id}>{customer.label}</option>
+                  ))}
+                </select>
+                {selectedCustomer && <small className="page-subtitle">{selectedCustomer.zone} · {selectedCustomer.seller || "Sin ejecutivo"}</small>}
               </div>
               <div className="form-group">
                 <label className="form-label">Fecha compromiso</label>
@@ -254,16 +333,40 @@ export default function VentasPage() {
             {items.map((it, i) => (
               <div key={i} style={{ display: "flex", gap: ".6rem", alignItems: "flex-end", marginBottom: ".6rem", flexWrap: "wrap" }}>
                 <div className="form-group" style={{ flex: "1 1 100px" }}>
-                  {i === 0 && <label className="form-label">Producto ID</label>}
-                  <input className="form-input" type="number" min="1" value={it.productoId} onChange={setItem(i, "productoId")} required />
+                  {i === 0 && <label className="form-label">Producto</label>}
+                  <select className="form-input" value={it.productoId} onChange={(event) => selectProduct(i, event.target.value)} required>
+                    <option value="">Selecciona un producto…</option>
+                    {catalogs.products.map((product) => (
+                      <option key={product.id} value={product.id}>{product.label}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group" style={{ flex: "1 1 110px" }}>
-                  {i === 0 && <label className="form-label">Cantidad (kg)</label>}
-                  <input className="form-input" type="number" min="0.001" step="0.001" value={it.cantidad} onChange={setItem(i, "cantidad")} required placeholder="0.000" />
+                  {i === 0 && <label className="form-label">Cantidad (cajas)</label>}
+                  <input className="form-input" type="number" min="0.001" step="0.001" value={it.cantidad} onChange={setItem(i, "cantidad")} required placeholder="0" />
                 </div>
                 <div className="form-group" style={{ flex: "1 1 130px" }}>
-                  {i === 0 && <label className="form-label">Precio unitario</label>}
+                  {i === 0 && <label className="form-label">Precio por caja</label>}
                   <input className="form-input" type="number" min="0" step="0.01" value={it.precioUnitario} onChange={setItem(i, "precioUnitario")} required placeholder="0.00" />
+                  {historyFor(it.productoId).length > 0 && (
+                    <select
+                      className="form-input"
+                      aria-label="Histórico de precios del cliente"
+                      value=""
+                      onChange={(event) => {
+                        if (!event.target.value) return;
+                        setItems((current) => current.map((item, index) => index === i ? { ...item, precioUnitario: event.target.value } : item));
+                      }}
+                      style={{ marginTop: 4, fontSize: 12 }}
+                    >
+                      <option value="">Histórico del cliente…</option>
+                      {historyFor(it.productoId).map((history) => (
+                        <option key={`${history.date}-${history.document}-${history.price}`} value={history.price}>
+                          ${history.price.toLocaleString("es-MX")} · {history.date} · {history.document}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
                 {items.length > 1 && (
                   <button type="button" className="btn btn-ghost" onClick={() => removeItem(i)}>✕</button>
@@ -321,7 +424,7 @@ export default function VentasPage() {
                     <tr key={p.id}>
                       <td><strong>{p.id}</strong></td>
                       <td>{fmtDate(p.createdAt)}</td>
-                      <td>{p.clienteId}</td>
+                      <td>{p.clienteCodigo ?? p.clienteId}{p.cliente ? ` · ${p.cliente}` : ""}</td>
                       <td>{p.fechaCompromiso ?? "—"}</td>
                       <td>${p.subtotal.toLocaleString("es-MX")}</td>
                       <td>${p.impuestos.toLocaleString("es-MX")}</td>

@@ -2,26 +2,11 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
+import { COMMERCIAL_ZONES, commercialZoneFromSource, commercialZoneLabel, type CommercialZone } from "@/lib/commercial-catalog";
 
-export const OXDA_ZONES = [
-  "TODAS",
-  "GDL",
-  "QR",
-  "CS",
-  "MEN VLP",
-  "MAY VLP",
-  "MAY GAMA",
-  "CC CASTEL",
-  "CC CASTEL2",
-  "CC KAIDA1",
-  "CC KAIDA2",
-  "CC KAIDA3",
-  "CC KAIDA4",
-  "FARAON",
-  "VERACRUZ",
-] as const;
+export const OXDA_ZONES = COMMERCIAL_ZONES;
 
-export type OxdaZone = (typeof OXDA_ZONES)[number];
+export type OxdaZone = CommercialZone;
 
 type ZoneContextValue = {
   zone: OxdaZone;
@@ -35,8 +20,10 @@ export function ZoneProvider({ children }: { children: React.ReactNode }) {
   const [zone, setZoneState] = useState<OxdaZone>("TODAS");
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as OxdaZone | null;
-    if (saved && OXDA_ZONES.includes(saved)) setZoneState(saved);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    const normalized = commercialZoneFromSource(saved);
+    if (normalized && normalized !== "MUESTRAS") setZoneState(normalized);
   }, []);
 
   const setZone = (nextZone: OxdaZone) => {
@@ -54,7 +41,7 @@ export function useZone() {
   return context;
 }
 
-const QUICK_ZONES: OxdaZone[] = ["TODAS", "GDL", "QR", "CS", "MEN VLP", "MAY VLP"];
+const QUICK_ZONES: OxdaZone[] = [...OXDA_ZONES];
 
 export function GlobalZoneFilter() {
   const { zone, setZone } = useZone();
@@ -64,7 +51,7 @@ export function GlobalZoneFilter() {
       <div className="zone-filter-label">
         <MapPin size={15} aria-hidden="true" />
         <span>Zona</span>
-        <strong>{zone === "TODAS" ? "Todas las zonas" : zone}</strong>
+        <strong>{commercialZoneLabel(zone)}</strong>
       </div>
       <div className="zone-quick-actions" aria-label="Selección rápida de zona">
         {QUICK_ZONES.map((item) => (
@@ -87,7 +74,7 @@ export function GlobalZoneFilter() {
       >
         {OXDA_ZONES.map((item) => (
           <option key={item} value={item}>
-            {item === "TODAS" ? "Todas las zonas" : item}
+            {commercialZoneLabel(item)}
           </option>
         ))}
       </select>

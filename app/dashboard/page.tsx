@@ -32,7 +32,7 @@ type DashboardAnalytics = {
     orders: number;
     averageTicket: number;
   };
-  customers: Array<{ code: string; customer: string; zone: string; sale: number; units: number }>;
+  customers: Array<{ code: string; customer: string; customerLabel: string; zone: string; sale: number; units: number }>;
   products: Array<{ code: string; product: string; sale: number; units: number }>;
   trend: Array<{ month: string; sale: number; units: number; factor: number | null }>;
 };
@@ -158,7 +158,7 @@ export default function DashboardPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(380px,1fr))", gap: 18 }}>
             <ChartCard title={`Clientes líderes · ${zone}`} subtitle="Ranking por venta neta facturada">
-              <BarChartComponent data={data.customers.slice(0, 7)} dataKeys={[{ key: "sale", name: "Venta", color: "#003087" }]} xAxisKey="customer" height={310} />
+              <BarChartComponent data={data.customers.slice(0, 7)} dataKeys={[{ key: "sale", name: "Venta", color: "#003087" }]} xAxisKey="customerLabel" height={310} />
             </ChartCard>
             <ChartCard title={`Productos con mayor movimiento · ${zone}`} subtitle="Ranking por unidades facturadas">
               <BarChartComponent data={data.products.slice(0, 7)} dataKeys={[{ key: "units", name: "Unidades", color: "#00a0e3" }]} xAxisKey="code" height={310} />

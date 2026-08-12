@@ -129,6 +129,40 @@ npm run dev
 - App: http://127.0.0.1:3000
 - KPI demo: http://127.0.0.1:3000/api/v1/dashboard/kpis
 
+## Catálogo y listas de precios
+
+La pantalla `/costeo` administra el catálogo final y sus listas General y
+Mayoreo. Los productos se ligan con sus bandas de precio mediante
+`producto_precios.producto_id` y los cambios se guardan con una transacción en
+Supabase.
+
+Para habilitarla en una base existente:
+
+1. Abre **Supabase → SQL Editor → New query**.
+2. Copia y ejecuta una sola vez `database/migrations/017_catalogo_listas_precios.sql`.
+3. Copia y ejecuta `database/verify/017_catalogo_listas_precios_check.sql`.
+4. Confirma que las comprobaciones regresen `true` y que las consultas de
+   incidencias no devuelvan filas.
+
+Para habilitar el modelo completo de importación del archivo
+`Modulo de Costeos de Productos (1).xlsx` (contenedor, moneda, tipo de cambio,
+fletes, aduana, impuestos, almacenaje y margen), ejecuta después:
+
+1. `database/migrations/019_modelo_costeo_importacion.sql`.
+2. `database/verify/019_modelo_costeo_importacion_check.sql`.
+
+La pantalla conserva por producto los supuestos del costeo y calcula en tiempo
+real costo puesto por caja, precio objetivo por caja y precio objetivo por kg.
+
+Para habilitar los selectores de clientes/productos y el histórico de precios
+del capturador de pedidos, ejecuta después:
+
+1. `database/migrations/018_clientes_pedidos_catalogo.sql`.
+2. `database/verify/018_clientes_pedidos_catalogo_check.sql`.
+
+La aplicación consulta estas tablas únicamente desde sus Route Handlers con
+`SUPABASE_SERVICE_ROLE_KEY`. No expongas esa llave en variables `NEXT_PUBLIC_*`.
+
 Nota: el MVP actual usa almacenamiento en memoria para validar flujos y pantallas; el esquema productivo PostgreSQL ya está definido en database/schema.sql.
 
 ## Siguiente paso recomendado

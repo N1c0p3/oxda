@@ -1,27 +1,9 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { FORMULA_CATALOG, MONTH_BUDGETS } from "@/lib/oxda-business-rules";
+import { COMMERCIAL_ZONES, commercialZoneFromSource, normalizeCatalogText } from "@/lib/commercial-catalog";
+import { loadSalesRows, type SaleRow } from "@/lib/sales-history";
 
 export const runtime = "nodejs";
-
-type SaleRow = {
-  month: string;
-  date: string;
-  warehouse: string;
-  category: string;
-  productCode: string;
-  product: string;
-  document: string;
-  units: number;
-  net: number;
-  cost: number;
-  margin: number;
-  zone: string;
-  seller: string;
-  customerCode: string;
-  customer: string;
-};
 
 const MONTHS: Record<string, { short: string; number: number }> = {
   enero: { short: "Ene", number: 1 },
@@ -37,113 +19,6 @@ const MONTHS: Record<string, { short: string; number: number }> = {
   noviembre: { short: "Nov", number: 11 },
   diciembre: { short: "Dic", number: 12 },
 };
-
-const DATE_MONTHS: Record<string, number> = {
-  ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5,
-  jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11,
-};
-
-function parseCsv(input: string) {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let value = "";
-  let quoted = false;
-
-  for (let index = 0; index < input.length; index += 1) {
-    const char = input[index];
-    if (quoted) {
-      if (char === '"' && input[index + 1] === '"') {
-        value += '"';
-        index += 1;
-      } else if (char === '"') {
-        quoted = false;
-      } else {
-        value += char;
-      }
-    } else if (char === '"') {
-      quoted = true;
-    } else if (char === ",") {
-      row.push(value);
-      value = "";
-    } else if (char === "\n") {
-      row.push(value.replace(/\r$/, ""));
-      rows.push(row);
-      row = [];
-      value = "";
-    } else {
-      value += char;
-    }
-  }
-  if (value || row.length) {
-    row.push(value);
-    rows.push(row);
-  }
-  return rows;
-}
-
-function numberValue(value = "") {
-  const parsed = Number(value.replace(/[$,\s]/g, ""));
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function normalize(value = "") {
-  return value.trim().replace(/\s+/g, " ").toUpperCase();
-}
-
-function isoDate(value: string) {
-  const iso = value.trim().match(/^(\d{4}-\d{2}-\d{2})/);
-  if (iso) return iso[1];
-  const match = value.trim().toLowerCase().match(/^(\d{1,2})-([a-záéíóú]{3})-(\d{2,4})$/i);
-  if (!match) return "";
-  const month = DATE_MONTHS[match[2].normalize("NFD").replace(/\p{Diacritic}/gu, "")];
-  if (month === undefined) return "";
-  const year = match[3].length === 2 ? 2000 + Number(match[3]) : Number(match[3]);
-  return new Date(Date.UTC(year, month, Number(match[1]))).toISOString().slice(0, 10);
-}
-
-let rowsPromise: Promise<SaleRow[]> | null = null;
-
-async function loadRows() {
-  if (rowsPromise) return rowsPromise;
-  rowsPromise = (async () => {
-    const filePath = path.join(process.cwd(), "data", "ventas-reporte-2026.csv");
-    const parsed = parseCsv(await readFile(filePath, "utf8"));
-    const headerIndex = parsed.findIndex((row) => row[0] === "Item");
-    if (headerIndex < 0) throw new Error("No se encontró el encabezado del reporte de ventas.");
-    const header = parsed[headerIndex];
-    const column = (name: string) => header.indexOf(name);
-
-    return parsed.slice(headerIndex + 1)
-      .filter((row) => row[column("Código Producto")] && row[column("Nombre (Cliente)")])
-      .map((row): SaleRow => {
-        const monthName = row[column("Mes")]?.trim().toLowerCase();
-        const net = numberValue(row[column("Neto")]);
-        const cost = numberValue(row[column("Costo total")]);
-        return {
-          month: MONTHS[monthName]?.short ?? row[column("Mes")],
-          date: isoDate(row[column("Fecha")]),
-          warehouse: normalize(row[column("Nombre (Almacén)")]),
-          category: normalize(row[column("Categoria")]),
-          productCode: normalize(row[column("Código Producto")]),
-          product: normalize(row[column("Nombre (Producto)")]),
-          document: `${row[column("Serie")]}-${row[column("Folio")]}`,
-          units: numberValue(row[column("Unidades")]),
-          net,
-          cost,
-          // La base oficial de rentabilidad es venta neta menos costo. El
-          // libro tiene algunos renglones donde "Margen" se calculó con Total;
-          // se conserva el Excel sin alterarlo y se normaliza aquí para todos
-          // los KPIs, productos y clientes.
-          margin: net - cost,
-          zone: normalize(row[column("RUBRO")]),
-          seller: normalize(row[column("Vendedor")]),
-          customerCode: normalize(row[column("Código Cliente")]),
-          customer: normalize(row[column("Nombre (Cliente)")]),
-        };
-      });
-  })();
-  return rowsPromise;
-}
 
 function groupRows<T extends { units: number; sale: number; cost: number; margin: number; documents: Set<string> }>(
   rows: SaleRow[],
@@ -166,13 +41,13 @@ function groupRows<T extends { units: number; sale: number; cost: number; margin
 
 export async function GET(request: NextRequest) {
   try {
-    const allRows = await loadRows();
-    const zone = normalize(request.nextUrl.searchParams.get("zone") || "TODAS");
+    const allRows = await loadSalesRows();
+    const zone = normalizeCatalogText(request.nextUrl.searchParams.get("zone") || "TODAS");
     const month = request.nextUrl.searchParams.get("month") || "Acumulado";
     const from = request.nextUrl.searchParams.get("from") || "";
     const to = request.nextUrl.searchParams.get("to") || "";
     const trendDimension = request.nextUrl.searchParams.get("trendDimension") || "total";
-    const trendKey = normalize(request.nextUrl.searchParams.get("trendKey") || "");
+    const trendKey = normalizeCatalogText(request.nextUrl.searchParams.get("trendKey") || "");
 
     const rows = allRows.filter((row) => {
       if (zone !== "TODAS" && row.zone !== zone) return false;
@@ -248,6 +123,7 @@ export async function GET(request: NextRequest) {
       return {
         code: item.code,
         customer: item.customer,
+        customerLabel: `${item.code} · ${item.customer}`,
         zone: item.zone,
         seller: item.seller,
         units: item.units,
@@ -293,6 +169,15 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => b.units - a.units);
 
+    const fullProductMap = new Map<string, { code: string; product: string }>();
+    for (const row of allRows) {
+      if (!fullProductMap.has(row.productCode)) {
+        fullProductMap.set(row.productCode, { code: row.productCode, product: row.product });
+      }
+    }
+    const productCatalog = [...fullProductMap.values()]
+      .sort((a, b) => a.code.localeCompare(b.code, "es", { numeric: true }));
+
     const trend = Object.keys(MONTH_BUDGETS).map((monthKey) => {
       const monthRows = allRows.filter((row) =>
         row.month === monthKey &&
@@ -318,7 +203,9 @@ export async function GET(request: NextRequest) {
       const table = MONTH_BUDGETS[monthKey] ?? {};
       return zone === "TODAS"
         ? Object.values(table).reduce((sum, value) => sum + value, 0)
-        : table[zone] ?? 0;
+        : Object.entries(table)
+            .filter(([sourceZone]) => commercialZoneFromSource(sourceZone) === zone)
+            .reduce((sum, [, value]) => sum + value, 0);
     };
     let budget = 0;
     if (from && to) {
@@ -336,11 +223,14 @@ export async function GET(request: NextRequest) {
       budget = Object.keys(MONTH_BUDGETS).reduce((sum, monthKey) => sum + monthlyBudget(monthKey), 0);
     }
     const budgetComparableSale = zone === "TODAS"
-      ? rows.filter((row) => row.zone in (MONTH_BUDGETS[row.month] ?? {})).reduce((sum, row) => sum + row.net, 0)
+      ? rows.filter((row) => Object.keys(MONTH_BUDGETS[row.month] ?? {})
+          .some((sourceZone) => commercialZoneFromSource(sourceZone) === row.zone))
+          .reduce((sum, row) => sum + row.net, 0)
       : totalSale;
 
     return NextResponse.json({
       source: { file: "ventas-reporte-2026.csv", cutOff: lastDate || "2026-06-24", metricBase: "neto" },
+      catalogs: { products: productCatalog, zones: COMMERCIAL_ZONES.filter((item) => item !== "TODAS") },
       filters: { zone, month, from, to, firstDate, lastDate, periodDays, trendDimension, trendKey },
       kpis: {
         sale: totalSale,

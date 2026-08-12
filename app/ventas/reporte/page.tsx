@@ -34,6 +34,7 @@ type ProductDetail = {
 type Customer = {
   code: string;
   customer: string;
+  customerLabel: string;
   zone: string;
   seller: string;
   units: number;
@@ -47,6 +48,10 @@ type Customer = {
 };
 
 type Analytics = {
+  catalogs: {
+    products: Array<{ code: string; product: string }>;
+    zones: string[];
+  };
   filters: {
     zone: string;
     month: string;
@@ -179,7 +184,7 @@ export default function SalesReportPage() {
         : "Enero a mayo 2026";
 
   const trendOptions = trendDimension === "product"
-    ? (analytics?.products ?? []).map((item) => ({ value: item.code, label: `${item.code} · ${item.product}` }))
+    ? (analytics?.catalogs.products ?? []).map((item) => ({ value: item.code, label: `${item.code} · ${item.product}` }))
     : trendDimension === "customer"
       ? (analytics?.customers ?? []).map((item) => ({ value: item.code, label: `${item.code} · ${item.customer}` }))
       : trendDimension === "zone"
@@ -321,7 +326,7 @@ export default function SalesReportPage() {
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(360px,1fr))", gap: 18 }}>
                 <ChartCard title={`Top clientes · ${zone}`} subtitle="Clic para consultar productos comprados">
-                  <BarChartComponent data={analytics.customers.slice(0, 8)} dataKeys={[{ key: "sale", name: "Venta", color: "#003087" }]} xAxisKey="customer" height={310} />
+                  <BarChartComponent data={analytics.customers.slice(0, 8)} dataKeys={[{ key: "sale", name: "Venta", color: "#003087" }]} xAxisKey="customerLabel" height={310} />
                 </ChartCard>
                 <ChartCard title={`Productos con mayor movimiento · ${zone}`} subtitle="Ranking por unidades facturadas">
                   <BarChartComponent data={analytics.products.slice(0, 8)} dataKeys={[{ key: "units", name: "Unidades", color: "#00a0e3" }]} xAxisKey="code" height={310} />
