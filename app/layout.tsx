@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Nav from "@/components/nav";
+import { ProfileProvider } from "@/components/profile-session";
 import { GlobalZoneFilter, ZoneProvider } from "@/components/zone-filter";
 import "./globals.css";
 
@@ -44,15 +45,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             borderRadius: "50%", filter: "blur(45px)",
           }} />
         </div>
-        <ZoneProvider>
-          <div className="shell" style={{ position: "relative", zIndex: 1 }}>
-            <Nav />
-            <div className="main">
-              <GlobalZoneFilter />
-              {children}
+        <ProfileProvider>
+          <ZoneProvider>
+            <div className="shell" style={{ position: "relative", zIndex: 1 }}>
+              <Nav />
+              <div className="main">
+                <GlobalZoneFilter />
+                {children}
+              </div>
             </div>
-          </div>
-        </ZoneProvider>
+          </ZoneProvider>
+        </ProfileProvider>
       </body>
     </html>
   );

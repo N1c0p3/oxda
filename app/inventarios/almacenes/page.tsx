@@ -16,14 +16,20 @@ type AlmacenMetrica = {
   status: string;
 };
 
+type InventorySource = { cutOff?: string; source?: string };
+
 export default function InventariosAlmacenesPage() {
   const [filtro, setFiltro] = useState("");
   const [almacenesData, setAlmacenesData] = useState<AlmacenMetrica[]>([]);
+  const [source, setSource] = useState<InventorySource>({});
 
   useEffect(() => {
     fetch("/api/v1/inventarios/almacenes")
       .then((res) => res.json())
-      .then((data: { items?: AlmacenMetrica[] }) => setAlmacenesData(data.items ?? []))
+      .then((data: { items?: AlmacenMetrica[]; source?: InventorySource }) => {
+        setAlmacenesData(data.items ?? []);
+        setSource(data.source ?? {});
+      })
       .catch(() => setAlmacenesData([]));
   }, []);
 
@@ -34,6 +40,8 @@ export default function InventariosAlmacenesPage() {
   const totalValor = almacenesData.reduce((acc, a) => acc + a.valor, 0);
   const totalCajas = almacenesData.reduce((acc, a) => acc + a.cajas, 0);
   const totalLlegadas = almacenesData.reduce((acc, a) => acc + a.llegadas, 0);
+  const criticalWarehouse = almacenesData.find((warehouse) => warehouse.status === "Crítico");
+  const cutOffLabel = source.cutOff ? new Date(`${source.cutOff}T12:00:00`).toLocaleDateString("es-MX") : "último corte";
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: "1600px", margin: "0 auto" }}>
@@ -45,7 +53,7 @@ export default function InventariosAlmacenesPage() {
               Inventarios por Almacenes
             </h1>
             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", margin: 0 }}>
-              Saldos por bodega al cierre de Mayo 2026
+              Saldos físicos por bodega al {cutOffLabel}
             </p>
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
@@ -64,14 +72,14 @@ export default function InventariosAlmacenesPage() {
       </header>
 
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "28px" }}>
-        <StatCard title="Valor Total Inventario" value={`$${(totalValor / 1000000).toFixed(2)}M`} subtitle="En 6 almacenes" trend="Mayo 2026" trendUp={true} icon={<Box size={20} color="#60a5fa" />} color="blue" />
-        <StatCard title="Cajas en Stock" value={totalCajas.toLocaleString()} subtitle="Unidades físicas" trend="+llegadas pendientes" trendUp={true} icon={<Package size={20} color="#22c55e" />} color="green" />
-        <StatCard title="Llegadas Previstas" value={totalLlegadas.toLocaleString()} subtitle="Cajas en tránsito" trend="+$1.2M valor" trendUp={true} icon={<TrendingDown size={20} color="#f59e0b" />} color="orange" />
-        <StatCard title="Almacén Crítico" value="Frjalisco" subtitle="1.06 meses cobertura" trend="Requiere atención" trendUp={false} icon={<AlertTriangle size={20} color="#ef4444" />} color="red" />
+        <StatCard title="Valor Total Inventario" value={`$${(totalValor / 1000000).toFixed(2)}M`} subtitle={`En ${almacenesData.length} almacenes`} trend={`Corte ${cutOffLabel}`} trendUp={true} icon={<Box size={20} color="#60a5fa" />} color="blue" />
+        <StatCard title="Cajas en Stock" value={totalCajas.toLocaleString()} subtitle="Unidades físicas" trend="Corte consolidado" trendUp={true} icon={<Package size={20} color="#22c55e" />} color="green" />
+        <StatCard title="Llegadas Previstas" value={totalLlegadas.toLocaleString()} subtitle="Cajas en tránsito" trend="Separadas del inventario físico" trendUp={true} icon={<TrendingDown size={20} color="#f59e0b" />} color="orange" />
+        <StatCard title="Almacén Crítico" value={criticalWarehouse?.almacen ?? "Sin alertas"} subtitle={criticalWarehouse ? `${criticalWarehouse.cobertura} meses de cobertura` : "Cobertura dentro del objetivo"} trend={criticalWarehouse ? "Requiere atención" : "Sin pendientes"} trendUp={!criticalWarehouse} icon={<AlertTriangle size={20} color="#ef4444" />} color="red" />
       </section>
 
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px", marginBottom: "20px" }}>
-        <ChartCard title="Valor de Inventario por Almacén" subtitle="Mayo 2026">
+        <ChartCard title="Valor de Inventario por Almacén" subtitle={`Corte ${cutOffLabel}`}>
           <BarChartComponent data={almacenesData} dataKeys={[{ key: "valor", name: "Valor ($)", color: "#003087" }]} xAxisKey="almacen" height={300} />
         </ChartCard>
         <ChartCard title="Distribución por Almacén" subtitle="% participación valor">

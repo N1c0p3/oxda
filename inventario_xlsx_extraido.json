@@ -1,6 +1,6 @@
 {
-  "archivo": "INVENTARIOS OXDA JULIO 2026..xlsx",
-  "fecha_corte": "2026-07-31",
+  "archivo": "INVENTARIOS OXDA AGOSTO 2026..xlsx",
+  "fecha_corte": "2026-08-31",
   "resumen_mensual": [
     {
       "mes": "Diciembre 2025",
@@ -394,12 +394,12 @@
           "cajas_inventario": 3176.25,
           "costo_promedio": 273.7087831562377,
           "ventas_cajas_mes": 2058.0,
-          "llegadas": 1200.0,
-          "ventas_estimadas": 1964.3797619047618,
-          "inv_mas_llegadas": 4376.25,
-          "inv_menos_ventas": 2411.870238095238,
-          "cobertura": 1.2278024264292802,
-          "ultimo_numero": 1.2278024264292802,
+          "llegadas": 1416.0,
+          "ventas_estimadas": 1546.529761904762,
+          "inv_mas_llegadas": 4592.25,
+          "inv_menos_ventas": 3045.720238095238,
+          "cobertura": 1.9693899937263535,
+          "ultimo_numero": 1.9693899937263535,
           "cliente": "Abastos logicos"
         },
         {
@@ -473,10 +473,10 @@
         "cajas_inventario": 20761.839999999997,
         "costo_promedio": null,
         "ventas_cajas_mes": 9701.44,
-        "llegadas": 1200.0,
-        "ventas_estimadas": 6964.379761904762,
-        "inv_mas_llegadas": 21961.84,
-        "inv_menos_ventas": 14997.460238095238,
+        "llegadas": 1416.0,
+        "ventas_estimadas": 6546.5297619047615,
+        "inv_mas_llegadas": 22177.84,
+        "inv_menos_ventas": 15631.310238095237,
         "cobertura": null,
         "ultimo_numero": null
       },
@@ -490,19 +490,19 @@
           "cajas_inventario": 6285.5,
           "costo_promedio": 228.4523426935009,
           "ventas_cajas_mes": 1302.0,
-          "llegadas": 1200.0,
+          "llegadas": 1416.0,
           "ventas_estimadas": 2000.0,
-          "inv_mas_llegadas": 7485.5,
-          "inv_menos_ventas": 5485.5,
-          "cobertura": 2.74275,
-          "ultimo_numero": 2.74275,
+          "inv_mas_llegadas": 7701.5,
+          "inv_menos_ventas": 5701.5,
+          "cobertura": 2.85075,
+          "ultimo_numero": 2.85075,
           "cliente": "Abastos logicos"
         },
         {
           "valor_inventario": 1752994.0599999998,
           "cajas_inventario": 4622.8,
           "costo_promedio": 379.2061218309249,
-          "ventas_cajas_mes": 5.0,
+          "ventas_cajas_mes": 78.0,
           "llegadas": 2112.0,
           "ventas_estimadas": 1200.0,
           "inv_mas_llegadas": 6734.8,
@@ -516,19 +516,19 @@
           "cajas_inventario": 5351.16,
           "costo_promedio": 272.58319497081004,
           "ventas_cajas_mes": 0.0,
-          "llegadas": 768.0,
+          "llegadas": 792.0,
           "ventas_estimadas": 1000.0,
-          "inv_mas_llegadas": 6935.37,
-          "inv_menos_ventas": 5935.37,
-          "cobertura": 5.93537,
-          "ultimo_numero": 5.93537,
+          "inv_mas_llegadas": 6959.37,
+          "inv_menos_ventas": 5959.37,
+          "cobertura": 5.95937,
+          "ultimo_numero": 5.95937,
           "cliente": "Bajo Cero"
         },
         {
           "valor_inventario": 236505.0622,
           "cajas_inventario": 816.2099999999998,
           "costo_promedio": 289.7600644441995,
-          "ventas_cajas_mes": 187.0,
+          "ventas_cajas_mes": 670.0,
           "llegadas": 0.0,
           "ventas_estimadas": 0.0,
           "inv_mas_llegadas": 0.0,
@@ -568,11 +568,11 @@
         "valor_inventario": 7082814.071799999,
         "cajas_inventario": 25363.67,
         "costo_promedio": null,
-        "ventas_cajas_mes": 3862.0,
-        "llegadas": 4080.0,
+        "ventas_cajas_mes": 4418.0,
+        "llegadas": 4320.0,
         "ventas_estimadas": 7000.0,
-        "inv_mas_llegadas": 29443.67,
-        "inv_menos_ventas": 22443.67,
+        "inv_mas_llegadas": 29683.67,
+        "inv_menos_ventas": 22683.67,
         "cobertura": null,
         "ultimo_numero": null
       },
@@ -586,25 +586,25 @@
           "cajas_inventario": 5211.0,
           "costo_promedio": 271.68906879677604,
           "ventas_cajas_mes": 1316.25,
-          "llegadas": 1200.0,
+          "llegadas": 1416.0,
           "ventas_estimadas": 2000.0,
-          "inv_mas_llegadas": 6411.0,
-          "inv_menos_ventas": 4411.0,
-          "cobertura": 2.2055,
-          "ultimo_numero": 2.2055,
+          "inv_mas_llegadas": 6627.0,
+          "inv_menos_ventas": 4627.0,
+          "cobertura": 2.3135,
+          "ultimo_numero": 2.3135,
           "cliente": "Abastos logicos"
         },
         {
           "valor_inventario": 2257132.2199999997,
           "cajas_inventario": 6192.8,
           "costo_promedio": 364.4768473065495,
-          "ventas_cajas_mes": 5.0,
-          "llegadas": 4248.0,
+          "ventas_cajas_mes": 78.0,
+          "llegadas": 2112.0,
           "ventas_estimadas": 1500.0,
-          "inv_mas_llegadas": 10440.8,
-          "inv_menos_ventas": 8940.8,
-          "cobertura": 5.960533333333333,
-          "ultimo_numero": 5.960533333333333,
+          "inv_mas_llegadas": 8304.8,
+          "inv_menos_ventas": 6804.799999999999,
+          "cobertura": 4.536533333333333,
+          "ultimo_numero": 4.536533333333333,
           "cliente": "CDMX: Arcosa | Fresco | Frigarsa | Canbelt"
         },
         {
@@ -637,7 +637,7 @@
           "valor_inventario": 0.0,
           "cajas_inventario": 0.0,
           "costo_promedio": 0.0,
-          "ventas_cajas_mes": 187.0,
+          "ventas_cajas_mes": 670.0,
           "llegadas": null,
           "ventas_estimadas": null,
           "inv_mas_llegadas": 0.0,
@@ -651,12 +651,12 @@
           "cajas_inventario": 6166.0,
           "costo_promedio": 187.369901070386,
           "ventas_cajas_mes": 3249.0,
-          "llegadas": 1600.0,
+          "llegadas": 1556.0,
           "ventas_estimadas": 3000.0,
-          "inv_mas_llegadas": 7766.0,
-          "inv_menos_ventas": 4766.0,
-          "cobertura": 1.5886666666666667,
-          "ultimo_numero": 1.5886666666666667,
+          "inv_mas_llegadas": 7722.0,
+          "inv_menos_ventas": 4722.0,
+          "cobertura": 1.574,
+          "ultimo_numero": 1.574,
           "cliente": "Frjalisco"
         },
         {
@@ -677,11 +677,11 @@
         "valor_inventario": 5413124.1274999995,
         "cajas_inventario": 22254.8,
         "costo_promedio": null,
-        "ventas_cajas_mes": 4757.25,
-        "llegadas": 7768.0,
+        "ventas_cajas_mes": 5313.25,
+        "llegadas": 5804.0,
         "ventas_estimadas": 8000.0,
-        "inv_mas_llegadas": 30022.8,
-        "inv_menos_ventas": 22022.8,
+        "inv_mas_llegadas": 28058.8,
+        "inv_menos_ventas": 20058.8,
         "cobertura": null,
         "ultimo_numero": null
       },
@@ -691,9 +691,9 @@
       "mes": "Julio 2026",
       "clientes": [
         {
-          "valor_inventario": 1649800.3775000002,
+          "valor_inventario": 1616649.3575,
           "cajas_inventario": 6313.0,
-          "costo_promedio": 261.33381553936323,
+          "costo_promedio": 256.0825847457627,
           "ventas_cajas_mes": 1274.0,
           "llegadas": 1200.0,
           "ventas_estimadas": 1500.0,
@@ -707,13 +707,13 @@
           "valor_inventario": 1917672.26,
           "cajas_inventario": 5103.8,
           "costo_promedio": 375.7342098044594,
-          "ventas_cajas_mes": 5.0,
-          "llegadas": 4248.0,
+          "ventas_cajas_mes": 78.0,
+          "llegadas": 2112.0,
           "ventas_estimadas": 1200.0,
-          "inv_mas_llegadas": 9351.8,
-          "inv_menos_ventas": 8151.799999999999,
-          "cobertura": 6.793166666666666,
-          "ultimo_numero": 6.793166666666666,
+          "inv_mas_llegadas": 7215.8,
+          "inv_menos_ventas": 6015.8,
+          "cobertura": 5.013166666666667,
+          "ultimo_numero": 5.013166666666667,
           "cliente": "CDMX: Arcosa | Fresco | Frigarsa | Canbelt"
         },
         {
@@ -733,7 +733,7 @@
           "valor_inventario": 592973.07,
           "cajas_inventario": 2602.0,
           "costo_promedio": 227.89126441199076,
-          "ventas_cajas_mes": 187.0,
+          "ventas_cajas_mes": 670.0,
           "llegadas": null,
           "ventas_estimadas": null,
           "inv_mas_llegadas": 2602.0,
@@ -756,16 +756,16 @@
           "cliente": "Vulpes"
         },
         {
-          "valor_inventario": 1163291.9900000002,
-          "cajas_inventario": 5447.0,
-          "costo_promedio": 213.56563062236097,
+          "valor_inventario": 1624424.03,
+          "cajas_inventario": 6173.0,
+          "costo_promedio": 263.14985096387494,
           "ventas_cajas_mes": 4307.0,
           "llegadas": null,
           "ventas_estimadas": 1500.0,
-          "inv_mas_llegadas": 5447.0,
-          "inv_menos_ventas": 3947.0,
-          "cobertura": 2.6313333333333335,
-          "ultimo_numero": 2.6313333333333335,
+          "inv_mas_llegadas": 6173.0,
+          "inv_menos_ventas": 4673.0,
+          "cobertura": 3.1153333333333335,
+          "ultimo_numero": 3.1153333333333335,
           "cliente": "Frjalisco"
         },
         {
@@ -783,14 +783,14 @@
         }
       ],
       "total": {
-        "valor_inventario": 5340159.6975,
-        "cajas_inventario": 19525.8,
+        "valor_inventario": 5768140.717499999,
+        "cajas_inventario": 20251.8,
         "costo_promedio": null,
-        "ventas_cajas_mes": 5773.0,
-        "llegadas": 5448.0,
+        "ventas_cajas_mes": 6329.0,
+        "llegadas": 3312.0,
         "ventas_estimadas": 5200.0,
-        "inv_mas_llegadas": 27575.8,
-        "inv_menos_ventas": 22375.8,
+        "inv_mas_llegadas": 26165.8,
+        "inv_menos_ventas": 20965.8,
         "cobertura": null,
         "ultimo_numero": null
       },
@@ -802,141 +802,141 @@
       "hoja": "CANCÚN",
       "columna_codigo": 5,
       "columna_descripcion": 6,
-      "columna_inventario": 42,
-      "periodo_inventario": "2026-07 (INV JULIO 2026)",
+      "columna_inventario": 47,
+      "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
       "productos": [
         {
           "codigo": "804104",
           "descripcion": "TRIANGLE HASHBROW  63G/40PZ BAG APPROX) 4 X 2.5KG",
-          "inventario": 1.5,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 1.25,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "805567",
           "descripcion": "HASBROWNS ROUNDS - FRYER 4X2500G",
           "inventario": 10.75,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "803528",
           "descripcion": "Aviko H Pommes Frites 11mm 7/16 4x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "TOTAL AVIKO",
           "descripcion": "",
-          "inventario": 12.25,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 12.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "CÓDIGO",
           "descripcion": "DESCRIPCIÓN",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "105632",
           "descripcion": "10 MM NATURAL, MISMO PRODUCTO 102013",
-          "inventario": 3482.25,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 4240.5,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102013",
           "descripcion": "10 MM NATURAL, MISMO PRODUCTO 105632",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102341",
           "descripcion": "10 MM CON COBERTURA",
-          "inventario": 167.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 132.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102310",
           "descripcion": "7 MM CON COBERTURA",
-          "inventario": 69.75,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 57.75,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102211",
           "descripcion": "7 MM NATURAL",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "104215",
           "descripcion": "10 MM CON COBERTURA Y CASCARA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "114054",
           "descripcion": "GAJOS SAZONADOS",
-          "inventario": 327.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 316.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102419",
           "descripcion": "ONDULADA",
-          "inventario": 89.75,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 75.75,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "1000440",
           "descripcion": "3/8 VIMA FOODS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "101245",
           "descripcion": "11 MM CON COBERTURA, SUSTITUTO 102341 PRODUCTO NUEVO",
-          "inventario": 1796.75,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 1483.25,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "110582",
           "descripcion": "TRIANGLE HASHBROW  63G/40PZ BAG APPROX) 4 X 2.5KG, SUSTITUTO 804104",
-          "inventario": 368.25,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 1226.75,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "TOTAL WERNSING",
           "descripcion": "",
-          "inventario": 6300.75,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 6305.25,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "RESUMEN DEL TOTAL DE PAPAS",
           "descripcion": "",
-          "inventario": 6313.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 6317.25,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         }
       ]
     },
@@ -978,7 +978,7 @@
         {
           "codigo": "806686",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
-          "inventario": 156.0,
+          "inventario": 136.0,
           "periodo_inventario": "2026-07 (INV JULIO ARCOSA 2026)",
           "columna_inventario": 37
         },
@@ -1093,141 +1093,141 @@
       "hoja": "FRIGARSA",
       "columna_codigo": 1,
       "columna_descripcion": 2,
-      "columna_inventario": 38,
-      "periodo_inventario": "2026-07 (INV JULIO 2026)",
+      "columna_inventario": 43,
+      "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
       "productos": [
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
           "inventario": 2.300000000000182,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "806939",
           "descripcion": "AVIKO CRINKLE CUT 12MM 4 X 2.5 KG",
           "inventario": 9.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "806694",
           "descripcion": "AVIKO SUPER CRUNCH 9.5mm 3/8 4x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "804104",
           "descripcion": "HASHBROWN TRIANG",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "806686",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
           "inventario": 47.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "804109",
           "descripcion": "AVIKO SHOESTRING 5x2500g",
           "inventario": 6.5,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "806980",
           "descripcion": "AVIKO SPICY JACKET WEDGES 4x2500g",
           "inventario": 2.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "806982",
           "descripcion": "AROS DE CEBOLLA 1X1000g",
           "inventario": 37.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "804661",
           "descripcion": "AVIKO STEAK FRIES  4X2500G 4X5.5 LBS",
           "inventario": 450.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "808540",
           "descripcion": "AVIKO H SUPER CRUNCH 15mm 6x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "807769",
           "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
           "inventario": 155.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "807329",
           "descripcion": "AVIKO ORIGINAL 20X450G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "805411",
           "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "807679",
           "descripcion": "AVIKO SPICY WEDGES 20X500G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "805168",
           "descripcion": "AVIKO AROS DE CEBOLLA PREFRITOS 25/400g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "807363",
           "descripcion": "Aviko H Super Crunch 14x600g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "809529",
           "descripcion": "Aviko SC Airfr. PommesFrites 10x750",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
           "codigo": "TOTAL AVIKO",
           "descripcion": "",
           "inventario": 708.8000000000002,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         }
       ]
     },
@@ -1235,148 +1235,148 @@
       "hoja": "FRESCO",
       "columna_codigo": 2,
       "columna_descripcion": 3,
-      "columna_inventario": 84,
-      "periodo_inventario": "2026-07 (INV JULIO  2026)",
+      "columna_inventario": 89,
+      "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
       "productos": [
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806939",
           "descripcion": "AVIKO CRINKLE CUT 12MM 4 X 2.5 KG",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806694",
           "descripcion": "AVIKO SUPER CRUNCH 9.5mm 3/8 4x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "804104",
           "descripcion": "HASHBROWN TRIANG",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806686",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "804109",
           "descripcion": "AVIKO SHOESTRING 5x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806980",
           "descripcion": "AVIKO SPICY JACKET WEDGES 4x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806982",
           "descripcion": "AROS DE CEBOLLA 1X1000g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "804661",
           "descripcion": "AVIKO STEAK FRIES  4X2500G 4X5.5 LBS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "806702",
           "descripcion": "AVIKO H SUPER CRUNCH 15mm 6x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "804661",
           "descripcion": "AVIKO STEAK FRIES  4X2500G 4X5.5 LBS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "807769",
           "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
           "inventario": 650.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "807329",
           "descripcion": "AVIKO ORIGINAL 20X450G",
           "inventario": 161.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "805411",
           "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
           "inventario": 43.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "807679",
           "descripcion": "AVIKO SPICY WEDGES 20X500G",
           "inventario": 222.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "805168",
           "descripcion": "AVIKO AROS DE CEBOLLA PREFRITOS 25/400g",
           "inventario": 22.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "807363",
           "descripcion": "Aviko H Super Crunch 14x600g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "809529",
           "descripcion": "Aviko SC Airfr. PommesFrites 10x750",
           "inventario": 344.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         },
         {
           "codigo": "TOTAL AVIKO",
           "descripcion": "",
           "inventario": 1442.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 84
+          "periodo_inventario": "2026-08 (INV AGOSTO  2026)",
+          "columna_inventario": 89
         }
       ]
     },
@@ -1384,148 +1384,148 @@
       "hoja": "MEXIDELI",
       "columna_codigo": 2,
       "columna_descripcion": 3,
-      "columna_inventario": 39,
-      "periodo_inventario": "2026-07 (INV JULIO 2026)",
+      "columna_inventario": 44,
+      "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
       "productos": [
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 1200.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806939",
           "descripcion": "AVIKO CRINKLE CUT 12MM 4 X 2.5 KG",
-          "inventario": 9.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 225.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806694",
           "descripcion": "AVIKO SUPER CRUNCH 9.5mm 3/8 4x2500g",
-          "inventario": 81.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 165.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "804104",
           "descripcion": "HASHBROWN TRIANG",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806686",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "804109",
           "descripcion": "AVIKO SHOESTRING 5x2500g",
-          "inventario": 143.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 305.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806980",
           "descripcion": "AVIKO SPICY JACKET WEDGES 4x2500g",
-          "inventario": 40.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 159.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806982",
           "descripcion": "AROS DE CEBOLLA 1X1000g",
-          "inventario": 82.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 77.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "804661",
           "descripcion": "AVIKO STEAK FRIES  4X2500G 4X5.5 LBS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "806702",
           "descripcion": "AVIKO H SUPER CRUNCH 15mm 6x2500g",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 92.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "807769",
           "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "807329",
           "descripcion": "AVIKO ORIGINAL 20X450G",
-          "inventario": 248.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 368.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "805411",
           "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
-          "inventario": 225.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 145.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "807679",
           "descripcion": "AVIKO SPICY WEDGES 20X500G",
-          "inventario": 213.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 333.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "805168",
           "descripcion": "AVIKO AROS DE CEBOLLA PREFRITOS 25/400g",
           "inventario": 301.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "807363",
           "descripcion": "Aviko H Super Crunch 14x600g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "809529",
           "descripcion": "Aviko SC Airfr. PommesFrites 10x750",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "505015",
           "descripcion": "10 MM NATURAL-KAIDA",
-          "inventario": 622.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 621.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         },
         {
           "codigo": "TOTAL AVIKO",
           "descripcion": "",
-          "inventario": 1964.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 39
+          "inventario": 3991.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 44
         }
       ]
     },
@@ -1577,43 +1577,22 @@
       "hoja": "CANBELT",
       "columna_codigo": 1,
       "columna_descripcion": 2,
-      "columna_inventario": 38,
-      "periodo_inventario": "2026-07 (INV JULIO 2026)",
+      "columna_inventario": 43,
+      "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
       "productos": [
         {
           "codigo": "806939",
           "descripcion": "AVIKO CRINKLE CUT 12MM 4 X 2.5 KG",
-          "inventario": 9.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         },
         {
-          "codigo": "803528",
-          "descripcion": "AVIKO H POMMES FRITES 11mm 7/16 4x2500g",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
-        },
-        {
-          "codigo": "806980",
-          "descripcion": "AVIKO SPICY JACKET WEDGES 4x2500g",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
-        },
-        {
-          "codigo": "807679",
-          "descripcion": "AVIKO SPICY JACKET WEDGES 20X500G",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
-        },
-        {
-          "codigo": "806918",
-          "descripcion": "AVIKO H SUPER LONG 9.5 MM SKIN ON 4x2500g",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 38
+          "codigo": "805411",
+          "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
+          "inventario": 44.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 43
         }
       ]
     },
@@ -1621,891 +1600,742 @@
       "hoja": "FRIJALISCO",
       "columna_codigo": 5,
       "columna_descripcion": 6,
-      "columna_inventario": 42,
-      "periodo_inventario": "2026-07 (INV JULIO 2026)",
+      "columna_inventario": 47,
+      "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
       "productos": [
         {
           "codigo": "105632",
           "descripcion": "10 MM NATURAL",
-          "inventario": 1545.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 1690.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102341",
           "descripcion": "10 MM CON COBERTURA",
-          "inventario": 622.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 514.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102310",
           "descripcion": "7 MM CON COBERTURA",
-          "inventario": 429.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 303.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102211",
           "descripcion": "7 MM NATURAL",
-          "inventario": 266.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 164.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "104215",
           "descripcion": "10 MM CON COBERTURA Y CASCARA",
-          "inventario": 513.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 549.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "114054",
           "descripcion": "GAJOS SAZONADOS",
-          "inventario": 544.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 534.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "102419",
           "descripcion": "ONDULADA",
-          "inventario": 216.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 174.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "70714906",
           "descripcion": "PAPA ONDULADA SUSTITUTO DE 102419",
-          "inventario": 3.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 5.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "R00640",
           "descripcion": "AROS DE CEBOLLA",
-          "inventario": 69.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 73.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "R00641",
           "descripcion": "7 MM NATURAL SUA SUSTITUTO DE 102211",
           "inventario": 39.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "TOTALES",
           "descripcion": "",
-          "inventario": 4246.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 4045.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "CÓDIGO",
           "descripcion": "DESCRIPCIÓN",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": 1242.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "806982",
           "descripcion": "AROS DE CEBOLLA 1X1000g",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "inventario": null,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "CÓDIGO",
           "descripcion": "DESCRIPCIÓN",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "505015",
           "descripcion": "10 MM NATURAL-KAIDA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         },
         {
           "codigo": "505016",
           "descripcion": "7MM NATURAL - KAIDA",
-          "inventario": 1204.0,
-          "periodo_inventario": "2026-07 (INV JULIO 2026)",
-          "columna_inventario": 42
-        }
-      ]
-    },
-    {
-      "hoja": "RESUMEN LEÓN",
-      "columna_codigo": 5,
-      "columna_descripcion": 6,
-      "columna_inventario": null,
-      "periodo_inventario": null,
-      "productos": [
-        {
-          "codigo": "807769",
-          "descripcion": "R - PAPAS FRITAS CORTE REG 10 X 1000G",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "807329",
-          "descripcion": "R - AVIKO ORIGINAL 20X450G",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "805411",
-          "descripcion": "R - PAPAS FRITAS ZIGZAG 12/750GRS",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "807679",
-          "descripcion": "R - AVIKO SPICY WEDGES 20X500G",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "260612",
-          "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "802142",
-          "descripcion": "AVIKO STRAIGHT CUT 3/8 4x2500g",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "806982",
-          "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "806685",
-          "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "804104",
-          "descripcion": "HASHBROWN TRIANG",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "806694",
-          "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "R06CAMP06",
-          "descripcion": "MANGO CON CHAMOY",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "R06CAMPFCC",
-          "descripcion": "FRESA COONGELADA CON CREMA 283G (CJ DE 24PZ)",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "04CMAR07",
-          "descripcion": "BONELESS NATURAL FRESKECITO",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "102341",
-          "descripcion": "10 MM CON COBERTURA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "102310",
-          "descripcion": "7 MM CON COBERTURA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "102211",
-          "descripcion": "7 MM NATURAL",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "104215",
-          "descripcion": "10 MM CON COBERTURA Y CASCARA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "114054",
-          "descripcion": "GAJOS SAZONADOS",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "102419",
-          "descripcion": "ONDULADA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "102013",
-          "descripcion": "10 MM NATURAL",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "01KFS02",
-          "descripcion": "PAPA ON DULADA SUSTITUTO",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "01KFS03",
-          "descripcion": "PAPA 1/4 NATURAL SUSTITUTO",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "01RCA01",
-          "descripcion": "PAPA CHIPPERBEC SUSTITUTO 102211",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "01RCA02",
-          "descripcion": "PAPA RECTA 3/8 SUSTITUTO 102013",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "105632",
-          "descripcion": "10 MM NATURAL",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "505015",
-          "descripcion": "10 MM NATURAL-KAIDA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
-        },
-        {
-          "codigo": "505016",
-          "descripcion": "1/4 MM NATURAL-KAIDA",
-          "inventario": null,
-          "periodo_inventario": null,
-          "columna_inventario": null
+          "inventario": 578.0,
+          "periodo_inventario": "2026-08 (INV AGOSTO 2026)",
+          "columna_inventario": 47
         }
       ]
     },
     {
       "hoja": "BAJIO",
-      "columna_codigo": 1,
-      "columna_descripcion": 2,
-      "columna_inventario": 13,
-      "periodo_inventario": "2026-07 (INV JULIO  2026)",
+      "columna_codigo": 5,
+      "columna_descripcion": 6,
+      "columna_inventario": 9,
+      "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
       "productos": [
         {
           "codigo": "807769",
-          "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
-          "inventario": 146.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
+          "descripcion": "R - PAPAS FRITAS CORTE REG 10 X 1000G",
+          "inventario": 124.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "807329",
-          "descripcion": "AVIKO ORIGINAL 20X450G",
-          "inventario": 167.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
+          "descripcion": "R - AVIKO ORIGINAL 20X450G",
+          "inventario": 166.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "805411",
-          "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
-          "inventario": 660.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
+          "descripcion": "R - PAPAS FRITAS ZIGZAG 12/750GRS",
+          "inventario": 619.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "807679",
-          "descripcion": "AVIKO SPICY WEDGES 20X500G",
-          "inventario": 285.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "505015",
-          "descripcion": "10 MM NATURAL-KAIDA",
-          "inventario": 57.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "505016",
-          "descripcion": "1/4 MM NATURAL-KAIDA",
-          "inventario": 200.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "105632",
-          "descripcion": "10 MM NATURAL",
-          "inventario": 369.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102211",
-          "descripcion": "7 MM NATURAL",
-          "inventario": 2.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102310",
-          "descripcion": "7 MM CON COBERTURA",
-          "inventario": 114.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102419",
-          "descripcion": "ONDULADA",
-          "inventario": 63.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "104215",
-          "descripcion": "10 MM CON COBERTURA Y CASCARA",
-          "inventario": 70.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "114054",
-          "descripcion": "GAJOS SAZONADOS",
-          "inventario": 80.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102341",
-          "descripcion": "10 MM CON COBERTURA",
-          "inventario": 277.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "R06CAMP06",
-          "descripcion": "MANGO CON CHAMOY",
-          "inventario": 30.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "R06CAMPFCC",
-          "descripcion": "FRESA COONGELADA CON CREMA 283G (CJ DE 24PZ)",
-          "inventario": 86.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "04CMAR07",
-          "descripcion": "BONELESS NATURAL FRESKECITO",
-          "inventario": 27.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "806982",
-          "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
-          "inventario": 31.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "FRISACEL",
-          "descripcion": "",
-          "inventario": 2664.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
-          "inventario": null,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102013",
-          "descripcion": "10 MM NATURAL",
-          "inventario": 45.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102341",
-          "descripcion": "10 MM CON COBERTURA",
-          "inventario": 182.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102310",
-          "descripcion": "7 MM CON COBERTURA",
-          "inventario": 58.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102211",
-          "descripcion": "7 MM NATURAL",
-          "inventario": 16.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "104215",
-          "descripcion": "10 MM CON COBERTURA Y CASCARA",
-          "inventario": 65.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "114054",
-          "descripcion": "GAJOS SAZONADOS",
-          "inventario": 33.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "102419",
-          "descripcion": "ONDULADA",
-          "inventario": 34.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "806982",
-          "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
-          "inventario": 16.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "505015",
-          "descripcion": "10 MM NATURAL-KAIDA",
-          "inventario": 17.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "04CMAR07",
-          "descripcion": "BONELESS NATURAL FRESKECITO",
-          "inventario": 41.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        },
-        {
-          "codigo": "GUARDAMEX",
-          "descripcion": "",
-          "inventario": 507.0,
-          "periodo_inventario": "2026-07 (INV JULIO  2026)",
-          "columna_inventario": 13
-        }
-      ]
-    },
-    {
-      "hoja": "VULPES PAPAS",
-      "columna_codigo": 1,
-      "columna_descripcion": 2,
-      "columna_inventario": 33,
-      "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-      "productos": [
-        {
-          "codigo": "807769",
-          "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "807329",
-          "descripcion": "AVIKO ORIGINAL 20X450G",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "805411",
-          "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "807679",
-          "descripcion": "AVIKO SPICY WEDGES 20X500G",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "descripcion": "R - AVIKO SPICY WEDGES 20X500G",
+          "inventario": 259.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "inventario": 1241.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "802142",
           "descripcion": "AVIKO STRAIGHT CUT 3/8 4x2500g",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "806982",
           "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "inventario": 40.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "804104",
           "descripcion": "HASHBROWN TRIANG",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
-          "codigo": "806686",
+          "codigo": "806694",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "R06CAMP06",
+          "descripcion": "MANGO CON CHAMOY",
+          "inventario": 148.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "R06CAMPFCC",
+          "descripcion": "FRESA COONGELADA CON CREMA 283G (CJ DE 24PZ)",
+          "inventario": 16.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "04CMAR07",
+          "descripcion": "BONELESS NATURAL FRESKECITO",
+          "inventario": 47.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "04CMAR06",
+          "descripcion": "NUGGET NATURAL FRESKECITO",
+          "inventario": 107.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "102341",
+          "descripcion": "10 MM CON COBERTURA",
+          "inventario": 313.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "102310",
+          "descripcion": "7 MM CON COBERTURA",
+          "inventario": 204.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "102211",
+          "descripcion": "7 MM NATURAL",
+          "inventario": 93.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "104215",
+          "descripcion": "10 MM CON COBERTURA Y CASCARA",
+          "inventario": 130.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "114054",
+          "descripcion": "GAJOS SAZONADOS",
+          "inventario": 133.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "102419",
+          "descripcion": "ONDULADA",
+          "inventario": 102.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "102013",
+          "descripcion": "10 MM NATURAL",
+          "inventario": 35.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "01KFS02",
           "descripcion": "PAPA ON DULADA SUSTITUTO",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "01KFS03",
           "descripcion": "PAPA 1/4 NATURAL SUSTITUTO",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "01RCA01",
-          "descripcion": "PAPA CHIPPERBEC",
+          "descripcion": "PAPA CHIPPERBEC SUSTITUTO 102211",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "01RCA02",
-          "descripcion": "PAPA RECTA 3/8 SUSTITUTO",
+          "descripcion": "PAPA RECTA 3/8 SUSTITUTO 102013",
           "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "105632",
           "descripcion": "10 MM NATURAL",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "102341",
-          "descripcion": "10 MM CON COBERTURA",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "102310",
-          "descripcion": "7 MM CON COBERTURA",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "102211",
-          "descripcion": "7 MM NATURAL",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "104215",
-          "descripcion": "10 MM CON COBERTURA Y CASCARA",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "114054",
-          "descripcion": "GAJOS SAZONADOS",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "102419",
-          "descripcion": "ONDULADA",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "102013",
-          "descripcion": "10 MM NATURAL",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
-          "inventario": null,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "inventario": 217.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         },
         {
           "codigo": "505015",
           "descripcion": "10 MM NATURAL-KAIDA",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-06 (INV JUNIO 2026)",
-          "columna_inventario": 33
+          "inventario": 258.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
+        },
+        {
+          "codigo": "505016",
+          "descripcion": "1/4 MM NATURAL-KAIDA",
+          "inventario": 673.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 9
         }
       ]
     },
     {
-      "hoja": "BAJO CERO",
-      "columna_codigo": 1,
-      "columna_descripcion": 2,
-      "columna_inventario": 38,
-      "periodo_inventario": "2026-07 (INV JUlIO  2026)",
+      "hoja": "VULPES PAPAS",
+      "columna_codigo": 5,
+      "columna_descripcion": 6,
+      "columna_inventario": 8,
+      "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
       "productos": [
         {
           "codigo": "807769",
-          "descripcion": "PAPAS FRITAS CORTE REG 10 X 1000G",
+          "descripcion": "R - PAPAS FRITAS CORTE REG 10 X 1000G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "807329",
-          "descripcion": "AVIKO ORIGINAL 20X450G",
+          "descripcion": "R - AVIKO ORIGINAL 20X450G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "805411",
-          "descripcion": "PAPAS FRITAS ZIGZAG 12/750GRS",
+          "descripcion": "R - PAPAS FRITAS ZIGZAG 12/750GRS",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "807679",
-          "descripcion": "AVIKO SPICY WEDGES 20X500G",
+          "descripcion": "R - AVIKO SPICY WEDGES 20X500G",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "260612",
           "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "802142",
           "descripcion": "AVIKO STRAIGHT CUT 3/8 4x2500g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "806982",
           "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "806685",
           "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "inventario": 0.5,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "804104",
           "descripcion": "HASHBROWN TRIANG",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "inventario": 0.25,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
-          "codigo": "806686",
+          "codigo": "806694",
           "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
-        },
-        {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
-          "codigo": "105632",
-          "descripcion": "10 MM NATURAL",
-          "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "codigo": "R06CAMP06",
+          "descripcion": "MANGO CON CHAMOY",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "R06CAMPFCC",
+          "descripcion": "FRESA COONGELADA CON CREMA 283G (CJ DE 24PZ)",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "04CMAR07",
+          "descripcion": "BONELESS NATURAL FRESKECITO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "04CMAR06",
+          "descripcion": "NUGGET NATURAL FRESKECITO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "102341",
           "descripcion": "10 MM CON COBERTURA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "102310",
           "descripcion": "7 MM CON COBERTURA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "102211",
           "descripcion": "7 MM NATURAL",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "104215",
           "descripcion": "10 MM CON COBERTURA Y CASCARA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "114054",
           "descripcion": "GAJOS SAZONADOS",
-          "inventario": 30.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "102419",
           "descripcion": "ONDULADA",
-          "inventario": 30.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
-          "codigo": "CÓDIGO",
-          "descripcion": "DESCRIPCIÓN",
+          "codigo": "102013",
+          "descripcion": "10 MM NATURAL",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "01KFS02",
+          "descripcion": "PAPA ON DULADA SUSTITUTO",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "01KFS03",
+          "descripcion": "PAPA 1/4 NATURAL SUSTITUTO",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "01RCA01",
+          "descripcion": "PAPA CHIPPERBEC SUSTITUTO 102211",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "01RCA02",
+          "descripcion": "PAPA RECTA 3/8 SUSTITUTO 102013",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "105632",
+          "descripcion": "10 MM NATURAL",
           "inventario": null,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
         },
         {
           "codigo": "505015",
           "descripcion": "10 MM NATURAL-KAIDA",
           "inventario": 0.0,
-          "periodo_inventario": "2026-07 (INV JUlIO  2026)",
-          "columna_inventario": 38
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        },
+        {
+          "codigo": "505016",
+          "descripcion": "1/4 MM NATURAL-KAIDA",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 8
+        }
+      ]
+    },
+    {
+      "hoja": "BAJO CERO",
+      "columna_codigo": 5,
+      "columna_descripcion": 6,
+      "columna_inventario": 7,
+      "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+      "productos": [
+        {
+          "codigo": "807769",
+          "descripcion": "R - PAPAS FRITAS CORTE REG 10 X 1000G",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "807329",
+          "descripcion": "R - AVIKO ORIGINAL 20X450G",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "805411",
+          "descripcion": "R - PAPAS FRITAS ZIGZAG 12/750GRS",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "807679",
+          "descripcion": "R - AVIKO SPICY WEDGES 20X500G",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "260612",
+          "descripcion": "CASTEL STRAIGHT CUT FRIES 4X2500g",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "802142",
+          "descripcion": "AVIKO STRAIGHT CUT 3/8 4x2500g",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "806982",
+          "descripcion": "AVIKO BREADED ONION RINGS 6x1000g",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "806685",
+          "descripcion": "AVIKO H PREM.CRUNCH SHOESTRING 7MM 4X2270G",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "804104",
+          "descripcion": "HASHBROWN TRIANG",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "806694",
+          "descripcion": "AVIKO H PREM CRUNCH 9.5 mm 3/8 4x2270g",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "R06CAMP06",
+          "descripcion": "MANGO CON CHAMOY",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "R06CAMPFCC",
+          "descripcion": "FRESA COONGELADA CON CREMA 283G (CJ DE 24PZ)",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "04CMAR07",
+          "descripcion": "BONELESS NATURAL FRESKECITO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "04CMAR06",
+          "descripcion": "NUGGET NATURAL FRESKECITO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "102341",
+          "descripcion": "10 MM CON COBERTURA",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "102310",
+          "descripcion": "7 MM CON COBERTURA",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "102211",
+          "descripcion": "7 MM NATURAL",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "104215",
+          "descripcion": "10 MM CON COBERTURA Y CASCARA",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "114054",
+          "descripcion": "GAJOS SAZONADOS",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "102419",
+          "descripcion": "ONDULADA",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "102013",
+          "descripcion": "10 MM NATURAL",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "01KFS02",
+          "descripcion": "PAPA ON DULADA SUSTITUTO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "01KFS03",
+          "descripcion": "PAPA 1/4 NATURAL SUSTITUTO",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "01RCA01",
+          "descripcion": "PAPA CHIPPERBEC SUSTITUTO 102211",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "01RCA02",
+          "descripcion": "PAPA RECTA 3/8 SUSTITUTO 102013",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "105632",
+          "descripcion": "10 MM NATURAL",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "505015",
+          "descripcion": "10 MM NATURAL-KAIDA",
+          "inventario": 0.0,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
+        },
+        {
+          "codigo": "505016",
+          "descripcion": "1/4 MM NATURAL-KAIDA",
+          "inventario": null,
+          "periodo_inventario": "2026-08 (RESUMEN LEÓN)",
+          "columna_inventario": 7
         }
       ]
     }

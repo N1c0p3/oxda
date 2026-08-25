@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Extrae métricas de logística (2022 Ventas Proyeccion..xlsx), el histórico
-completo de ventas 2025, el corte 2026 y el inventario físico de julio.
+completo de ventas 2025, el corte 2026 y el inventario físico vigente.
 Genera archivos JSON en public/data/ para consumo del frontend.
 """
 import json
@@ -362,10 +362,12 @@ def load_inventory_snapshot():
     raw = json.loads(FILE_INVENTORY.read_text(encoding="utf-8"))
     stock = {}
     stale = []
+    expected_period = str(raw.get("fecha_corte") or "")[:7]
+    tracked_sheets = set(INVENTORY_SHEET_BY_SALES_WAREHOUSE.values())
     for warehouse in raw.get("almacenes", []):
         sheet = warehouse.get("hoja", "")
         period = warehouse.get("periodo_inventario") or ""
-        if not period.startswith("2026-07"):
+        if sheet in tracked_sheets and expected_period and not period.startswith(expected_period):
             stale.append(f"{sheet}: {period or 'sin periodo'}")
         for item in warehouse.get("productos", []):
             code = canonical_code(item.get("codigo"))

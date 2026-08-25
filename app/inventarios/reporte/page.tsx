@@ -52,6 +52,7 @@ type ReporteData = {
   movements: InventoryMovement[];
   rotationHistory: RotationRow[];
   rotationWeekly: RotationRow[];
+  source?: { cutOff?: string; source?: string };
 };
 
 const emptyData: ReporteData = { products: [], movements: [], rotationHistory: [], rotationWeekly: [] };
@@ -60,6 +61,11 @@ const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
 const number = (value: number) => value.toLocaleString("es-MX", { maximumFractionDigits: 1 });
 const productRowKey = (item: InventoryProduct) => `${item.zone}|${item.warehouse}|${item.code}|${item.lot}`;
+const daysBefore = (date: string, days: number) => {
+  const value = new Date(`${date}T12:00:00`);
+  value.setDate(value.getDate() - days);
+  return value.toISOString().slice(0, 10);
+};
 
 export default function InventoryCenterPage() {
   const { zone } = useZone();
@@ -67,20 +73,26 @@ export default function InventoryCenterPage() {
   const [data, setData] = useState<ReporteData>(emptyData);
   const { products, movements } = data;
   const [period, setPeriod] = useState<"semana" | "mes" | "personalizado">("mes");
-  const [from, setFrom] = useState("2026-07-01");
-  const [to, setTo] = useState("2026-07-31");
+  const [from, setFrom] = useState("2026-08-01");
+  const [to, setTo] = useState("2026-08-31");
   const [warehouse, setWarehouse] = useState("TODOS");
   const [selectedCode, setSelectedCode] = useState("");
   const [targetMonths, setTargetMonths] = useState(1.5);
   const [editingExpiry, setEditingExpiry] = useState("");
-  const [movementForm, setMovementForm] = useState({ date: "2026-07-31", type: "Entrada" as InventoryMovement["type"], code: "", units: "1", reference: "" });
+  const [movementForm, setMovementForm] = useState({ date: "2026-08-31", type: "Entrada" as InventoryMovement["type"], code: "", units: "1", reference: "" });
 
   useEffect(() => {
     fetch("/api/v1/inventarios/reporte")
       .then((res) => res.json())
       .then((payload: ReporteData) => {
         setData(payload);
+        const cutOff = payload.source?.cutOff;
         const first = payload.products[0];
+        if (cutOff) {
+          setFrom(`${cutOff.slice(0, 7)}-01`);
+          setTo(cutOff);
+          setMovementForm((current) => ({ ...current, date: cutOff }));
+        }
         if (first) {
           setSelectedCode(first.code);
           setMovementForm((current) => ({ ...current, code: first.code }));
@@ -155,9 +167,9 @@ export default function InventoryCenterPage() {
   const idealSale = selected ? Math.max(0, selected.units - idealStock) : 0;
 
   const dateRange = period === "semana"
-    ? { from: "2026-07-25", to: "2026-07-31" }
+    ? { from: daysBefore(to, 6), to }
     : period === "mes"
-      ? { from: "2026-07-01", to: "2026-07-31" }
+      ? { from: `${to.slice(0, 7)}-01`, to }
       : { from, to };
   const visibleMovements = movements.filter((item) =>
     (zone === "TODAS" || item.zone === zone) &&
@@ -244,7 +256,7 @@ export default function InventoryCenterPage() {
   return (
     <div className="page" style={{ padding: "4px 4px 32px" }}>
       <header className="page-header" style={{ display: "flex", justifyContent: "space-between", gap: 14, alignItems: "flex-start" }}>
-        <div><h1 className="page-title">Centro de inventarios</h1><p className="page-subtitle">Existencias físicas, lotes, caducidades, movimientos y tránsito · {zone}</p></div>
+        <div><h1 className="page-title">Centro de inventarios</h1><p className="page-subtitle">Existencias físicas, lotes, caducidades, movimientos y tránsito · {zone} · corte {data.source?.cutOff ?? "por cargar"}</p></div>
         <button className="btn btn-ghost" onClick={exportInventory}><Download size={16} /> Exportar</button>
       </header>
 

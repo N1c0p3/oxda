@@ -12,7 +12,7 @@ npm run data:refresh
 El proceso genera los derivados auditables para ventas, inventario, logística y predicción.
 El pronóstico usa el histórico completo de
 `2025 Reporte de Ventas Oxda-Vulpes al 31.12.2025..xlsx`, el corte 2026 y
-`INVENTARIOS OXDA JULIO 2026..xlsx`. Para cada producto/almacén combina el
+`INVENTARIOS OXDA AGOSTO 2026..xlsx`. Para cada producto/almacén combina el
 mismo mes de 2025 ajustado por la tendencia 2026 con el promedio de los tres
 meses completos más recientes; después descuenta la existencia física para
 calcular la compra sugerida.

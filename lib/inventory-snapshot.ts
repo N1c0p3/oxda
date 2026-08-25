@@ -6,6 +6,11 @@ type RawWarehouse = {
   hoja: string;
   productos: Array<{ codigo?: unknown; descripcion?: unknown; inventario?: unknown }>;
 };
+type RawInventoryData = {
+  archivo?: unknown;
+  fecha_corte?: unknown;
+  almacenes: RawWarehouse[];
+};
 type SalesProduct = { codigoProducto?: unknown; nombreProducto?: unknown; nombreAlmacen?: unknown; unidades?: unknown; costoTotal?: unknown; promedioDiarioUnidades?: unknown };
 type Prediction = { codigoProducto?: unknown; almacen?: unknown; demanda30Dias?: unknown };
 
@@ -23,7 +28,8 @@ const SALES_WAREHOUSES: Record<string, string[]> = {
 };
 const DETAIL_WAREHOUSES = new Set(Object.keys(SALES_WAREHOUSES));
 
-const warehouses = (inventoryData as unknown as { almacenes: RawWarehouse[] }).almacenes;
+const snapshot = inventoryData as unknown as RawInventoryData;
+const warehouses = snapshot.almacenes;
 const sales = (salesData as unknown as { productWarehouse: SalesProduct[] }).productWarehouse;
 const predictions = (predictionsData as unknown as { demandPredictions: Prediction[] }).demandPredictions;
 const numeric = (value: unknown) => {
@@ -32,7 +38,7 @@ const numeric = (value: unknown) => {
 };
 const validCode = (value: string) => {
   const code = value.trim().toUpperCase();
-  return /^[A-Z0-9][A-Z0-9.-]{2,}$/.test(code) && !/^(TOTAL|RESUMEN|C[ÓO]DIGO)/.test(code);
+  return /^[A-Z0-9][A-Z0-9.-]{2,}$/.test(code) && !/^(TOTAL|RESUMEN|C[ÓO]DIGO|FRISACEL|GUARDAMEX)/.test(code);
 };
 
 export function inventorySnapshotProducts() {
@@ -71,4 +77,7 @@ export function inventorySnapshotProducts() {
   });
 }
 
-export const inventorySnapshotMeta = { cutOff: "2026-07-31", source: "INVENTARIOS OXDA JULIO 2026..xlsx" };
+export const inventorySnapshotMeta = {
+  cutOff: String(snapshot.fecha_corte ?? ""),
+  source: String(snapshot.archivo ?? ""),
+};

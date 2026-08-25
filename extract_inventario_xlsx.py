@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Extractor robusto de INVENTARIOS OXDA JULIO 2026..xlsx.
+Extractor robusto de INVENTARIOS OXDA AGOSTO 2026..xlsx.
 
 - Hoja "Resumen Inventario": lee cada sección mensual y toma la columna de
   cobertura/último número por posición fija (última columna del encabezado).
-- Hojas de almacén: toma la última columna explícita de "INV JULIO 2026". Si
-  una bodega todavía no trae julio, conserva el último cierre anterior y deja
-  documentado el periodo realmente utilizado.
+- Hojas de almacén: toma la última columna explícita de inventario no posterior
+  al corte configurado. Si una bodega todavía no trae agosto, conserva el
+  último cierre anterior y deja documentado el periodo realmente utilizado.
 """
 import json
 import re
@@ -19,10 +19,10 @@ try:
 except ImportError as exc:  # pragma: no cover
     raise SystemExit("openpyxl no está instalado. Ejecuta: pip3 install openpyxl") from exc
 
-XLSX_PATH = Path("INVENTARIOS OXDA JULIO 2026..xlsx")
+XLSX_PATH = Path("INVENTARIOS OXDA AGOSTO 2026..xlsx")
 OUTPUT_JSON = Path("inventario_xlsx_extraido.json")
 OUTPUT_TS = Path("inventario_xlsx_extraido.ts")
-CUT_OFF_MONTH = 7
+CUT_OFF_MONTH = 8
 CUT_OFF_YEAR = 2026
 
 MONTH_NUMBER = {
@@ -234,7 +234,7 @@ def read_record(row: List[Any], indices: Dict[str, Optional[int]], header_len: i
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 2. HOJAS DE ALMACÉN — inventario al corte de julio
+# 2. HOJAS DE ALMACÉN — inventario al corte configurado
 # ═══════════════════════════════════════════════════════════════════════════
 
 def inventory_period(value: Any) -> Optional[tuple[int, int]]:
@@ -268,7 +268,7 @@ def find_inventory_column(ws) -> tuple[Optional[int], Optional[str]]:
 
 def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
     """
-    Busca CÓDIGO, DESCRIPCIÓN y el cierre más reciente no posterior a julio.
+    Busca CÓDIGO, DESCRIPCIÓN y el cierre más reciente no posterior al corte.
     """
     col_codigo: Optional[int] = None
     col_descripcion: Optional[int] = None
@@ -321,6 +321,52 @@ def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
         "periodo_inventario": periodo_inventario,
         "productos": productos,
     }
+
+
+def read_leon_summary(ws) -> Dict[str, Dict[str, Any]]:
+    header_columns: Dict[str, int] = {}
+    header_row = 0
+    for row in range(1, ws.max_row + 1):
+        values = {ascii_text(ws.cell(row=row, column=col).value): col for col in range(1, ws.max_column + 1)}
+        if "codigo" in values and "descripcion" in values and "bajo cero" in values and "vulpes" in values and "frisacel guardamex" in values:
+            header_columns = values
+            header_row = row
+            break
+
+    targets = {
+        "BAJO CERO": "bajo cero",
+        "VULPES PAPAS": "vulpes",
+        "BAJIO": "frisacel guardamex",
+    }
+    result = {
+        sheet: {
+            "hoja": sheet,
+            "columna_codigo": header_columns.get("codigo"),
+            "columna_descripcion": header_columns.get("descripcion"),
+            "columna_inventario": header_columns.get(source),
+            "periodo_inventario": f"{CUT_OFF_YEAR}-{CUT_OFF_MONTH:02d} (RESUMEN LEÓN)",
+            "productos": [],
+        }
+        for sheet, source in targets.items()
+    }
+    if not header_columns:
+        return result
+
+    for row in range(header_row + 1, ws.max_row + 1):
+        code = ws.cell(row=row, column=header_columns["codigo"]).value
+        if code is None or ascii_text(code) == "codigo":
+            continue
+        description = ws.cell(row=row, column=header_columns["descripcion"]).value
+        for sheet, source in targets.items():
+            column = header_columns[source]
+            result[sheet]["productos"].append({
+                "codigo": str(code).strip(),
+                "descripcion": str(description).strip() if description else "",
+                "inventario": parse_number(ws.cell(row=row, column=column).value),
+                "periodo_inventario": result[sheet]["periodo_inventario"],
+                "columna_inventario": column,
+            })
+    return result
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -423,7 +469,7 @@ def build_report_typescript(data: Dict[str, Any], meses_filtro: Optional[List[st
 def parse_args() -> Any:
     import argparse
     parser = argparse.ArgumentParser(
-        description="Extrae datos de INVENTARIOS OXDA JULIO 2026..xlsx"
+        description="Extrae datos de INVENTARIOS OXDA AGOSTO 2026..xlsx"
     )
     parser.add_argument(
         "--mes",
@@ -447,11 +493,12 @@ def main() -> None:
     if "Resumen Inventario" in wb.sheetnames:
         resumen = read_resumen_inventario(wb["Resumen Inventario"])
 
+    leon_summary = read_leon_summary(wb["RESUMEN LEÓN"]) if "RESUMEN LEÓN" in wb.sheetnames else {}
     almacenes = []
     for name in wb.sheetnames:
-        if name in ("Resumen Inventario", "$$$$$", "Resumen Ventas", "Resumen T.C."):
+        if name in ("Resumen Inventario", "$$$$$", "Resumen Ventas", "Resumen T.C.", "RESUMEN LEÓN"):
             continue
-        almacenes.append(read_almacen_sheet(wb[name], name))
+        almacenes.append(leon_summary.get(name) or read_almacen_sheet(wb[name], name))
 
     data = {
         "archivo": str(XLSX_PATH),
