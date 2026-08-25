@@ -59,6 +59,7 @@ const emptyData: ReporteData = { products: [], movements: [], rotationHistory: [
 const money = (value: number) =>
   value.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
 const number = (value: number) => value.toLocaleString("es-MX", { maximumFractionDigits: 1 });
+const productRowKey = (item: InventoryProduct) => `${item.zone}|${item.warehouse}|${item.code}|${item.lot}`;
 
 export default function InventoryCenterPage() {
   const { zone } = useZone();
@@ -66,13 +67,13 @@ export default function InventoryCenterPage() {
   const [data, setData] = useState<ReporteData>(emptyData);
   const { products, movements } = data;
   const [period, setPeriod] = useState<"semana" | "mes" | "personalizado">("mes");
-  const [from, setFrom] = useState("2026-05-01");
-  const [to, setTo] = useState("2026-05-31");
+  const [from, setFrom] = useState("2026-07-01");
+  const [to, setTo] = useState("2026-07-31");
   const [warehouse, setWarehouse] = useState("TODOS");
   const [selectedCode, setSelectedCode] = useState("");
   const [targetMonths, setTargetMonths] = useState(1.5);
   const [editingExpiry, setEditingExpiry] = useState("");
-  const [movementForm, setMovementForm] = useState({ date: "2026-05-13", type: "Entrada" as InventoryMovement["type"], code: "", units: "1", reference: "" });
+  const [movementForm, setMovementForm] = useState({ date: "2026-07-31", type: "Entrada" as InventoryMovement["type"], code: "", units: "1", reference: "" });
 
   useEffect(() => {
     fetch("/api/v1/inventarios/reporte")
@@ -110,31 +111,82 @@ export default function InventoryCenterPage() {
   const totalUnits = zoneProducts.reduce((sum, item) => sum + item.units, 0);
   const totalValue = zoneProducts.reduce((sum, item) => sum + item.units * item.costBox, 0);
   const totalTransit = zoneProducts.reduce((sum, item) => sum + item.inTransit, 0);
+  const productSummaries = useMemo(() => {
+    const summaries = new Map<string, {
+      code: string;
+      product: string;
+      units: number;
+      monthlyDemand: number;
+      inventoryValue: number;
+      inTransit: number;
+    }>();
+
+    zoneProducts.forEach((item) => {
+      const current = summaries.get(item.code) ?? {
+        code: item.code,
+        product: item.product,
+        units: 0,
+        monthlyDemand: 0,
+        inventoryValue: 0,
+        inTransit: 0,
+      };
+      current.units += item.units;
+      current.monthlyDemand += item.monthlyDemand;
+      current.inventoryValue += item.units * item.costBox;
+      current.inTransit += item.inTransit;
+      summaries.set(item.code, current);
+    });
+
+    return [...summaries.values()]
+      .map((item) => ({
+        ...item,
+        costBox: item.units > 0 ? item.inventoryValue / item.units : 0,
+      }))
+      .sort((a, b) => a.code.localeCompare(b.code, "es-MX", { numeric: true }));
+  }, [zoneProducts]);
   const coverageOf = (item: InventoryProduct) => item.monthlyDemand > 0 ? item.units / item.monthlyDemand : null;
   const critical = zoneProducts.filter((item) => {
     const coverage = coverageOf(item);
     return coverage !== null && inventoryStatus(coverage) === "Crítico";
   });
-  const selected = products.find((item) => item.code === selectedCode) ?? products[0];
+  const selected = productSummaries.find((item) => item.code === selectedCode) ?? productSummaries[0];
   const idealStock = selected ? Math.ceil(selected.monthlyDemand * targetMonths) : 0;
   const replacementUnits = selected ? Math.max(0, idealStock - selected.units) : 0;
   const idealSale = selected ? Math.max(0, selected.units - idealStock) : 0;
 
   const dateRange = period === "semana"
-    ? { from: "2026-05-07", to: "2026-05-13" }
+    ? { from: "2026-07-25", to: "2026-07-31" }
     : period === "mes"
-      ? { from: "2026-05-01", to: "2026-05-31" }
+      ? { from: "2026-07-01", to: "2026-07-31" }
       : { from, to };
   const visibleMovements = movements.filter((item) =>
     (zone === "TODAS" || item.zone === zone) &&
     (warehouse === "TODOS" || item.warehouse === warehouse) &&
     item.date >= dateRange.from && item.date <= dateRange.to
   );
-  const participation = zoneProducts.map((item) => ({
-    name: item.code,
-    value: item.units,
-    participation: totalUnits ? item.units / totalUnits * 100 : 0,
-  }));
+  const participation = useMemo(() => {
+    const unitsByProduct = new Map<string, number>();
+
+    zoneProducts.forEach((item) => {
+      unitsByProduct.set(item.code, (unitsByProduct.get(item.code) ?? 0) + item.units);
+    });
+
+    const ranked = [...unitsByProduct.entries()]
+      .map(([name, value]) => ({ name, value }))
+      .filter((item) => item.value > 0)
+      .sort((a, b) => b.value - a.value);
+    const mainProducts = ranked.slice(0, 8);
+    const otherUnits = ranked.slice(8).reduce((sum, item) => sum + item.value, 0);
+    const chartItems = otherUnits > 0
+      ? [...mainProducts, { name: "Otros", value: otherUnits }]
+      : mainProducts;
+    const chartTotal = chartItems.reduce((sum, item) => sum + item.value, 0);
+
+    return chartItems.map((item) => ({
+      ...item,
+      name: `${item.name} · ${chartTotal > 0 ? (item.value / chartTotal * 100).toFixed(1) : "0.0"}%`,
+    }));
+  }, [zoneProducts]);
   const rotationSource = period === "mes"
     ? data.rotationHistory
     : data.rotationWeekly.filter((item: RotationRow) => period === "semana" ? (item.date ?? "") >= dateRange.from && (item.date ?? "") <= dateRange.to : (item.date ?? "") >= from && (item.date ?? "") <= to);
@@ -232,7 +284,7 @@ export default function InventoryCenterPage() {
           <ChartCard title="Rotación histórica" subtitle="Unidades vendidas ÷ inventario físico promedio">
             <AreaChartComponent data={rotation} dataKeys={[{ key: "rotation", name: "Rotación", color: "#003087" }]} xAxisKey="month" height={310} />
           </ChartCard>
-          <ChartCard title="Participación por producto" subtitle="Calculada por unidades, no por valor">
+          <ChartCard title="Participación por producto" subtitle="Top 8 por unidades; el resto se agrupa en Otros">
             <PieChartComponent data={participation} dataKey="value" nameKey="name" height={310} donut />
           </ChartCard>
         </div>
@@ -246,13 +298,13 @@ export default function InventoryCenterPage() {
             <tbody>{zoneProducts.map((item) => {
               const coverage = item.units / item.monthlyDemand;
               const status = inventoryStatus(coverage);
-              const editKey = `${item.code}-${item.lot}`;
+              const editKey = productRowKey(item);
               return <tr key={editKey}>
                 <td><strong style={{ color: "#60a5fa" }}>{item.code}</strong><small style={{ display: "block" }}>{item.product}</small></td>
                 <td><span className="badge badge-blue">{item.zone}</span></td><td>{item.warehouse}</td><td>{item.lot}</td>
                 <td>{editingExpiry === editKey
                   ? <span style={{ display: "flex", gap: 5 }}><input className="form-input" type="date" defaultValue={item.expiry} id={`expiry-${editKey}`} /><button className="btn btn-primary" onClick={() => updateExpiry(item, (document.getElementById(`expiry-${editKey}`) as HTMLInputElement).value)}><Check size={14} /></button></span>
-                  : <button className="btn btn-ghost" onClick={() => setEditingExpiry(editKey)}>{new Date(`${item.expiry}T12:00:00`).toLocaleDateString("es-MX")} <Pencil size={12} /></button>}
+                  : <button className="btn btn-ghost" onClick={() => setEditingExpiry(editKey)}>{item.expiry ? new Date(`${item.expiry}T12:00:00`).toLocaleDateString("es-MX") : "No informada"} <Pencil size={12} /></button>}
                 </td>
                 <td><strong>{number(item.units)}</strong></td><td>{totalUnits ? (item.units / totalUnits * 100).toFixed(1) : 0}%</td><td>{coverage.toFixed(2)} meses</td>
                 <td><span className={`badge ${status === "Crítico" ? "badge-red" : status === "Óptimo" ? "badge-green" : "badge-blue"}`}>{status}</span></td>
@@ -269,7 +321,7 @@ export default function InventoryCenterPage() {
             <div className="form-grid">
               <div className="form-group"><label className="form-label">Fecha</label><input required className="form-input" type="date" value={movementForm.date} onChange={(event) => setMovementForm({ ...movementForm, date: event.target.value })} /></div>
               <div className="form-group"><label className="form-label">Tipo</label><select className="form-input" value={movementForm.type} onChange={(event) => setMovementForm({ ...movementForm, type: event.target.value as InventoryMovement["type"] })}>{["Entrada", "Salida", "Transferencia", "Ajuste"].map((item) => <option key={item}>{item}</option>)}</select></div>
-              <div className="form-group"><label className="form-label">Producto</label><select className="form-input" value={movementForm.code} onChange={(event) => setMovementForm({ ...movementForm, code: event.target.value })}>{products.filter((item) => zone === "TODAS" || item.zone === zone).map((item) => <option key={item.code} value={item.code}>{item.code} · {item.product}</option>)}</select></div>
+              <div className="form-group"><label className="form-label">Producto</label><select className="form-input" value={movementForm.code} onChange={(event) => setMovementForm({ ...movementForm, code: event.target.value })}>{products.filter((item) => zone === "TODAS" || item.zone === zone).map((item) => <option key={productRowKey(item)} value={item.code}>{item.code} · {item.product} · {item.warehouse}</option>)}</select></div>
               <div className="form-group"><label className="form-label">Cajas / unidades</label><input required className="form-input" type="number" value={movementForm.units} onChange={(event) => setMovementForm({ ...movementForm, units: event.target.value })} /></div>
               <div className="form-group"><label className="form-label">Referencia / motivo</label><input required className="form-input" value={movementForm.reference} onChange={(event) => setMovementForm({ ...movementForm, reference: event.target.value.toUpperCase() })} /></div>
             </div>
@@ -285,15 +337,15 @@ export default function InventoryCenterPage() {
       {tab === "transito" && (
         <div className="card"><h2 className="card-title">Inventario en tránsito independiente</h2><div className="table-wrap"><table>
           <thead><tr><th>Código / producto</th><th>Zona</th><th>Almacén destino</th><th>Lote</th><th>Cajas en tránsito</th><th>Valor estimado</th></tr></thead>
-          <tbody>{zoneProducts.filter((item) => item.inTransit > 0).map((item) => <tr key={item.code}><td><strong style={{ color: "#60a5fa" }}>{item.code}</strong><small style={{ display: "block" }}>{item.product}</small></td><td>{item.zone}</td><td>{item.warehouse}</td><td>{item.lot}</td><td><strong>{number(item.inTransit)}</strong></td><td>{money(item.inTransit * item.costBox)}</td></tr>)}</tbody>
+          <tbody>{zoneProducts.filter((item) => item.inTransit > 0).map((item) => <tr key={productRowKey(item)}><td><strong style={{ color: "#60a5fa" }}>{item.code}</strong><small style={{ display: "block" }}>{item.product}</small></td><td>{item.zone}</td><td>{item.warehouse}</td><td>{item.lot}</td><td><strong>{number(item.inTransit)}</strong></td><td>{money(item.inTransit * item.costBox)}</td></tr>)}</tbody>
         </table></div></div>
       )}
 
-      {tab === "calculadora" && (
+      {tab === "calculadora" && selected && (
         <div style={{ display: "grid", gridTemplateColumns: "minmax(320px,1fr) minmax(0,2fr)", gap: 18 }}>
           <div className="card">
             <h2 className="card-title">Calculadora de stock ideal por producto</h2>
-            <div className="form-group"><label className="form-label">Código / producto</label><select className="form-input" value={selectedCode} onChange={(event) => setSelectedCode(event.target.value)}>{products.filter((item) => zone === "TODAS" || item.zone === zone).map((item) => <option key={item.code} value={item.code}>{item.code} · {item.product}</option>)}</select></div>
+            <div className="form-group"><label className="form-label">Código / producto</label><select className="form-input" value={selected.code} onChange={(event) => setSelectedCode(event.target.value)}>{productSummaries.map((item) => <option key={item.code} value={item.code}>{item.code} · {item.product}</option>)}</select></div>
             <div className="form-group"><label className="form-label">Meta de cobertura (meses)</label><input className="form-input" type="number" min={0.1} step={0.1} value={targetMonths} onChange={(event) => setTargetMonths(Number(event.target.value))} /></div>
             <div className="kpi-card blue"><div className="kpi-label">Stock ideal</div><div className="kpi-value">{number(idealStock)}</div><div className="kpi-unit">demanda mensual × cobertura objetivo</div></div>
             <p><strong>Costo de reposición por caja:</strong> {money(selected.costBox)}</p>

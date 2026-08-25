@@ -1,0 +1,201 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - navigation [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - generic [ref=f1e5]: 🔵 OXDA
+        - generic [ref=f1e6]: Sistema de Gestión
+      - generic [ref=f1e7]:
+        - paragraph [ref=f1e8]: Principal
+        - link "📊 Dashboard" [ref=f1e9] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=f1e10]: 📊
+          - text: Dashboard
+      - generic [ref=f1e11]:
+        - paragraph [ref=f1e12]: Inventarios
+        - link "📦 Centro de Inventarios" [ref=f1e13] [cursor=pointer]:
+          - /url: /inventarios/reporte
+          - generic [ref=f1e14]: 📦
+          - text: Centro de Inventarios
+      - generic [ref=f1e15]:
+        - paragraph [ref=f1e16]: Ventas
+        - link "🏆 Salón de Ventas" [ref=f1e17] [cursor=pointer]:
+          - /url: /ventas/reporte
+          - generic [ref=f1e18]: 🏆
+          - text: Salón de Ventas
+        - link "🛒 Pedidos" [ref=f1e19] [cursor=pointer]:
+          - /url: /ventas
+          - generic [ref=f1e20]: 🛒
+          - text: Pedidos
+        - link "💰 Cartera de clientes" [ref=f1e21] [cursor=pointer]:
+          - /url: /cobranza
+          - generic [ref=f1e22]: 💰
+          - text: Cartera de clientes
+        - link "🤝 Prospectos & CRM" [ref=f1e23] [cursor=pointer]:
+          - /url: /crm
+          - generic [ref=f1e24]: 🤝
+          - text: Prospectos & CRM
+      - generic [ref=f1e25]:
+        - paragraph [ref=f1e26]: Presupuestos
+        - link "🎯 Presupuestos" [ref=f1e27] [cursor=pointer]:
+          - /url: /presupuestos/zona-producto
+          - generic [ref=f1e28]: 🎯
+          - text: Presupuestos
+      - generic [ref=f1e29]:
+        - paragraph [ref=f1e30]: Operaciones
+        - link "🚛 Envíos y seguimiento" [ref=f1e31] [cursor=pointer]:
+          - /url: /logistica
+          - generic [ref=f1e32]: 🚛
+          - text: Envíos y seguimiento
+        - link "🧮 Costeo" [ref=f1e33] [cursor=pointer]:
+          - /url: /costeo
+          - generic [ref=f1e34]: 🧮
+          - text: Costeo
+        - link "🚢 Logística & Predicción" [ref=f1e35] [cursor=pointer]:
+          - /url: /logistica/prediccion
+          - generic [ref=f1e36]: 🚢
+          - text: Logística & Predicción
+        - link "💳 Cuentas por pagar" [ref=f1e37] [cursor=pointer]:
+          - /url: /cuentas-por-pagar
+          - generic [ref=f1e38]: 💳
+          - text: Cuentas por pagar
+      - generic [ref=f1e39]:
+        - paragraph [ref=f1e40]: Apariencia
+        - button "🌙 Modo oscuro" [ref=f1e41] [cursor=pointer]:
+          - generic [ref=f1e42]: 🌙
+          - text: Modo oscuro
+    - generic [ref=f1e43]:
+      - region "Filtro general por zona" [ref=f1e44]:
+        - generic [ref=f1e45]:
+          - generic [ref=f1e49]: Zona
+          - strong [ref=f1e50]: Todas las zonas
+        - generic "Selección rápida de zona" [ref=f1e51]:
+          - button "Todas" [pressed] [ref=f1e52] [cursor=pointer]
+          - button "BAJÍO - MAYOREO" [ref=f1e53] [cursor=pointer]
+          - button "GDL" [ref=f1e54] [cursor=pointer]
+          - button "QR" [ref=f1e55] [cursor=pointer]
+          - button "CS" [ref=f1e56] [cursor=pointer]
+          - button "CONTENEDOR COMPLETO" [ref=f1e57] [cursor=pointer]
+        - combobox "Seleccionar otra zona" [ref=f1e58]:
+          - option "Todas las zonas" [selected]
+          - option "BAJÍO - MAYOREO"
+          - option "GDL"
+          - option "QR"
+          - option "CS"
+          - option "CONTENEDOR COMPLETO"
+      - generic [ref=f1e59]:
+        - banner [ref=f1e60]:
+          - generic [ref=f1e61]:
+            - heading "Costeo, catálogo y listas de precios" [level=1] [ref=f1e62]
+            - paragraph [ref=f1e63]: Costeo de importación con fórmulas del Excel · edición persistente en Supabase
+          - button "Exportar catálogo" [ref=f1e64] [cursor=pointer]
+        - generic [ref=f1e68]:
+          - generic [ref=f1e69]:
+            - generic [ref=f1e70]: Productos vigentes
+            - generic [ref=f1e75]: "1"
+            - generic [ref=f1e76]: Catálogo maestro
+          - generic [ref=f1e77]:
+            - generic [ref=f1e78]: Con precio publicado
+            - generic [ref=f1e83]: "1"
+            - generic [ref=f1e84]: 0 pendientes de precio
+          - generic [ref=f1e85]:
+            - generic [ref=f1e86]: Listas ligadas
+            - generic [ref=f1e91]: "2"
+            - generic [ref=f1e92]: GENERAL · MAYOREO
+          - generic [ref=f1e93]:
+            - generic [ref=f1e94]: Margen de referencia
+            - generic [ref=f1e95]: 36.4%
+            - generic [ref=f1e96]: Sólo productos con costo y precio
+        - tablist "Apartados del módulo de costeo" [ref=f1e97]:
+          - tab "Costeo de importación" [ref=f1e98] [cursor=pointer]
+          - tab "Catálogo y precios" [active] [selected] [ref=f1e101] [cursor=pointer]
+        - generic [ref=f1e106]:
+          - complementary [ref=f1e107]:
+            - generic [ref=f1e108]:
+              - heading "Productos" [level=2] [ref=f1e109]
+              - paragraph [ref=f1e110]: Selecciona uno para editar sus datos y precios.
+            - textbox [ref=f1e115]:
+              - /placeholder: Código, nombre o categoría
+            - button "102013 PAPA RECTA 3/8 PAPAS · $450.00" [ref=f1e117] [cursor=pointer]:
+              - generic [ref=f1e118]: "102013"
+              - generic [ref=f1e119]: PAPA RECTA 3/8
+              - generic [ref=f1e120]: PAPAS · $450.00
+          - main [ref=f1e121]:
+            - generic [ref=f1e122]:
+              - generic [ref=f1e123]:
+                - generic [ref=f1e124]:
+                  - generic [ref=f1e125]: Producto 102013
+                  - heading "PAPA RECTA 3/8" [level=2] [ref=f1e126]
+                  - paragraph [ref=f1e127]: El código de producto es la llave que liga todas las listas.
+                - generic [ref=f1e128]:
+                  - checkbox "Producto activo" [checked] [ref=f1e129]
+                  - text: Producto activo
+              - generic [ref=f1e130]:
+                - generic [ref=f1e131]:
+                  - generic [ref=f1e132]: Nombre del producto
+                  - textbox [ref=f1e133]: PAPA RECTA 3/8
+                - generic [ref=f1e134]:
+                  - generic [ref=f1e135]: Código de producto
+                  - textbox [ref=f1e136]: "102013"
+                - generic [ref=f1e137]:
+                  - generic [ref=f1e138]: Código Vulpes
+                  - textbox [ref=f1e139]: 01WER38
+                - generic [ref=f1e140]:
+                  - generic [ref=f1e141]: Categoría
+                  - textbox [ref=f1e142]: PAPAS
+                - generic [ref=f1e143]:
+                  - generic [ref=f1e144]: Disponibilidad
+                  - combobox [ref=f1e145]:
+                    - option "Stock" [selected]
+                    - option "Consolidado"
+                    - option "Sin asignar"
+                    - option "Baja"
+                - generic [ref=f1e146]:
+                  - generic [ref=f1e147]: Tipo de empaque
+                  - textbox [ref=f1e148]: CAJA CARTON
+                - generic [ref=f1e149]:
+                  - generic [ref=f1e150]: Presentación
+                  - textbox [ref=f1e151]: 4 bolsas 2.5 Kg
+                - generic [ref=f1e152]:
+                  - generic [ref=f1e153]: Unidad de venta
+                  - textbox [ref=f1e154]: CAJA
+                - generic [ref=f1e155]:
+                  - generic [ref=f1e156]: Kg por caja
+                  - spinbutton [ref=f1e157]: "10"
+                - generic [ref=f1e158]:
+                  - generic [ref=f1e159]: Costo por caja
+                  - spinbutton [ref=f1e160]: "307.6313"
+            - generic [ref=f1e340]:
+              - generic [ref=f1e341]:
+                - generic [ref=f1e342]:
+                  - generic [ref=f1e343]: GENERAL
+                  - heading "Lista de precios general" [level=2] [ref=f1e344]
+                - generic [ref=f1e345]: Vigente desde 01 jul 2026
+              - generic [ref=f1e346]:
+                - heading "General" [level=3] [ref=f1e347]
+                - generic [ref=f1e349]:
+                  - generic [ref=f1e350]: Precio general
+                  - generic [ref=f1e351]:
+                    - generic [ref=f1e352]: $
+                    - spinbutton "Precio general $ /caja" [ref=f1e353]: "353.6"
+                    - emphasis [ref=f1e354]: /caja
+            - generic [ref=f1e355]:
+              - generic [ref=f1e356]:
+                - generic [ref=f1e357]:
+                  - generic [ref=f1e358]: MAYOREO
+                  - heading "Lista de precios OXDA para clientes de mayoreo" [level=2] [ref=f1e359]
+                - generic [ref=f1e360]: Vigente desde 13 jul 2026
+              - generic [ref=f1e361]:
+                - heading "Logistica" [level=3] [ref=f1e362]
+                - generic [ref=f1e364]:
+                  - generic [ref=f1e365]: 6 a 10 cajas
+                  - generic [ref=f1e366]:
+                    - generic [ref=f1e367]: $
+                    - spinbutton "6 a 10 cajas $ /caja" [ref=f1e368]: "450"
+                    - emphasis [ref=f1e369]: /caja
+            - generic [ref=f1e309]:
+              - generic [ref=f1e310]:
+                - strong [ref=f1e311]: Cambios pendientes
+                - generic [ref=f1e312]: Guarda para actualizar Supabase.
+              - button "Guardar producto" [ref=f1e313] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f1e323] [cursor=pointer]
+  - alert [ref=f1e327]

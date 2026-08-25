@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Extrae métricas de logística (2022 Ventas Proyeccion..xlsx)
-y ventas/predicción (2026 Reporte de Ventas Oxda al 24.06.2026.xlsx)
+Extrae métricas de logística (2022 Ventas Proyeccion..xlsx), el histórico
+completo de ventas 2025, el corte 2026 y el inventario físico de julio.
 Genera archivos JSON en public/data/ para consumo del frontend.
 """
 import json
@@ -17,7 +17,9 @@ OUT_DIR = ROOT / "public" / "data"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 FILE_2022 = ROOT / "2022 Ventas Proyeccion..xlsx"
+FILE_2025 = ROOT / "2025 Reporte de Ventas Oxda-Vulpes al 31.12.2025..xlsx"
 FILE_2026 = ROOT / "2026 Reporte de Ventas Oxda al 24.06.2026.xlsx"
+FILE_INVENTORY = ROOT / "inventario_xlsx_extraido.json"
 
 MESES_ORD = [
     "Enero",
@@ -33,6 +35,21 @@ MESES_ORD = [
     "Noviembre",
     "Diciembre",
 ]
+MONTH_BY_NUMBER = {index: month for index, month in enumerate(MESES_ORD, start=1)}
+
+INVENTORY_SHEET_BY_SALES_WAREHOUSE = {
+    "CANCUN": "CANCÚN",
+    "FRIGARSA-COVENTINA": "FRIGARSA",
+    "MEXIDELI - CDMX": "MEXIDELI",
+    "ESTADO DE MÉXICO": "FRESCO",
+    "CANBELT": "CANBELT",
+    "FRIJALISCO - GDL": "FRIJALISCO",
+    "VLPLEÓN VULPES": "VULPES PAPAS",
+    "BAJO CERO - LEÓN.": "BAJO CERO",
+    "KAIDA": "BAJIO",
+    "GUARDAMEX": "BAJIO",
+    "FRISACEL": "BAJIO",
+}
 
 
 def to_date(v):
@@ -217,163 +234,271 @@ def extract_logistics():
 
 # ------------------------- VENTAS -------------------------
 
-def extract_sales():
-    print("Leyendo ventas 2026...")
-    df = pd.read_excel(FILE_2026, sheet_name="Reporte de Venta", header=0)
+def canonical_code(value):
+    if pd.isna(value):
+        return ""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value).strip().upper()
+
+
+def normalized_label(value):
+    return str(value).strip().upper() if pd.notna(value) else "SIN CLASIFICAR"
+
+
+def load_sales_file(path):
+    df = pd.read_excel(path, sheet_name="Reporte de Venta", header=0)
     df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")
-
-    # Limpieza básica
     df = df[df["Fecha"].notna()].copy()
-    df["Año"] = df["Año"].fillna(2026).astype(int)
-    # La utilidad corporativa siempre se construye con venta neta. En algunos
-    # renglones del libro el Margen heredado usa Total; se normaliza aquí sin
-    # modificar el archivo de origen.
-    df["Neto"] = pd.to_numeric(df["Neto"], errors="coerce").fillna(0)
-    df["Costo total"] = pd.to_numeric(df["Costo total"], errors="coerce").fillna(0)
+    df["Año"] = df["Fecha"].dt.year.astype(int)
+    df["MesNumero"] = df["Fecha"].dt.month.astype(int)
+    df["Mes"] = df["MesNumero"].map(MONTH_BY_NUMBER)
+    df["Periodo"] = df["Fecha"].dt.strftime("%Y-%m")
+    df["Código Fuente"] = df["Código Producto"].map(canonical_code)
+    report_code = df["Cod Reporte"].map(canonical_code)
+    df["Código Producto"] = report_code.where(report_code != "", df["Código Fuente"])
+    df["Nombre (Producto)"] = df["Nombre (Producto)"].fillna("").astype(str).str.strip()
+    df["Código Almacén"] = df["Código Almacén"].map(canonical_code)
+    df["Nombre (Almacén)"] = df["Nombre (Almacén)"].fillna("").astype(str).str.strip()
+    df["DIVISION"] = df["DIVISION"].map(normalized_label)
+    df["RUBRO"] = df["RUBRO"].map(normalized_label)
+    for column in ("Unidades", "Neto", "Costo total"):
+        df[column] = pd.to_numeric(df[column], errors="coerce").fillna(0)
+    # El margen corporativo se calcula sobre venta neta en ambos ejercicios.
     df["Margen"] = df["Neto"] - df["Costo total"]
+    df["Archivo Fuente"] = path.name
+    return df
 
-    monthly = (
-        df.groupby(["Año", "Mes", "Código Producto", "Nombre (Producto)", "Código Almacén", "Nombre (Almacén)", "DIVISION", "RUBRO"])
-        .agg({"Unidades": "sum", "Neto": "sum", "Costo total": "sum", "Margen": "sum"})
-        .reset_index()
-    )
 
-    # Agregar por producto/almacén
-    product_warehouse = (
-        df.groupby(["Código Producto", "Nombre (Producto)", "Código Almacén", "Nombre (Almacén)", "DIVISION", "RUBRO"])
-        .agg({"Unidades": "sum", "Neto": "sum", "Costo total": "sum", "Margen": "sum", "Fecha": ["min", "max", "count"]})
-        .reset_index()
-    )
-    product_warehouse.columns = [
-        "codigoProducto", "nombreProducto", "codigoAlmacen", "nombreAlmacen",
-        "division", "rubro", "unidades", "venta", "costoTotal", "margen",
-        "fechaPrimera", "fechaUltima", "numTransacciones"
-    ]
+def extract_sales():
+    print("Leyendo ventas históricas 2025 y corte 2026...")
+    historical = load_sales_file(FILE_2025)
+    current = load_sales_file(FILE_2026)
+    all_sales = pd.concat([historical, current], ignore_index=True)
+    current_year = int(current["Año"].max())
+    current = current[current["Año"] == current_year].copy()
+    elapsed_days = max(1, (current["Fecha"].max().date() - datetime(current_year, 1, 1).date()).days + 1)
 
-    # Agregar mensual por producto (para serie de tiempo y proyección)
-    monthly_by_product = (
-        df.groupby(["Mes", "Código Producto", "Nombre (Producto)"])
-        .agg({"Unidades": "sum", "Neto": "sum"})
-        .reset_index()
-    )
-
-    monthly_records = monthly.to_dict(orient="records")
-    for r in monthly_records:
-        r["unidades"] = float(r["Unidades"]) if pd.notna(r["Unidades"]) else 0
-        r["venta"] = float(r["Neto"]) if pd.notna(r["Neto"]) else 0
-        r["costo"] = float(r["Costo total"]) if pd.notna(r["Costo total"]) else 0
-        r["margen"] = float(r["Margen"]) if pd.notna(r["Margen"]) else 0
-        del r["Unidades"], r["Neto"], r["Costo total"], r["Margen"]
-
-    pw_records = []
-    for _, r in product_warehouse.iterrows():
-        dias = max(1, (r["fechaUltima"] - r["fechaPrimera"]).days + 1)
-        pw_records.append({
-            "codigoProducto": r["codigoProducto"],
-            "nombreProducto": r["nombreProducto"],
-            "codigoAlmacen": r["codigoAlmacen"],
-            "nombreAlmacen": r["nombreAlmacen"],
-            "division": r["division"],
-            "rubro": r["rubro"],
-            "unidades": float(r["unidades"]),
-            "venta": float(r["venta"]),
-            "costoTotal": float(r["costoTotal"]),
-            "margen": float(r["margen"]),
-            "promedioDiarioUnidades": round(float(r["unidades"]) / dias, 2),
-            "promedioDiarioVenta": round(float(r["venta"]) / dias, 2),
-            "margenPct": round(float(r["margen"]) / float(r["venta"]) * 100, 2) if r["venta"] else 0,
+    current = current.sort_values("Fecha")
+    dimensions = ["Año", "Mes", "MesNumero", "Código Producto", "Código Almacén", "Nombre (Almacén)"]
+    monthly = current.groupby(dimensions, dropna=False).agg(
+        nombreProducto=("Nombre (Producto)", "last"), division=("DIVISION", "last"), rubro=("RUBRO", "last"),
+        unidades=("Unidades", "sum"), venta=("Neto", "sum"),
+        costo=("Costo total", "sum"), margen=("Margen", "sum"),
+    ).reset_index()
+    monthly_records = []
+    for row in monthly.to_dict(orient="records"):
+        monthly_records.append({
+            **{key: row[key] for key in dimensions},
+            "Nombre (Producto)": row["nombreProducto"],
+            "DIVISION": row["division"],
+            "RUBRO": row["rubro"],
+            "unidades": float(row["unidades"]),
+            "venta": float(row["venta"]),
+            "costo": float(row["costo"]),
+            "margen": float(row["margen"]),
         })
 
-    # Serie mensual por producto para proyección
-    series = defaultdict(lambda: defaultdict(lambda: {"unidades": 0.0, "venta": 0.0}))
-    for _, r in monthly_by_product.iterrows():
-        series[r["Código Producto"]][r["Mes"]] = {
-            "unidades": float(r["Unidades"]) if pd.notna(r["Unidades"]) else 0,
-            "venta": float(r["Neto"]) if pd.notna(r["Neto"]) else 0,
+    product_dimensions = ["Código Producto", "Código Almacén", "Nombre (Almacén)"]
+    product_warehouse = current.groupby(product_dimensions, dropna=False).agg(
+        nombreProducto=("Nombre (Producto)", "last"), division=("DIVISION", "last"), rubro=("RUBRO", "last"),
+        unidades=("Unidades", "sum"), venta=("Neto", "sum"),
+        costoTotal=("Costo total", "sum"), margen=("Margen", "sum"),
+        numTransacciones=("Fecha", "count"),
+    ).reset_index()
+    pw_records = []
+    for _, row in product_warehouse.iterrows():
+        pw_records.append({
+            "codigoProducto": row["Código Producto"],
+            "nombreProducto": row["nombreProducto"],
+            "codigoAlmacen": row["Código Almacén"],
+            "nombreAlmacen": row["Nombre (Almacén)"],
+            "division": row["division"],
+            "rubro": row["rubro"],
+            "unidades": float(row["unidades"]),
+            "venta": float(row["venta"]),
+            "costoTotal": float(row["costoTotal"]),
+            "margen": float(row["margen"]),
+            "promedioDiarioUnidades": round(float(row["unidades"]) / elapsed_days, 2),
+            "promedioDiarioVenta": round(float(row["venta"]) / elapsed_days, 2),
+            "margenPct": round(float(row["margen"]) / float(row["venta"]) * 100, 2) if row["venta"] else 0,
+        })
+
+    monthly_by_product = all_sales.groupby(["Periodo", "Código Producto"], dropna=False).agg(
+        unidades=("Unidades", "sum"), venta=("Neto", "sum")
+    ).reset_index()
+    series = defaultdict(dict)
+    for _, row in monthly_by_product.iterrows():
+        series[row["Código Producto"]][row["Periodo"]] = {
+            "unidades": round(float(row["unidades"]), 4),
+            "venta": round(float(row["venta"]), 2),
         }
 
-    product_names = dict(zip(df["Código Producto"], df["Nombre (Producto)"]))
-
-    return {
+    product_names = (
+        all_sales.sort_values("Fecha").groupby("Código Producto")["Nombre (Producto)"].last().to_dict()
+    )
+    payload = {
         "monthly": monthly_records,
         "productWarehouse": pw_records,
-        "productSeries": {
-            prod: {m: series[prod].get(m, {"unidades": 0, "venta": 0}) for m in MESES_ORD[:6]}
-            for prod in series
-        },
+        "productSeries": dict(series),
         "productNames": product_names,
-        "dateRange": {"min": df["Fecha"].min().isoformat(), "max": df["Fecha"].max().isoformat()},
+        "dateRange": {"min": current["Fecha"].min().isoformat(), "max": current["Fecha"].max().isoformat()},
+        "historicalDateRange": {"min": all_sales["Fecha"].min().isoformat(), "max": all_sales["Fecha"].max().isoformat()},
+        "modelHistory": {
+            "sources": [FILE_2025.name, FILE_2026.name],
+            "rows2025": int(len(historical)),
+            "rows2026": int(len(current)),
+            "months": int(all_sales["Periodo"].nunique()),
+        },
     }
+    return payload, all_sales
 
 
 # ------------------------- PREDICCIONES -------------------------
 
-def build_predictions(sales, logistics):
-    print("Construyendo predicciones...")
-    shelf_life_days = 60  # 2 meses
+def load_inventory_snapshot():
+    if not FILE_INVENTORY.exists():
+        return {}, {"source": None, "cutOff": None, "warnings": ["No se encontró inventario extraído"]}
+    raw = json.loads(FILE_INVENTORY.read_text(encoding="utf-8"))
+    stock = {}
+    stale = []
+    for warehouse in raw.get("almacenes", []):
+        sheet = warehouse.get("hoja", "")
+        period = warehouse.get("periodo_inventario") or ""
+        if not period.startswith("2026-07"):
+            stale.append(f"{sheet}: {period or 'sin periodo'}")
+        for item in warehouse.get("productos", []):
+            code = canonical_code(item.get("codigo"))
+            value = item.get("inventario")
+            if not code or not isinstance(value, (int, float)) or not math.isfinite(value):
+                continue
+            key = (sheet, code)
+            stock[key] = stock.get(key, 0.0) + max(0.0, float(value))
+    return stock, {
+        "source": raw.get("archivo"),
+        "cutOff": raw.get("fecha_corte"),
+        "warnings": stale,
+    }
+
+
+def month_keys(start_year, start_month, count):
+    keys = []
+    year, month = start_year, start_month
+    for _ in range(count):
+        keys.append(f"{year}-{month:02d}")
+        month += 1
+        if month == 13:
+            year += 1
+            month = 1
+    return keys
+
+
+def seasonal_forecast(series, target_month, recent_keys, growth_factor):
+    recent = [float(series.get(key, {}).get("unidades", 0)) for key in recent_keys]
+    recent_avg = sum(recent) / len(recent) if recent else 0
+    prior_key = f"{int(target_month[:4]) - 1}-{target_month[5:]}"
+    prior = float(series.get(prior_key, {}).get("unidades", 0))
+    if prior > 0 and recent_avg > 0:
+        return 0.65 * prior * growth_factor + 0.35 * recent_avg
+    return prior * growth_factor if prior > 0 else recent_avg
+
+
+def build_predictions(sales, all_sales, logistics):
+    print("Construyendo pronóstico estacional y sugerencias contra inventario...")
+    shelf_life_days = 60
+    safety_days = 7
     lead_total_avg = logistics["metrics"]["leadTimesGlobal"]["totalOrderToWarehouse"]["avg"]
     lead_total_avg = lead_total_avg if lead_total_avg > 0 else 45
+    stock, inventory_meta = load_inventory_snapshot()
 
-    # Tomar top productos por unidades vendidas para sugerencias de compra
-    top = sorted(sales["productWarehouse"], key=lambda x: x["unidades"], reverse=True)[:40]
+    cutoff = all_sales["Fecha"].max().date()
+    complete_month = cutoff.month - 1 if cutoff.day < 28 else cutoff.month
+    recent_keys = month_keys(cutoff.year, max(1, complete_month - 2), 3)
+    if complete_month < 3:
+        recent_keys = [f"{cutoff.year}-{month:02d}" for month in range(1, complete_month + 1)]
+    forecast_keys = [f"{cutoff.year}-{month:02d}" for month in range(cutoff.month + 1, 13)]
+    if not forecast_keys:
+        forecast_keys = month_keys(cutoff.year + 1, 1, 6)
 
-    predictions = []
-    today = datetime.fromisoformat(sales["dateRange"]["max"]).date()
-    for item in top:
-        adu = item["promedioDiarioUnidades"]
-        adv = item["promedioDiarioVenta"]
-        if adu <= 0:
+    group_dimensions = ["Código Producto", "Código Almacén", "Nombre (Almacén)"]
+    grouped = all_sales.groupby(group_dimensions, dropna=False)
+    candidates = []
+    monthly_projection_by_product = defaultdict(lambda: defaultdict(lambda: {"unidades": 0.0, "venta": 0.0}))
+
+    for dimensions, frame in grouped:
+        code, warehouse_code, warehouse = dimensions
+        latest = frame.sort_values("Fecha").iloc[-1]
+        name = latest["Nombre (Producto)"]
+        division = latest["DIVISION"]
+        rubro = latest["RUBRO"]
+        current_units = float(frame.loc[frame["Año"] == cutoff.year, "Unidades"].sum())
+        if current_units <= 0:
             continue
+        series_frame = frame.groupby("Periodo").agg(unidades=("Unidades", "sum"), venta=("Neto", "sum"))
+        series = {period: values.to_dict() for period, values in series_frame.iterrows()}
+        ytd_current = sum(float(series.get(f"{cutoff.year}-{month:02d}", {}).get("unidades", 0)) for month in range(1, complete_month + 1))
+        ytd_prior = sum(float(series.get(f"{cutoff.year - 1}-{month:02d}", {}).get("unidades", 0)) for month in range(1, complete_month + 1))
+        growth = ytd_current / ytd_prior if ytd_prior > 0 else 1.0
+        growth = min(1.8, max(0.5, growth))
+        unit_price = float(frame["Neto"].sum() / frame["Unidades"].sum()) if frame["Unidades"].sum() else 0
+        forecasts = {}
+        for key in forecast_keys:
+            units_forecast = max(0.0, seasonal_forecast(series, key, recent_keys, growth))
+            forecasts[key] = units_forecast
+            month_name = MONTH_BY_NUMBER[int(key[5:])]
+            monthly_projection_by_product[code][month_name]["unidades"] += units_forecast
+            monthly_projection_by_product[code][month_name]["venta"] += units_forecast * unit_price
 
-        # Demanda esperada durante lead time + buffer de 1 semana
-        cobertura_dias = int(lead_total_avg + 7)
-        demanda_lead = round(adu * cobertura_dias, 0)
-        demanda_30d = round(adu * 30, 0)
-        demanda_60d = round(adu * 60, 0)  # vida útil
-
-        # Cuándo se recomienda hacer el pedido para no quedar en ceros
-        stock_sugerido = demanda_60d  # pedir para cubrir vida útil
-        punto_reorden = demanda_lead
-        fecha_sugerida_pedido = (today + timedelta(days=max(0, int((punto_reorden / adu) - lead_total_avg)))).isoformat()
-        fecha_llegada_estimada = (datetime.fromisoformat(fecha_sugerida_pedido).date() + timedelta(days=int(lead_total_avg))).isoformat()
-        fecha_caducidad = (datetime.fromisoformat(fecha_llegada_estimada).date() + timedelta(days=shelf_life_days)).isoformat()
-
-        predictions.append({
-            "codigoProducto": item["codigoProducto"],
-            "nombreProducto": item["nombreProducto"],
-            "almacen": item["nombreAlmacen"],
-            "division": item["division"],
-            "rubro": item["rubro"],
-            "promedioDiarioUnidades": adu,
-            "promedioDiarioVenta": adv,
-            "coberturaSugeridaDias": cobertura_dias,
-            "demandaLeadTime": demanda_lead,
-            "demanda30Dias": demanda_30d,
-            "demanda60Dias": demanda_60d,
-            "puntoReorden": punto_reorden,
-            "stockSugerido": stock_sugerido,
-            "fechaSugeridaPedido": fecha_sugerida_pedido,
-            "fechaLlegadaEstimada": fecha_llegada_estimada,
-            "fechaCaducidadBatch": fecha_caducidad,
+        next_values = list(forecasts.values())[:2]
+        demand_30 = sum(next_values) / len(next_values) if next_values else 0
+        if demand_30 <= 0:
+            continue
+        daily_demand = demand_30 / 30
+        inventory_sheet = INVENTORY_SHEET_BY_SALES_WAREHOUSE.get(str(warehouse).upper())
+        inventory_found = inventory_sheet is not None and (inventory_sheet, code) in stock
+        available = stock.get((inventory_sheet, code), 0.0) if inventory_sheet else 0.0
+        coverage_days = min(shelf_life_days, int(round(lead_total_avg + safety_days)))
+        reorder_point = daily_demand * coverage_days
+        target_stock = daily_demand * shelf_life_days
+        purchase = max(0.0, target_stock - available)
+        as_of = datetime.fromisoformat(inventory_meta.get("cutOff") or sales["dateRange"]["max"]).date()
+        days_to_order = max(0, int(available / daily_demand - coverage_days)) if inventory_found else 0
+        order_date = as_of + timedelta(days=days_to_order)
+        arrival = order_date + timedelta(days=int(round(lead_total_avg)))
+        candidates.append({
+            "codigoProducto": code,
+            "nombreProducto": name,
+            "almacen": warehouse,
+            "division": division,
+            "rubro": rubro,
+            "promedioDiarioUnidades": round(daily_demand, 2),
+            "promedioDiarioVenta": round(daily_demand * unit_price, 2),
+            "coberturaSugeridaDias": coverage_days,
+            "demandaLeadTime": round(reorder_point),
+            "demanda30Dias": round(demand_30),
+            "demanda60Dias": round(target_stock),
+            "puntoReorden": round(reorder_point),
+            "inventarioDisponible": round(available, 2),
+            "inventarioEncontrado": inventory_found,
+            "stockSugerido": round(purchase),
+            "fechaSugeridaPedido": order_date.isoformat(),
+            "fechaLlegadaEstimada": arrival.isoformat(),
+            "fechaCaducidadBatch": (arrival + timedelta(days=shelf_life_days)).isoformat(),
             "shelfLifeDays": shelf_life_days,
+            "factorCrecimiento": round(growth, 3),
+            "metodo": "65% mismo mes 2025 ajustado por tendencia + 35% promedio reciente",
         })
 
-    # Proyección mensual simple: extrapolar promedio de los últimos meses conocidos
+    predictions = sorted(candidates, key=lambda item: item["stockSugerido"], reverse=True)[:60]
     monthly_projection = []
-    meses_conocidos = MESES_ORD[:6]
-    for prod, vals in sales["productSeries"].items():
-        known = [vals[m]["unidades"] for m in meses_conocidos if vals[m]["unidades"] > 0]
-        if not known:
-            continue
-        avg_month = sum(known) / len(known)
-        nombre = sales["productNames"].get(prod, "")
-        for i, m in enumerate(MESES_ORD[6:], start=1):
+    for code, months in monthly_projection_by_product.items():
+        for month, values in months.items():
             monthly_projection.append({
-                "codigoProducto": prod,
-                "nombreProducto": nombre,
-                "mes": m,
-                "unidadesProyectadas": round(avg_month, 0),
-                "ventaProyectada": round(avg_month * (vals[meses_conocidos[0]]["venta"] / vals[meses_conocidos[0]]["unidades"]), 0) if vals[meses_conocidos[0]]["unidades"] else 0,
+                "codigoProducto": code,
+                "nombreProducto": sales["productNames"].get(code, ""),
+                "mes": month,
+                "unidadesProyectadas": round(values["unidades"]),
+                "ventaProyectada": round(values["venta"]),
             })
 
     return {
@@ -381,13 +506,21 @@ def build_predictions(sales, logistics):
         "shelfLifeDays": shelf_life_days,
         "demandPredictions": predictions,
         "monthlyProjection": monthly_projection,
+        "model": {
+            "name": "Pronóstico estacional ponderado",
+            "historyStart": sales["historicalDateRange"]["min"],
+            "historyEnd": sales["historicalDateRange"]["max"],
+            "historyMonths": sales["modelHistory"]["months"],
+            "formula": "65% mismo mes del año anterior ajustado por tendencia YTD + 35% promedio de 3 meses completos",
+            "inventory": inventory_meta,
+        },
     }
 
 
 def main():
     logistics = extract_logistics()
-    sales = extract_sales()
-    predictions = build_predictions(sales, logistics)
+    sales, all_sales = extract_sales()
+    predictions = build_predictions(sales, all_sales, logistics)
 
     # Guardar
     with open(OUT_DIR / "logistica.json", "w") as f:

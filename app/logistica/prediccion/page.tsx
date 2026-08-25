@@ -97,6 +97,8 @@ type Prediction = {
   demanda30Dias: number;
   demanda60Dias: number;
   puntoReorden: number;
+  inventarioDisponible: number;
+  inventarioEncontrado: boolean;
   stockSugerido: number;
   fechaSugeridaPedido: string;
   fechaLlegadaEstimada: string;
@@ -115,6 +117,14 @@ type PredictionsData = {
     unidadesProyectadas: number;
     ventaProyectada: number;
   }>;
+  model?: {
+    name?: string;
+    historyStart?: string;
+    historyEnd?: string;
+    historyMonths?: number;
+    formula?: string;
+    inventory?: { source?: string; cutOff?: string; warnings?: string[] };
+  };
 };
 
 type Commission = {
@@ -352,8 +362,8 @@ export default function LogisticaPrediccionPage() {
         <div className="page-header">
           <h1 className="page-title">Predicción de ventas y logística</h1>
           <p className="page-subtitle">
-            Proyección a partir del reporte de ventas 2026 y tiempos históricos de importación (2022).
-            Considera caducidad de 2 meses desde llegada a almacén.
+            Proyección con el histórico completo 2025, el corte 2026, inventario físico de julio y tiempos de importación.
+            Considera tendencia, estacionalidad y caducidad de 2 meses desde la llegada.
           </p>
         </div>
 
@@ -474,7 +484,7 @@ export default function LogisticaPrediccionPage() {
               Sugerencias de compra internacional
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: "13px", marginBottom: "1rem" }}>
-              Cálculo basado en venta diaria promedio, lead time estimado de {predictions.leadTimeAvgDays} días y vida útil de {predictions.shelfLifeDays} días.
+              {predictions.model?.name ?? "Pronóstico"} con {predictions.model?.historyMonths ?? 0} meses de historia; descuenta inventario al {fmtDate(predictions.model?.inventory?.cutOff)}. Lead time estimado: {predictions.leadTimeAvgDays} días.
             </p>
             <div className="table-wrap">
               <table>
@@ -484,7 +494,8 @@ export default function LogisticaPrediccionPage() {
                     <th>Almacén</th>
                     <th>Promedio diario</th>
                     <th>Demanda 30 días</th>
-                    <th>Stock sugerido</th>
+                    <th>Inventario actual</th>
+                    <th>Compra sugerida</th>
                     <th>Fecha pedido</th>
                     <th>Llegada estimada</th>
                     <th>Caducidad batch</th>
@@ -500,6 +511,7 @@ export default function LogisticaPrediccionPage() {
                       <td>{p.almacen}</td>
                       <td>{fmtNumber(p.promedioDiarioUnidades)} cjs</td>
                       <td>{fmtNumber(p.demanda30Dias)}</td>
+                      <td>{p.inventarioEncontrado ? fmtNumber(p.inventarioDisponible) : <span className="badge badge-orange">Por validar</span>}</td>
                       <td style={{ fontWeight: 700 }}>{fmtNumber(p.stockSugerido)}</td>
                       <td>{fmtDate(p.fechaSugeridaPedido)}</td>
                       <td>{fmtDate(p.fechaLlegadaEstimada)}</td>

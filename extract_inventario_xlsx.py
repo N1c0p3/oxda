@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
-Extractor robusto de INVENTARIOS OXDA MAYO 2026..xlsx
+Extractor robusto de INVENTARIOS OXDA JULIO 2026..xlsx.
 
 - Hoja "Resumen Inventario": lee cada sección mensual y toma la columna de
   cobertura/último número por posición fija (última columna del encabezado).
-- Hojas de almacén: busca la columna que contenga "INV MAYO" por posición y
-  extrae el inventario de mayo para cada producto/código.
+- Hojas de almacén: toma la última columna explícita de "INV JULIO 2026". Si
+  una bodega todavía no trae julio, conserva el último cierre anterior y deja
+  documentado el periodo realmente utilizado.
 """
-import csv
 import json
 import re
+import unicodedata
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -18,15 +19,30 @@ try:
 except ImportError as exc:  # pragma: no cover
     raise SystemExit("openpyxl no está instalado. Ejecuta: pip3 install openpyxl") from exc
 
-XLSX_PATH = Path("INVENTARIOS OXDA MAYO 2026..xlsx")
+XLSX_PATH = Path("INVENTARIOS OXDA JULIO 2026..xlsx")
 OUTPUT_JSON = Path("inventario_xlsx_extraido.json")
 OUTPUT_TS = Path("inventario_xlsx_extraido.ts")
+CUT_OFF_MONTH = 7
+CUT_OFF_YEAR = 2026
+
+MONTH_NUMBER = {
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4,
+    "mayo": 5, "junio": 6, "julio": 7, "agosto": 8,
+    "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+}
 
 
 def normalize_text(value: Any) -> str:
     if value is None:
         return ""
     return str(value).strip().lower()
+
+
+def ascii_text(value: Any) -> str:
+    return "".join(
+        char for char in unicodedata.normalize("NFD", normalize_text(value))
+        if unicodedata.category(char) != "Mn"
+    )
 
 
 def parse_number(value: Any) -> Optional[float]:
@@ -153,8 +169,10 @@ def read_resumen_inventario(ws) -> List[Dict[str, Any]]:
                 "cobertura": find_header_index(row, ["cobertura"]),
             }
             if header_indices["cobertura"] is None and len(row) > 1:
-                # última columna del encabezado por posición
-                header_indices["cobertura"] = len(row) - 1
+                # En este libro Cobertura no tiene rótulo; está inmediatamente
+                # después de "Inv - ventas estimadas".
+                prior = header_indices["inv_menos_ventas"]
+                header_indices["cobertura"] = prior + 1 if prior is not None else len(row) - 1
             current["header_len"] = len(row)
             i += 1
             continue
@@ -216,21 +234,47 @@ def read_record(row: List[Any], indices: Dict[str, Optional[int]], header_len: i
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 2. HOJAS DE ALMACÉN — columna INV MAYO por posición
+# 2. HOJAS DE ALMACÉN — inventario al corte de julio
 # ═══════════════════════════════════════════════════════════════════════════
+
+def inventory_period(value: Any) -> Optional[tuple[int, int]]:
+    text = ascii_text(value)
+    if "inv" not in text:
+        return None
+    month = next((number for name, number in MONTH_NUMBER.items() if name in text), None)
+    year_match = re.search(r"20\d{2}", text)
+    if month is None or year_match is None:
+        return None
+    return int(year_match.group()), month
+
+
+def find_inventory_column(ws) -> tuple[Optional[int], Optional[str]]:
+    candidates: List[tuple[int, int, int, str]] = []
+    for row in range(1, min(6, ws.max_row + 1)):
+        for col in range(1, ws.max_column + 1):
+            value = ws.cell(row=row, column=col).value
+            period = inventory_period(value)
+            if period is None:
+                continue
+            year, month = period
+            if (year, month) <= (CUT_OFF_YEAR, CUT_OFF_MONTH):
+                candidates.append((year, month, col, str(value).strip()))
+    if not candidates:
+        return None, None
+    # El libro contiene bloques duplicados; la aparición más a la derecha es
+    # la revisión más reciente del mismo periodo.
+    year, month, col, label = max(candidates, key=lambda item: (item[0], item[1], item[2]))
+    return col, f"{year}-{month:02d} ({label})"
 
 def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
     """
-    Busca las columnas CÓDIGO, DESCRIPCIÓN e INV MAYO por posición en el
-    encabezado y extrae el inventario de mayo de cada producto.
+    Busca CÓDIGO, DESCRIPCIÓN y el cierre más reciente no posterior a julio.
     """
     col_codigo: Optional[int] = None
     col_descripcion: Optional[int] = None
-    col_inv_mayo: Optional[int] = None
     header_row: int = 1
 
     for r in range(1, min(6, ws.max_row + 1)):
-        last_inv_mayo_in_row: Optional[int] = None
         for c in range(1, ws.max_column + 1):
             cell = ws.cell(row=r, column=c).value
             text = normalize_text(cell)
@@ -242,23 +286,7 @@ def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
             if col_descripcion is None and ("descripción" in text or "descripcion" in text or "descrip" in text):
                 col_descripcion = c
                 header_row = r
-            if "inv mayo" in text:
-                # preferir la última aparición de INV MAYO en la fila (evita columnas duplicadas intermedias)
-                last_inv_mayo_in_row = c
-        if last_inv_mayo_in_row:
-            col_inv_mayo = last_inv_mayo_in_row
-
-    # Fallback: si no se encontró INV MAYO, buscar el último "INV <MES> 2026" de la hoja
-    if col_inv_mayo is None:
-        for r in range(1, min(6, ws.max_row + 1)):
-            last_inv_2026: Optional[int] = None
-            for c in range(1, ws.max_column + 1):
-                text = normalize_text(ws.cell(row=r, column=c).value)
-                if re.search(r"inv\s+\w+\s+2026", text):
-                    last_inv_2026 = c
-            if last_inv_2026:
-                col_inv_mayo = last_inv_2026
-                break
+    col_inventario, periodo_inventario = find_inventory_column(ws)
 
     productos = []
     if col_codigo is None:
@@ -266,7 +294,8 @@ def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
             "hoja": sheet_name,
             "columna_codigo": col_codigo,
             "columna_descripcion": col_descripcion,
-            "columna_inv_mayo": col_inv_mayo,
+            "columna_inventario": col_inventario,
+            "periodo_inventario": periodo_inventario,
             "productos": productos,
         }
 
@@ -275,19 +304,21 @@ def read_almacen_sheet(ws, sheet_name: str) -> Dict[str, Any]:
         if codigo is None or str(codigo).strip() == "":
             continue
         descripcion = ws.cell(row=r, column=col_descripcion).value if col_descripcion else None
-        inv_mayo = parse_number(ws.cell(row=r, column=col_inv_mayo).value) if col_inv_mayo else None
+        inventario = parse_number(ws.cell(row=r, column=col_inventario).value) if col_inventario else None
         productos.append({
             "codigo": str(codigo).strip(),
             "descripcion": str(descripcion).strip() if descripcion else "",
-            "inv_mayo": inv_mayo,
-            "columna_inv_mayo": col_inv_mayo,
+            "inventario": inventario,
+            "periodo_inventario": periodo_inventario,
+            "columna_inventario": col_inventario,
         })
 
     return {
         "hoja": sheet_name,
         "columna_codigo": col_codigo,
         "columna_descripcion": col_descripcion,
-        "columna_inv_mayo": col_inv_mayo,
+        "columna_inventario": col_inventario,
+        "periodo_inventario": periodo_inventario,
         "productos": productos,
     }
 
@@ -351,13 +382,13 @@ def build_report_typescript(data: Dict[str, Any], meses_filtro: Optional[List[st
             f"  }},"
         )
 
-    # Alias de mayo para compatibilidad (el mes más reciente con datos)
-    mayo = next((s for s in resumen if s["mes"].lower().startswith("mayo")), None)
-    mayo_block = ""
-    if mayo:
-        clientes = "\n".join(build_cliente_ts(c) for c in mayo["clientes"])
-        mayo_block = (
-            "export const inventarioMayo2026 = [\n"
+    # Alias del último resumen disponible para compatibilidad.
+    latest = resumen[-1] if resumen else None
+    latest_block = ""
+    if latest:
+        clientes = "\n".join(build_cliente_ts(c) for c in latest["clientes"])
+        latest_block = (
+            "export const inventarioUltimoCorte = [\n"
             + clientes
             + "\n];\n\n"
         )
@@ -379,7 +410,7 @@ def build_report_typescript(data: Dict[str, Any], meses_filtro: Optional[List[st
         )
 
     return (
-        mayo_block
+        latest_block
         + "export const inventarioPorMes = [\n"
         + "\n".join(por_mes_lines)
         + "\n];\n\n"
@@ -392,7 +423,7 @@ def build_report_typescript(data: Dict[str, Any], meses_filtro: Optional[List[st
 def parse_args() -> Any:
     import argparse
     parser = argparse.ArgumentParser(
-        description="Extrae datos de INVENTARIOS OXDA MAYO 2026..xlsx"
+        description="Extrae datos de INVENTARIOS OXDA JULIO 2026..xlsx"
     )
     parser.add_argument(
         "--mes",
@@ -424,6 +455,7 @@ def main() -> None:
 
     data = {
         "archivo": str(XLSX_PATH),
+        "fecha_corte": f"{CUT_OFF_YEAR}-{CUT_OFF_MONTH:02d}-31",
         "resumen_mensual": resumen,
         "almacenes": almacenes,
     }
@@ -442,11 +474,11 @@ def main() -> None:
 
     print(f"\nAlmacenes procesados: {len(almacenes)}")
     for alm in almacenes:
-        col_label = alm['columna_inv_mayo'] if alm['columna_inv_mayo'] is not None else "N/A"
-        print(f"  - {alm['hoja']:<25} col_inv_mayo={col_label:<3} productos={len(alm['productos'])}")
+        col_label = alm['columna_inventario'] if alm['columna_inventario'] is not None else "N/A"
+        print(f"  - {alm['hoja']:<25} col_inventario={col_label:<3} periodo={alm['periodo_inventario']} productos={len(alm['productos'])}")
         if alm["productos"]:
             for p in alm["productos"][:3]:
-                print(f"      {p['codigo']:<10} {p['descripcion'][:30]:<33} inv_mayo={p['inv_mayo']}")
+                print(f"      {p['codigo']:<10} {p['descripcion'][:30]:<33} inventario={p['inventario']}")
 
     print(f"\nArchivos generados:")
     print(f"  - {OUTPUT_JSON}")

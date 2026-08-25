@@ -57,6 +57,7 @@ export async function GET() {
       shelfLifeDays: predictions.shelfLifeDays ?? 0,
       demandPredictions: predictions.demandPredictions ?? [],
       monthlyProjection: predictions.monthlyProjection ?? [],
+      model: predictions.model ?? {},
     },
     source,
     refreshedAt: new Date().toISOString(),

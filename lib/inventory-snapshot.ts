@@ -1,20 +1,31 @@
 import inventoryData from "@/inventario_xlsx_extraido.json";
 import salesData from "@/public/data/ventas_mensual.json";
+import predictionsData from "@/public/data/predicciones.json";
 
 type RawWarehouse = {
   hoja: string;
-  productos: Array<{ codigo?: unknown; descripcion?: unknown; inv_mayo?: unknown }>;
+  productos: Array<{ codigo?: unknown; descripcion?: unknown; inventario?: unknown }>;
 };
-type SalesProduct = { codigoProducto?: unknown; nombreProducto?: unknown; unidades?: unknown; costoTotal?: unknown };
+type SalesProduct = { codigoProducto?: unknown; nombreProducto?: unknown; nombreAlmacen?: unknown; unidades?: unknown; costoTotal?: unknown; promedioDiarioUnidades?: unknown };
+type Prediction = { codigoProducto?: unknown; almacen?: unknown; demanda30Dias?: unknown };
 
 const WAREHOUSE_ZONE: Record<string, string> = {
   "CANCÚN": "QR", "RESUMEN CDMX": "CS", FRIGARSA: "CS", FRESCO: "CS", MEXIDELI: "CS",
   ALFRIMEX: "CS", CANBELT: "CS", FRIJALISCO: "GDL", "RESUMEN LEÓN": "MEN VLP",
-  "VULPES PAPAS": "MEN VLP", "BAJO CERO": "MAY VLP",
+  BAJIO: "MEN VLP", "VULPES PAPAS": "MEN VLP", "BAJO CERO": "MAY VLP",
 };
+
+const SALES_WAREHOUSES: Record<string, string[]> = {
+  "CANCÚN": ["CANCUN"], FRIGARSA: ["FRIGARSA-COVENTINA"], FRESCO: ["ESTADO DE MÉXICO"],
+  MEXIDELI: ["MEXIDELI - CDMX"], CANBELT: ["CANBELT"], FRIJALISCO: ["FRIJALISCO - GDL"],
+  BAJIO: ["KAIDA", "GUARDAMEX", "FRISACEL"], "VULPES PAPAS": ["VLPLEÓN VULPES"],
+  "BAJO CERO": ["BAJO CERO - LEÓN."],
+};
+const DETAIL_WAREHOUSES = new Set(Object.keys(SALES_WAREHOUSES));
 
 const warehouses = (inventoryData as unknown as { almacenes: RawWarehouse[] }).almacenes;
 const sales = (salesData as unknown as { productWarehouse: SalesProduct[] }).productWarehouse;
+const predictions = (predictionsData as unknown as { demandPredictions: Prediction[] }).demandPredictions;
 const numeric = (value: unknown) => {
   const result = Number(value ?? 0);
   return Number.isFinite(result) ? result : 0;
@@ -25,37 +36,39 @@ const validCode = (value: string) => {
 };
 
 export function inventorySnapshotProducts() {
-  const salesByCode = new Map<string, { name: string; units: number; cost: number }>();
-  sales.forEach((item) => {
-    const code = String(item.codigoProducto ?? "").trim().toUpperCase();
-    if (!validCode(code)) return;
-    const current = salesByCode.get(code) ?? { name: "", units: 0, cost: 0 };
-    current.name ||= String(item.nombreProducto ?? "").trim();
-    current.units += numeric(item.unidades);
-    current.cost += numeric(item.costoTotal);
-    salesByCode.set(code, current);
-  });
-
-  const seen = new Set<string>();
-  return warehouses.flatMap((warehouse) => warehouse.productos.flatMap((item) => {
+  const rows = new Map<string, { code: string; product: string; zone: string; warehouse: string; units: number }>();
+  warehouses.filter((warehouse) => DETAIL_WAREHOUSES.has(warehouse.hoja)).forEach((warehouse) => warehouse.productos.forEach((item) => {
     const code = String(item.codigo ?? "").trim().toUpperCase();
     const key = `${warehouse.hoja}|${code}`;
-    if (!validCode(code) || seen.has(key)) return [];
-    seen.add(key);
-    const salesItem = salesByCode.get(code);
-    return [{
-      code,
-      product: String(item.descripcion ?? "").trim() || salesItem?.name || "Producto sin descripción",
-      zone: WAREHOUSE_ZONE[warehouse.hoja] ?? warehouse.hoja,
-      warehouse: warehouse.hoja,
+    if (!validCode(code)) return;
+    const current = rows.get(key) ?? { code, product: "", zone: WAREHOUSE_ZONE[warehouse.hoja] ?? warehouse.hoja, warehouse: warehouse.hoja, units: 0 };
+    current.product ||= String(item.descripcion ?? "").trim();
+    current.units += numeric(item.inventario);
+    rows.set(key, current);
+  }));
+
+  return [...rows.values()].map((row) => {
+    const warehouseNames = SALES_WAREHOUSES[row.warehouse] ?? [];
+    const matchingSales = sales.filter((item) =>
+      String(item.codigoProducto ?? "").trim().toUpperCase() === row.code &&
+      warehouseNames.includes(String(item.nombreAlmacen ?? "").trim().toUpperCase())
+    );
+    const units = matchingSales.reduce((sum, item) => sum + numeric(item.unidades), 0);
+    const cost = matchingSales.reduce((sum, item) => sum + numeric(item.costoTotal), 0);
+    const currentMonthlyDemand = matchingSales.reduce((sum, item) => sum + numeric(item.promedioDiarioUnidades) * 30, 0);
+    const forecastMonthlyDemand = predictions
+      .filter((item) => String(item.codigoProducto ?? "").trim().toUpperCase() === row.code && warehouseNames.includes(String(item.almacen ?? "").trim().toUpperCase()))
+      .reduce((sum, item) => sum + numeric(item.demanda30Dias), 0);
+    return {
+      ...row,
+      product: row.product || String(matchingSales[0]?.nombreProducto ?? "").trim() || "Producto sin descripción",
       lot: "No informado en corte",
       expiry: "",
-      units: numeric(item.inv_mayo),
-      monthlyDemand: salesItem ? Math.round((salesItem.units / 6) * 100) / 100 : 0,
-      costBox: salesItem?.units ? Math.round((salesItem.cost / salesItem.units) * 100) / 100 : 0,
+      monthlyDemand: Math.round((forecastMonthlyDemand || currentMonthlyDemand) * 100) / 100,
+      costBox: units ? Math.round((cost / units) * 100) / 100 : 0,
       inTransit: 0,
-    }];
-  }));
+    };
+  });
 }
 
-export const inventorySnapshotMeta = { cutOff: "2026-05-31", source: "INVENTARIOS OXDA MAYO 2026.xlsx" };
+export const inventorySnapshotMeta = { cutOff: "2026-07-31", source: "INVENTARIOS OXDA JULIO 2026..xlsx" };

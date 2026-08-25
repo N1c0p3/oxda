@@ -9,7 +9,13 @@ inventario o logística, reemplázalo con el nombre definido en los scripts y ej
 npm run data:refresh
 ```
 
-El proceso genera los derivados auditables para ventas, logística y predicción.
+El proceso genera los derivados auditables para ventas, inventario, logística y predicción.
+El pronóstico usa el histórico completo de
+`2025 Reporte de Ventas Oxda-Vulpes al 31.12.2025..xlsx`, el corte 2026 y
+`INVENTARIOS OXDA JULIO 2026..xlsx`. Para cada producto/almacén combina el
+mismo mes de 2025 ajustado por la tendencia 2026 con el promedio de los tres
+meses completos más recientes; después descuenta la existencia física para
+calcular la compra sugerida.
 Si se requiere publicar esos cortes en la base de datos, después ejecuta:
 
 ```bash
@@ -162,6 +168,13 @@ del capturador de pedidos, ejecuta después:
 
 La aplicación consulta estas tablas únicamente desde sus Route Handlers con
 `SUPABASE_SERVICE_ROLE_KEY`. No expongas esa llave en variables `NEXT_PUBLIC_*`.
+
+El campo **Producto de interés** del CRM se vincula con el mismo catálogo de
+productos y listas de precios. Para habilitar la llave foránea en una base ya
+existente, ejecuta:
+
+1. `database/migrations/020_crm_producto_interes_catalogo.sql`.
+2. `database/verify/020_crm_producto_interes_catalogo_check.sql`.
 
 Nota: el MVP actual usa almacenamiento en memoria para validar flujos y pantallas; el esquema productivo PostgreSQL ya está definido en database/schema.sql.
 

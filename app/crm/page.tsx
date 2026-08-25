@@ -46,6 +46,7 @@ type Prospecto = {
   contacto2: string;
   correo: string;
   productoInteres?: string;
+  productoInteresId?: string;
   zona: string;
   etapa: "nuevo" | "contactado" | "propuesta" | "negociacion" | "recuperacion" | "cerrado" | "perdido";
   notas?: string;
@@ -95,15 +96,15 @@ const CANALES = [
 ];
 
 const ASESORES = ["Mario", "Gabriela", "Diego", "Gamaliel", "Adolfo", "Otro"];
-const PRODUCTOS = [
-  { codigo: "105632", nombre: "10 MM NATURAL" },
-  { codigo: "102341", nombre: "10 MM CON COBERTURA" },
-  { codigo: "102310", nombre: "7 MM CON COBERTURA" },
-  { codigo: "114054", nombre: "GAJOS SAZONADOS" },
-  { codigo: "102419", nombre: "PAPA ONDULADA" },
-  { codigo: "260612", nombre: "CASTEL STRAIGHT CUT" },
-  { codigo: "806982", nombre: "AROS DE CEBOLLA AVIKO" },
-];
+
+type CatalogProduct = {
+  id: number;
+  code: string;
+  product: string;
+  category: string;
+  availability: string;
+  active: boolean;
+};
 
 const TIPOS_SEGUIMIENTO: Seguimiento["tipo"][] = [
   "llamada",
@@ -138,6 +139,8 @@ export default function CrmPage() {
   const [busqueda, setBusqueda] = useState("");
   const [filtroEtapa, setFiltroEtapa] = useState<Prospecto["etapa"] | "todas">("todas");
   const [msg, setMsg] = useState<{ tipo: "ok" | "error"; text: string } | null>(null);
+  const [catalogProducts, setCatalogProducts] = useState<CatalogProduct[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
 
   const [prospectoActivo, setProspectoActivo] = useState<Prospecto | null>(null);
   const [editando, setEditando] = useState<Prospecto | null>(null);
@@ -157,6 +160,7 @@ export default function CrmPage() {
       contacto2: "",
       correo: "",
       productoInteres: "",
+      productoInteresId: "",
       zona: zone === "TODAS" ? "GDL" : zone,
       etapa: "nuevo",
       notas: "",
@@ -188,6 +192,23 @@ export default function CrmPage() {
       .then((data: { items?: Prospecto[] }) => setProspectos(data.items ?? []))
       .catch(() => setProspectos([]))
       .finally(() => setCargado(true));
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/v1/productos", { cache: "no-store" })
+      .then(async (res) => {
+        const data = await res.json() as { items?: CatalogProduct[]; error?: string };
+        if (!res.ok) throw new Error(data.error ?? "No fue posible cargar el catálogo");
+        if (active) setCatalogProducts((data.items ?? []).filter((product) => product.active));
+      })
+      .catch(() => {
+        if (active) setCatalogProducts([]);
+      })
+      .finally(() => {
+        if (active) setCatalogLoading(false);
+      });
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
@@ -232,25 +253,31 @@ export default function CrmPage() {
       return;
     }
 
+    const selectedProduct = catalogProducts.find((product) => String(product.id) === form.productoInteresId);
+    const formToSave = {
+      ...form,
+      productoInteres: selectedProduct ? `${selectedProduct.code} · ${selectedProduct.product}` : form.productoInteres,
+    };
+
     try {
       if (editando) {
         const res = await fetch(`/api/v1/crm/prospectos/${editando.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...form, id: editando.id }),
+          body: JSON.stringify({ ...formToSave, id: editando.id }),
         });
         if (!res.ok) throw new Error("Error al actualizar");
-        setProspectos((prev) => prev.map((p) => (p.id === editando.id ? { ...form, id: editando.id, creadoEn: editando.creadoEn, seguimientos: editando.seguimientos } : p)));
+        setProspectos((prev) => prev.map((p) => (p.id === editando.id ? { ...formToSave, id: editando.id, creadoEn: editando.creadoEn, seguimientos: editando.seguimientos } : p)));
         mostrarMsg("Prospecto actualizado.");
       } else {
         const res = await fetch("/api/v1/crm/prospectos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
+          body: JSON.stringify(formToSave),
         });
         if (!res.ok) throw new Error("Error al guardar");
         const created = await res.json();
-        const newProspecto: Prospecto = { ...form, id: String(created.id), creadoEn: new Date().toISOString(), seguimientos: [] };
+        const newProspecto: Prospecto = { ...formToSave, id: String(created.id), creadoEn: new Date().toISOString(), seguimientos: [] };
         setProspectos((prev) => [newProspecto, ...prev]);
         mostrarMsg("Prospecto capturado correctamente.");
       }
@@ -659,18 +686,25 @@ export default function CrmPage() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Producto de interés</label>
+                  <label className="form-label">Producto de interés · catálogo vigente</label>
                   <select
                     className="form-input"
-                    name="productoInteres"
-                    value={form.productoInteres}
+                    name="productoInteresId"
+                    value={form.productoInteresId ?? ""}
                     onChange={handleChange}
+                    disabled={catalogLoading || catalogProducts.length === 0}
                   >
-                    <option value="">SELECCIONA UN PRODUCTO…</option>
-                    {PRODUCTOS.map((producto) => (
-                      <option key={producto.codigo} value={`${producto.codigo} · ${producto.nombre}`}>{producto.codigo} · {producto.nombre}</option>
+                    <option value="">{catalogLoading ? "CARGANDO CATÁLOGO…" : "SELECCIONA UN PRODUCTO…"}</option>
+                    {!form.productoInteresId && form.productoInteres && (
+                      <option value="" disabled>LEGADO: {form.productoInteres}</option>
+                    )}
+                    {catalogProducts.map((producto) => (
+                      <option key={producto.id} value={producto.id}>{producto.code} · {producto.product}</option>
                     ))}
                   </select>
+                  {!catalogLoading && catalogProducts.length === 0 && (
+                    <small style={{ color: "var(--danger)" }}>No hay productos activos en el catálogo de precios.</small>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -807,6 +841,9 @@ export default function CrmPage() {
                           <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                             {p.nombreNegocio} {p.cargoProspecto ? `· ${p.cargoProspecto}` : ""}
                           </div>
+                          {p.productoInteres && (
+                            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: 3 }}>Interés: {p.productoInteres}</div>
+                          )}
                         </td>
                         <td>
                           {p.contacto1 && <div style={{ fontSize: "13px" }}>{p.contacto1}</div>}
@@ -922,6 +959,7 @@ export default function CrmPage() {
                       <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: ".05em" }}>Negocio</div>
                       <div style={{ fontWeight: 700 }}>{prospectoActivo.nombreNegocio}</div>
                       <div style={{ fontSize: "13px", color: "var(--text-muted)" }}>{prospectoActivo.correo}</div>
+                      {prospectoActivo.productoInteres && <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: 4 }}>Interés: {prospectoActivo.productoInteres}</div>}
                     </div>
                     <div>
                       <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: ".05em" }}>Contactos</div>

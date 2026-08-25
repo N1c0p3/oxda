@@ -1,0 +1,121 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: 🔵 OXDA
+      - generic [ref=e6]: Sistema de Gestión
+    - generic [ref=e7]:
+      - paragraph [ref=e8]: Principal
+      - link "📊 Dashboard" [ref=e9] [cursor=pointer]:
+        - /url: /dashboard
+        - generic [ref=e10]: 📊
+        - text: Dashboard
+    - generic [ref=e11]:
+      - paragraph [ref=e12]: Inventarios
+      - link "📦 Centro de Inventarios" [ref=e13] [cursor=pointer]:
+        - /url: /inventarios/reporte
+        - generic [ref=e14]: 📦
+        - text: Centro de Inventarios
+    - generic [ref=e15]:
+      - paragraph [ref=e16]: Ventas
+      - link "🏆 Salón de Ventas" [ref=e17] [cursor=pointer]:
+        - /url: /ventas/reporte
+        - generic [ref=e18]: 🏆
+        - text: Salón de Ventas
+      - link "🛒 Pedidos" [ref=e19] [cursor=pointer]:
+        - /url: /ventas
+        - generic [ref=e20]: 🛒
+        - text: Pedidos
+      - link "💰 Cartera de clientes" [ref=e21] [cursor=pointer]:
+        - /url: /cobranza
+        - generic [ref=e22]: 💰
+        - text: Cartera de clientes
+      - link "🤝 Prospectos & CRM" [ref=e23] [cursor=pointer]:
+        - /url: /crm
+        - generic [ref=e24]: 🤝
+        - text: Prospectos & CRM
+    - generic [ref=e25]:
+      - paragraph [ref=e26]: Presupuestos
+      - link "🎯 Presupuestos" [ref=e27] [cursor=pointer]:
+        - /url: /presupuestos/zona-producto
+        - generic [ref=e28]: 🎯
+        - text: Presupuestos
+    - generic [ref=e29]:
+      - paragraph [ref=e30]: Operaciones
+      - link "🚛 Envíos y seguimiento" [ref=e31] [cursor=pointer]:
+        - /url: /logistica
+        - generic [ref=e32]: 🚛
+        - text: Envíos y seguimiento
+      - link "🧮 Costeo" [ref=e33] [cursor=pointer]:
+        - /url: /costeo
+        - generic [ref=e34]: 🧮
+        - text: Costeo
+      - link "🚢 Logística & Predicción" [ref=e35] [cursor=pointer]:
+        - /url: /logistica/prediccion
+        - generic [ref=e36]: 🚢
+        - text: Logística & Predicción
+      - link "💳 Cuentas por pagar" [ref=e37] [cursor=pointer]:
+        - /url: /cuentas-por-pagar
+        - generic [ref=e38]: 💳
+        - text: Cuentas por pagar
+    - generic [ref=e39]:
+      - paragraph [ref=e40]: Apariencia
+      - button "🌙 Modo oscuro" [ref=e41] [cursor=pointer]:
+        - generic [ref=e42]: 🌙
+        - text: Modo oscuro
+  - generic [ref=e43]:
+    - region "Filtro general por zona" [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e49]: Zona
+        - strong [ref=e50]: Todas las zonas
+      - generic "Selección rápida de zona" [ref=e51]:
+        - button "Todas" [pressed] [ref=e52] [cursor=pointer]
+        - button "BAJÍO - MAYOREO" [ref=e53] [cursor=pointer]
+        - button "GDL" [ref=e54] [cursor=pointer]
+        - button "QR" [ref=e55] [cursor=pointer]
+        - button "CS" [ref=e56] [cursor=pointer]
+        - button "CONTENEDOR COMPLETO" [ref=e57] [cursor=pointer]
+      - combobox "Seleccionar otra zona" [ref=e58]:
+        - option "Todas las zonas" [selected]
+        - option "BAJÍO - MAYOREO"
+        - option "GDL"
+        - option "QR"
+        - option "CS"
+        - option "CONTENEDOR COMPLETO"
+    - generic [ref=e59]:
+      - banner [ref=e60]:
+        - generic [ref=e61]:
+          - heading "Costeo, catálogo y listas de precios" [level=1] [ref=e62]
+          - paragraph [ref=e63]: Costeo de importación con fórmulas del Excel · edición persistente en Supabase
+        - button "Exportar catálogo" [disabled] [ref=e64]
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - generic [ref=e70]: Productos vigentes
+          - generic [ref=e75]: "0"
+          - generic [ref=e76]: Catálogo maestro
+        - generic [ref=e77]:
+          - generic [ref=e78]: Con precio publicado
+          - generic [ref=e83]: "0"
+          - generic [ref=e84]: 0 pendientes de precio
+        - generic [ref=e85]:
+          - generic [ref=e86]: Listas ligadas
+          - generic [ref=e91]: "0"
+          - generic [ref=e92]: Sin listas
+        - generic [ref=e93]:
+          - generic [ref=e94]: Margen de referencia
+          - generic [ref=e95]: 0.0%
+          - generic [ref=e96]: Sólo productos con costo y precio
+      - tablist "Apartados del módulo de costeo" [ref=e97]:
+        - tab "Costeo de importación" [selected] [ref=e98] [cursor=pointer]
+        - tab "Catálogo y precios" [ref=e101] [cursor=pointer]
+      - generic [ref=e106]:
+        - complementary [ref=e107]:
+          - generic [ref=e108]:
+            - heading "Productos" [level=2] [ref=e109]
+            - paragraph [ref=e110]: Selecciona uno para editar sus datos y precios.
+          - textbox [ref=e115]:
+            - /placeholder: Código, nombre o categoría
+          - paragraph [ref=e117]: Cargando catálogo…
+        - main [ref=e118]:
+          - generic [ref=e119]:
+            - generic [ref=e120]: 📦
+            - paragraph [ref=e121]: Cargando productos…

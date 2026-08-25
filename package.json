@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "data:refresh": "python3 extract_logistica_ventas.py && python3 scripts/exportar_ventas_reporte.py",
+    "data:refresh": "python3 extract_inventario_xlsx.py && python3 extract_logistica_ventas.py && python3 scripts/exportar_ventas_reporte.py",
     "data:predicciones": "node scripts/importar_predicciones.mjs"
   },
   "dependencies": {
