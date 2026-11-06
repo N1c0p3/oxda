@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Maggie">
+  <defs>
+    <linearGradient id="maggie-avatar" x1="120" y1="60" x2="900" y2="980" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#003087"/>
+      <stop offset="1" stop-color="#00a0e3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#maggie-avatar)"/>
+  <path fill="none" stroke="#fff" stroke-width="88" stroke-linecap="round" stroke-linejoin="round" d="M300 690V360l212 208 212-208v330"/>
+  <path fill="#ffc247" d="M764 106c10 52 36 78 88 88-52 10-78 36-88 88-10-52-36-78-88-88 52-10 78-36 88-88Z"/>
+</svg>

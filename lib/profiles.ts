@@ -24,7 +24,8 @@ export type NavIcon =
   | "costing"
   | "payables"
   | "finance"
-  | "analytics";
+  | "analytics"
+  | "maggie";
 
 export type NavSection = {
   label: string;
@@ -34,7 +35,10 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
   {
     label: "Principal",
-    links: [{ href: "/dashboard", label: "Mi dashboard", icon: "dashboard" }],
+    links: [
+      { href: "/dashboard", label: "Mi dashboard", icon: "dashboard" },
+      { href: "/maggie", label: "Maggie", icon: "maggie" },
+    ],
   },
   {
     label: "Operación",
@@ -71,10 +75,15 @@ export const NAV_SECTIONS: NavSection[] = [
       { href: "/estadisticas", label: "Estadísticas", icon: "analytics" },
     ],
   },
+  {
+    label: "Administración",
+    links: [{ href: "/telegram", label: "Vinculación de Maggie", icon: "maggie" }],
+  },
 ];
 
 const ACCOUNTING_ROUTES = [
   "/dashboard",
+  "/maggie",
   "/ventas/reporte",
   "/cobranza",
   "/presupuestos/zona-producto",
@@ -85,6 +94,7 @@ const ACCOUNTING_ROUTES = [
 
 const LOGISTICS_ROUTES = [
   "/dashboard",
+  "/maggie",
   "/inventarios/reporte",
   "/inventarios/transito",
   "/ventas",
@@ -94,6 +104,7 @@ const LOGISTICS_ROUTES = [
 
 const SALES_ROUTES = [
   "/dashboard",
+  "/maggie",
   "/ventas/reporte",
   "/ventas",
   "/crm",

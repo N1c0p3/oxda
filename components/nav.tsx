@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
 import {
   BarChart3,
   Boxes,
@@ -13,19 +14,19 @@ import {
   Factory,
   Handshake,
   LayoutDashboard,
+  LogOut,
   PackageOpen,
   Ship,
   ShoppingCart,
   Target,
   Truck,
-  UsersRound,
-  type LucideIcon,
 } from "lucide-react";
+import MaggieLogo from "./maggie-logo";
 import { useProfile } from "./profile-session";
 import ThemeToggle from "./theme-toggle";
 import { NAV_SECTIONS, type NavIcon } from "@/lib/profiles";
 
-const ICONS: Record<NavIcon, LucideIcon> = {
+const ICONS: Record<NavIcon, ComponentType<{ className?: string; size?: number; "aria-hidden"?: "true" }>> = {
   dashboard: LayoutDashboard,
   inventory: Boxes,
   transit: PackageOpen,
@@ -41,11 +42,12 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   payables: CreditCard,
   finance: ChartNoAxesCombined,
   analytics: BrainCircuit,
+  maggie: MaggieLogo,
 };
 
 export default function Nav() {
   const pathname = usePathname();
-  const { profile, clearProfile } = useProfile();
+  const { profile, cerrarSesion } = useProfile();
   const sections = NAV_SECTIONS.map((section) => ({
     ...section,
     links: section.links.filter((link) => profile.allowedRoutes.includes(link.href)),
@@ -93,9 +95,9 @@ export default function Nav() {
       <div style={{ flex: 1 }} />
 
       <div className="sidebar-actions">
-        <button type="button" className="sidebar-switch-profile" onClick={clearProfile}>
-          <UsersRound size={16} aria-hidden="true" />
-          Cambiar perfil
+        <button type="button" className="sidebar-switch-profile" onClick={() => void cerrarSesion()}>
+          <LogOut size={16} aria-hidden="true" />
+          Cerrar sesión
         </button>
         <p className="sidebar-section-label">Apariencia</p>
         <ThemeToggle />

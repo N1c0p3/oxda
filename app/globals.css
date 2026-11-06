@@ -1911,3 +1911,152 @@ tr:hover td {
   .profile-grid { grid-template-columns: 1fr; }
   .profile-card { min-height: 130px; }
 }
+
+/* ========================
+   Maggie
+======================== */
+:root {
+  --maggie-gold: #ffc247;
+  --maggie-gold-ink: #3a2800;
+}
+
+.maggie-page { padding: 4px 4px 30px; max-width: 1040px; }
+
+.maggie-hero {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 36px;
+  margin-bottom: 16px;
+  border-radius: var(--radius);
+  color: #fff;
+  background: linear-gradient(135deg, #003087 0%, #0068b5 62%, #00a0e3 100%);
+  box-shadow: 0 16px 40px rgba(0, 48, 135, 0.22);
+}
+
+.maggie-hero-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.maggie-hero-copy { min-width: 0; }
+
+.maggie-eyebrow {
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--maggie-gold);
+}
+
+.maggie-title {
+  margin-bottom: 10px;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: #fff;
+}
+
+.maggie-lead {
+  max-width: 58ch;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.maggie-page .maggie-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border: none;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--maggie-gold-ink);
+  background: var(--maggie-gold);
+}
+
+.maggie-page .maggie-cta:hover { filter: brightness(1.06); }
+
+.maggie-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.maggie-formas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.maggie-formas .card, .maggie-detalle .card { margin: 0; }
+
+.maggie-forma h2 { margin: 12px 0 6px; font-size: 1.02rem; font-weight: 700; color: var(--text); }
+.maggie-forma p { font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); }
+
+.maggie-forma-icono {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--maggie-gold-ink);
+  background: var(--maggie-gold);
+}
+
+.maggie-detalle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.maggie-ejemplos, .maggie-reglas { list-style: none; display: grid; gap: 9px; }
+
+.maggie-ejemplos li {
+  width: fit-content;
+  max-width: 100%;
+  padding: 9px 13px;
+  border-radius: 14px 14px 14px 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text);
+  background: rgba(0, 160, 227, 0.13);
+}
+
+.maggie-reglas li {
+  display: flex;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.maggie-reglas svg { flex: none; margin-top: 2px; color: var(--accent2); }
+
+@media (max-width: 760px) {
+  .maggie-hero { flex-direction: column; align-items: flex-start; gap: 20px; padding: 24px; }
+  .maggie-hero-avatar { width: 112px; height: 112px; }
+  .maggie-hero-avatar svg { width: 84px; height: 84px; }
+  .maggie-formas, .maggie-detalle { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ========================
+   Login
+======================== */
+.login-panel { width: min(420px, 100%); }
+.login-panel h1 { margin-bottom: 1.4rem; font-size: 2rem; }
+.login-panel .alert { margin-bottom: 1rem; }
+.login-panel .form-group { margin-bottom: 1rem; }
+.login-boton { width: 100%; justify-content: center; gap: 8px; }

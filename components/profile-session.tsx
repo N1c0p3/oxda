@@ -2,80 +2,46 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, UserRound } from "lucide-react";
-import { canAccessPath, getProfile, PROFILES, type AppProfile, type ProfileId } from "@/lib/profiles";
+import { UserRound } from "lucide-react";
+import { canAccessPath, getProfile, type AppProfile, type ProfileId } from "@/lib/profiles";
 
 type ProfileContextValue = {
   profile: AppProfile;
-  selectProfile: (profileId: ProfileId) => void;
-  clearProfile: () => void;
+  cerrarSesion: () => Promise<void>;
 };
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
-const STORAGE_KEY = "oxda-active-profile";
+
+function irAlLogin() {
+  window.location.assign("/login");
+}
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const [profileId, setProfileId] = useState<ProfileId | null>(null);
-  const [ready, setReady] = useState(false);
+  const [profile, setProfile] = useState<AppProfile | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as ProfileId | null;
-    if (getProfile(saved)) setProfileId(saved);
-    setReady(true);
+    fetch("/api/auth/sesion", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Sesión no válida");
+        const { perfil } = (await response.json()) as { perfil: ProfileId };
+        const encontrado = getProfile(perfil);
+        if (!encontrado) throw new Error("Perfil no válido");
+        setProfile(encontrado);
+      })
+      .catch(irAlLogin);
   }, []);
 
-  const profile = getProfile(profileId);
-
-  const selectProfile = (nextProfileId: ProfileId) => {
-    localStorage.setItem(STORAGE_KEY, nextProfileId);
-    setProfileId(nextProfileId);
-    router.replace("/dashboard");
+  const cerrarSesion = async () => {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    irAlLogin();
   };
 
-  const clearProfile = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setProfileId(null);
-  };
-
-  if (!ready) {
+  if (!profile) {
     return <div className="profile-loading">Preparando OXDA…</div>;
   }
 
-  if (!profile) {
-    return (
-      <main className="profile-select-page">
-        <section className="profile-select-panel">
-          <div className="profile-select-brand">OXDA</div>
-          <p className="profile-select-eyebrow">Acceso por perfil</p>
-          <h1>Selecciona tu vista de trabajo</h1>
-          <p className="profile-select-copy">
-            Cada perfil muestra únicamente los indicadores y módulos relevantes para su departamento.
-          </p>
-          <div className="profile-grid">
-            {PROFILES.map((item) => (
-              <button key={item.id} type="button" className="profile-card" onClick={() => selectProfile(item.id)}>
-                <span className="profile-avatar">{item.initials}</span>
-                <span className="profile-card-body">
-                  <strong>{item.name}</strong>
-                  <small>{item.department}</small>
-                  <span>{item.description}</span>
-                </span>
-                <ArrowRight size={20} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-          <div className="profile-select-note">
-            <ShieldCheck size={17} aria-hidden="true" />
-            Acceso temporal sin contraseña. La autenticación segura se puede activar en una siguiente etapa.
-          </div>
-        </section>
-      </main>
-    );
-  }
-
   return (
-    <ProfileContext.Provider value={{ profile, selectProfile, clearProfile }}>
+    <ProfileContext.Provider value={{ profile, cerrarSesion }}>
       <ProfileAccessGuard>{children}</ProfileAccessGuard>
     </ProfileContext.Provider>
   );

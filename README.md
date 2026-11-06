@@ -1,5 +1,36 @@
 # Papas Demo
 
+## Acceso al sistema
+
+Cada persona entra en `/login` con su usuario (`juan`, `angeles`, `gama` o
+`direccion`) y su sesión dura 12 horas. Las cuentas viven en Supabase Auth y el perfil
+de cada una está en `app_metadata.perfil`. `proxy.ts` protege pantallas, API y archivos
+de `public/data` según el perfil, y requiere `AUTH_SECRET` en `.env.local` y en Vercel.
+
+`node scripts/crear_accesos.mjs` crea las cuentas que falten y
+`node scripts/crear_accesos.mjs --restablecer juan` genera otra contraseña. Las
+contraseñas nuevas se guardan en `.env.accesos`, que Git ignora.
+
+## Maggie, la asistente de IA
+
+Maggie (@MaggieOxdaBot) permite consultar y modificar el sistema desde Telegram,
+por texto o nota de voz, con los mismos permisos de cada perfil. Toda modificación
+se aplica hasta que el usuario toca Confirmar y queda registrada en el panel
+`/telegram` (solo perfil Dirección). `/maggie` la presenta a todo el equipo y su
+identidad está en [docs/maggie-marca.md](docs/maggie-marca.md).
+
+Puesta en marcha:
+
+1. Ejecuta `database/migrations/021_telegram_agente.sql` en Supabase.
+2. Define en `.env.local` y en Vercel las variables de `.env.example`.
+3. Despliega y abre `/telegram` desde el sitio publicado con `TELEGRAM_ADMIN_KEY`.
+4. Toca **Activar a Maggie**, que también aplica su nombre, textos y foto en
+   Telegram, y genera un enlace por persona. Cada enlace es de un solo uso y vence
+   en 24 horas.
+
+Maggie opera con `claude-haiku-5-5` (se cambia con `CLAUDE_MODEL`) y transcribe la
+voz con `gpt-transcribe` de OpenAI (se cambia con `OPENAI_TRANSCRIPTION_MODEL`).
+
 ## Actualización de cortes de negocio
 
 Los archivos fuente no se modifican. Cuando se reciba un nuevo corte de ventas,

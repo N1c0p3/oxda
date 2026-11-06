@@ -14,12 +14,12 @@ export async function POST(request: NextRequest) {
   }
 
   const { data, error } = await adminClient().from("produccion_capturas").insert({
-    orden_id: Number(payload.ordenId), user_id: Number(payload.userId), area_id: Number(payload.areaId),
+    orden_id: Number(payload.ordenId), usuario_id: Number(payload.userId), area_id: Number(payload.areaId),
     turno: String(payload.turno), kg_procesado: Number(payload.kgProcesado), kg_merma: Number(payload.kgMerma),
     minutos_paro: Number(payload.minutosParo), incidencia: payload.incidencia ? String(payload.incidencia) : null,
   }).select().single();
   if (error) return supabaseError(error);
-  return NextResponse.json({ id: data.id, ordenId: data.orden_id, userId: data.user_id, areaId: data.area_id,
+  return NextResponse.json({ id: data.id, ordenId: data.orden_id, userId: data.usuario_id, areaId: data.area_id,
     turno: data.turno, kgProcesado: numberValue(data.kg_procesado), kgMerma: numberValue(data.kg_merma),
     minutosParo: data.minutos_paro, incidencia: data.incidencia ?? undefined, fechaHora: data.fecha_hora }, { status: 201 });
 }
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   if (areaId) query = query.eq("area_id", areaId);
   const { data, error } = await query;
   if (error) return supabaseError(error);
-  const items = data.map((item) => ({ id: item.id, ordenId: item.orden_id, userId: item.user_id, areaId: item.area_id,
+  const items = data.map((item) => ({ id: item.id, ordenId: item.orden_id, userId: item.usuario_id, areaId: item.area_id,
     turno: item.turno, kgProcesado: numberValue(item.kg_procesado), kgMerma: numberValue(item.kg_merma),
     minutosParo: item.minutos_paro, incidencia: item.incidencia ?? undefined, fechaHora: item.fecha_hora }));
   const totalProcesado = items.reduce((acc, item) => acc + item.kgProcesado, 0);
