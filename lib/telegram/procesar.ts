@@ -11,6 +11,7 @@ import {
 import { ejecutarOperaciones } from "@/lib/telegram/herramientas";
 import {
   borrarConversacion,
+  buscarPorCodigo,
   buscarPorTelegram,
   canjearCodigo,
   cancelarAccion,
@@ -18,6 +19,7 @@ import {
   crearAccion,
   guardarMensaje,
   leerConversacion,
+  liberarVinculo,
   reclamarAccion,
   registrarActividad,
   registrarUpdate,
@@ -71,10 +73,15 @@ function textoDeResultados(resultados: ResultadoOperacion[]) {
 
 async function manejarInicio(mensaje: MensajeTelegram, usuario: UsuarioTelegram, codigo?: string) {
   const existente = await buscarPorTelegram(usuario.id);
-  if (existente) {
+  const destino = codigo ? await buscarPorCodigo(codigo) : null;
+  // Con un código vigente de otro perfil, la cuenta se mueve a ese perfil.
+  const cambiaDePerfil = Boolean(existente?.activo && destino && destino.perfil !== existente.perfil);
+  if (existente && !cambiaDePerfil) {
     await enviarMensaje(mensaje.chat.id, existente.activo ? bienvenida(existente) : ACCESO_DESACTIVADO);
     return;
   }
+  if (existente) await liberarVinculo(existente.id);
+
   const vinculo = codigo
     ? await canjearCodigo(codigo, { userId: usuario.id, chatId: mensaje.chat.id, username: usuario.username })
     : null;

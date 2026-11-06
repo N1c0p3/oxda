@@ -12,6 +12,7 @@ const ESCRITURAS: Array<{ prefijo: string; pantallas: string[] }> = [
   { prefijo: "/api/v1/inventarios/reporte", pantallas: ["/inventarios/reporte"] },
   { prefijo: "/api/v1/inventarios/movimientos", pantallas: ["/inventarios"] },
   { prefijo: "/api/v1/logistica", pantallas: ["/logistica"] },
+  { prefijo: "/api/v1/maggie", pantallas: ["/maggie"] },
   { prefijo: "/api/v1/produccion", pantallas: ["/produccion"] },
   { prefijo: "/api/v1/productos", pantallas: ["/costeo"] },
   { prefijo: "/api/v1/ventas/pedidos", pantallas: ["/ventas"] },

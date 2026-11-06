@@ -148,6 +148,63 @@ export async function canjearCodigo(
   return exigir(resultado) as unknown as Vinculo | null;
 }
 
+/** Enlace pedido desde el sitio: reutiliza el vínculo pendiente del perfil para no acumular filas. */
+export async function codigoParaPerfil(nombre: string, perfil: ProfileId) {
+  const cliente = adminClient();
+  const pendiente = await cliente
+    .from("telegram_vinculos")
+    .select("id")
+    .eq("perfil", perfil)
+    .eq("activo", true)
+    .is("telegram_user_id", null)
+    .order("id")
+    .limit(1)
+    .maybeSingle();
+  const fila = exigir(pendiente) as { id: number } | null;
+
+  const { codigo, campos } = nuevoCodigo();
+  const guardado = fila
+    ? await cliente.from("telegram_vinculos").update(campos).eq("id", fila.id)
+    : await cliente.from("telegram_vinculos").insert({ nombre, perfil, ...campos });
+  exigir(guardado);
+  return codigo;
+}
+
+export async function cuentasDePerfil(perfil: ProfileId) {
+  const resultado = await adminClient()
+    .from("telegram_vinculos")
+    .select("telegram_username")
+    .eq("perfil", perfil)
+    .eq("activo", true)
+    .not("telegram_user_id", "is", null)
+    .order("id");
+  const filas = (exigir(resultado) ?? []) as Array<{ telegram_username: string | null }>;
+  return filas.map((fila) => fila.telegram_username);
+}
+
+/** Vínculo al que apunta un código vigente, sin canjearlo todavía. */
+export async function buscarPorCodigo(codigo: string) {
+  const resultado = await adminClient()
+    .from("telegram_vinculos")
+    .select(COLUMNAS_VINCULO)
+    .eq("codigo_hash", hashCodigo(codigo))
+    .is("telegram_user_id", null)
+    .gt("codigo_expira", new Date().toISOString())
+    .maybeSingle();
+  return exigir(resultado) as unknown as Vinculo | null;
+}
+
+/** Suelta la cuenta de Telegram de un vínculo para que pueda ligarse a otro perfil. */
+export async function liberarVinculo(id: number) {
+  exigir(
+    await adminClient()
+      .from("telegram_vinculos")
+      .update({ telegram_user_id: null, telegram_chat_id: null, telegram_username: null, vinculado_at: null })
+      .eq("id", id),
+  );
+  await borrarConversacion(id);
+}
+
 export async function registrarActividad(vinculoId: number) {
   exigir(
     await adminClient()

@@ -2060,3 +2060,20 @@ tr:hover td {
 .login-panel .alert { margin-bottom: 1rem; }
 .login-panel .form-group { margin-bottom: 1rem; }
 .login-boton { width: 100%; justify-content: center; gap: 8px; }
+
+.maggie-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.maggie-hero .alert { margin-bottom: 12px; color: var(--text); }
+
+.maggie-secundario {
+  padding: 0;
+  border: none;
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: #fff;
+  background: none;
+  cursor: pointer;
+}
+
+.maggie-secundario:disabled { opacity: 0.6; cursor: wait; }

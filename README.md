@@ -25,8 +25,12 @@ Puesta en marcha:
 2. Define en `.env.local` y en Vercel las variables de `.env.example`.
 3. Despliega y abre `/telegram` desde el sitio publicado con `TELEGRAM_ADMIN_KEY`.
 4. Toca **Activar a Maggie**, que también aplica su nombre, textos y foto en
-   Telegram, y genera un enlace por persona. Cada enlace es de un solo uso y vence
-   en 24 horas.
+   Telegram.
+
+Cada persona se conecta sola: entra al sistema, abre `/maggie` y toca **Conectar a
+Maggie**. El perfil sale de su sesión. Si esa cuenta de Telegram ya estaba ligada a
+otro perfil, pasa al de la sesión. El panel `/telegram` también puede generar enlaces,
+de un solo uso y con 24 horas de vigencia.
 
 Maggie opera con `claude-haiku-5-5` (se cambia con `CLAUDE_MODEL`) y transcribe la
 voz con `gpt-transcribe` de OpenAI (se cambia con `OPENAI_TRANSCRIPTION_MODEL`).
